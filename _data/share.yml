@@ -2,9 +2,10 @@
 #  Icons from <https://fontawesome.com/>
 
 platforms:
-  - type: Twitter
-    icon: "fa-brands fa-square-x-twitter"
-    link: "https://twitter.com/intent/tweet?text=TITLE&url=URL"
+  # - type: Twitter
+  #   icon: "fa-brands fa-square-x-twitter"
+  #   link: "https://twitter.com/intent/tweet?text=TITLE&url=URL"
+  # 无 Twitter 账号，已注释
 
   - type: Facebook
     icon: "fab fa-facebook-square"
