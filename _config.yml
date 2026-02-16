@@ -14,9 +14,9 @@ timezone:
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: superj # the main title
+title: 进击的姜饼人 # the main title (浏览器标签、侧边栏、PWA 名称)
 
-tagline: 进击的姜饼人 # it will display as the subtitle
+tagline: superj's blog # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   superj's blog.
