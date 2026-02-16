@@ -82,5 +82,24 @@ layout: compress
     {% endfor %}
 
     {% include_cached search-loader.html lang=lang %}
+
+    {% if site.busuanzi != false %}
+      {% include busuanzi.html %}
+    {% endif %}
+
+    <!-- 返回顶部按钮逻辑 -->
+    <script>
+      (function() {
+        const btn = document.getElementById('back-to-top');
+        if (!btn) return;
+        const threshold = 80;
+        function toggle() {
+          btn.classList.toggle('show', window.scrollY > threshold);
+        }
+        window.addEventListener('scroll', toggle);
+        btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        toggle();
+      })();
+    </script>
   </body>
 </html>
