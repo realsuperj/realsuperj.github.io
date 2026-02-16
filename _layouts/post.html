@@ -80,7 +80,13 @@ script_includes:
         </span>
 
         <div>
-          <!-- pageviews -->
+          <!-- pageviews (不蒜子) -->
+          {% if site.busuanzi != false %}
+            <span class="me-3">
+              <i class="far fa-eye fa-fw"></i>
+              <span id="busuanzi_value_page_pv">0</span> 次阅读
+            </span>
+          {% endif %}
           {% if site.pageviews.provider and site.analytics[site.pageviews.provider].id %}
             <span>
               <em id="pageviews">

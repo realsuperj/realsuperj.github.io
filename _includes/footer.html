@@ -17,6 +17,12 @@
       <em class="fst-normal">{{ site.social.name }}</em>.
     {% endif %}
 
+    {% if site.busuanzi != false %}
+    <span class="busuanzi ms-2">
+      <span id="busuanzi_value_site_pv">0</span> 次访问 · <span id="busuanzi_value_site_uv">0</span> 位访客
+    </span>
+    {% endif %}
+
     {% if site.data.locales[include.lang].copyright.brief %}
       <span
         data-bs-toggle="tooltip"
