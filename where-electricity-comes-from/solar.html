@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光从电池片到灯泡 —— 光伏发电全过程图解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0B1826;
+  --bg-panel:#122338;
+  --bg-panel-2:#0E1D2F;
+  --steel:#3A5068;
+  --steel-light:#5A7592;
+  --teal:#5CE1D8;
+  --teal-dim:#2C7A75;
+  --amber:#FFB25C;
+  --amber-dim:#8A5A2A;
+  --text-hi:#EAF2F8;
+  --text-lo:#8CA3B8;
+  --line:#1F3247;
+  --accent:#E8C15A;
+  --accent-dim:#8A6F28;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg-deep);
+  color:var(--text-hi);
+  font-family:'IBM Plex Sans','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{
+  font-family:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif;
+  font-weight:600;
+  letter-spacing:0.01em;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;}
+.spine{
+  position:absolute;
+  left:50%;
+  top:100vh;
+  width:2px;
+  height:calc(100% - 100vh);
+  background:linear-gradient(180deg,
+    var(--accent) 0%, var(--accent) 32%,
+    var(--amber) 62%, var(--amber) 100%);
+  opacity:0.35;
+  z-index:0;
+}
+section{position:relative;z-index:1;padding:120px 0;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:18px;
+}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--accent);}
+.eyebrow.amber{color:var(--amber);}
+.eyebrow.amber::before{background:var(--amber);}
+h2{font-size:clamp(28px,4vw,40px);margin-bottom:16px;}
+.lede{color:var(--text-lo);font-size:17px;margin-bottom:56px;}
+
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;padding:80px 24px;
+  background:
+    radial-gradient(ellipse 900px 520px at 50% 18%, rgba(232,193,90,0.16), transparent 70%),
+    radial-gradient(ellipse 700px 420px at 50% 72%, rgba(232,193,90,0.07), transparent 65%);
+}
+.hero .eyebrow{justify-content:center;}
+.hero .eyebrow::before{display:none;}
+.hero h1{
+  font-size:clamp(36px,6vw,64px);
+  line-height:1.15;
+  max-width:840px;
+  margin:0 auto 20px;
+  padding:0 16px;
+  text-wrap:balance;
+}
+.hero h1 .hl{
+  color:var(--accent);
+  font-size:clamp(20px,3.2vw,30px);
+  font-weight:500;
+  display:inline-block;
+  margin-top:10px;
+  max-width:min(92vw,720px);
+  word-break:keep-all;
+  line-break:strict;
+  text-wrap:balance;
+}
+.hero h1 .hl .nb{white-space:nowrap;}
+.hero p{color:var(--text-lo);font-size:18px;max-width:520px;margin-bottom:56px;}
+.pv-stage{width:min(560px,80vw);position:relative;}
+.pv-stage svg{width:100%;height:auto;display:block;}
+.sun-ray{stroke:var(--amber);stroke-width:2;opacity:0;stroke-dasharray:6 10;animation:shine 3s linear infinite;}
+.sun-ray:nth-child(1){animation-delay:0s;}
+.sun-ray:nth-child(2){animation-delay:0.5s;}
+.sun-ray:nth-child(3){animation-delay:1s;}
+.sun-ray:nth-child(4){animation-delay:1.5s;}
+.sun-ray:nth-child(5){animation-delay:2s;}
+@keyframes shine{
+  0%{opacity:0;stroke-dashoffset:50;}
+  15%{opacity:0.75;}
+  80%{opacity:0.75;}
+  100%{opacity:0;stroke-dashoffset:0;}
+}
+.cell-glow{animation:cellPulse 2.4s ease-in-out infinite;}
+@keyframes cellPulse{0%,100%{opacity:0.35;}50%{opacity:0.85;}}
+.scroll-cue{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-lo);font-size:12px;font-family:'JetBrains Mono',monospace;
+  letter-spacing:0.1em;
+}
+.scroll-cue .bar{width:1px;height:36px;background:linear-gradient(180deg,var(--accent),transparent);animation:pulseDown 1.8s ease-in-out infinite;}
+@keyframes pulseDown{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+.anatomy-grid{
+  display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;
+}
+.anatomy-svg-wrap{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:24px;
+}
+.anatomy-svg-wrap svg{width:100%;height:auto;display:block;}
+.part{cursor:pointer;transition:opacity .25s ease;}
+.part-fill{fill:var(--steel);stroke:var(--steel-light);stroke-width:1;transition:fill .25s ease;}
+.part.active .part-fill{fill:var(--accent-dim);stroke:var(--accent);}
+.anatomy-list{display:flex;flex-direction:column;gap:2px;}
+.anatomy-item{
+  padding:16px 18px;border-radius:4px;cursor:pointer;
+  border:1px solid transparent;
+  transition:background .2s ease,border-color .2s ease;
+}
+.anatomy-item:hover,.anatomy-item.active{
+  background:var(--bg-panel);border-color:var(--line);
+}
+.anatomy-item .num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px;margin-right:10px;}
+.anatomy-item h3{font-size:16px;display:inline;font-weight:600;}
+.anatomy-item p{color:var(--text-lo);font-size:14px;margin-top:6px;}
+
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{
+  display:grid;grid-template-columns:96px 1fr;gap:28px;
+  padding:36px 0;border-top:1px solid var(--line);
+}
+.step:last-child{border-bottom:1px solid var(--line);}
+.step-num{
+  font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;
+  color:var(--line);
+}
+.step.s1 .step-num{color:var(--accent);}
+.step.s2 .step-num{color:#7fd8cf;}
+.step.s3 .step-num{color:#c9b06e;}
+.step.s4 .step-num{color:var(--amber);}
+.step h3{font-size:20px;margin-bottom:8px;}
+.step .stat{
+  display:inline-block;margin-top:14px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--text-lo);background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:3px;padding:6px 12px;
+}
+.step p.desc{color:var(--text-lo);font-size:15px;max-width:620px;}
+
+.transmission{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:40px 24px;
+  overflow-x:auto;
+}
+.transmission svg{display:block;margin:0 auto;min-width:900px;width:100%;height:auto;}
+.transmission h3{font-size:16px;margin-bottom:20px;color:var(--text-hi);}
+.tflow{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.lflow{stroke:var(--teal);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-24;}}
+.leg{
+  display:flex;flex-wrap:wrap;gap:20px 32px;margin-top:28px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-lo);
+}
+.leg span{display:inline-flex;align-items:center;gap:8px;}
+.leg i{width:10px;height:10px;border-radius:2px;display:inline-block;background:var(--steel);}
+
+.gen-panel{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:44px 36px;
+  margin-top:72px;
+}
+.gen-grid{
+  display:grid;grid-template-columns:minmax(260px,400px) 1fr;
+  gap:48px;align-items:center;
+}
+.gen-grid svg{width:100%;height:auto;display:block;}
+.electron-dot{animation:electronMove 2s ease-in-out infinite;}
+.electron-dot.e2{animation-delay:.4s;}
+.electron-dot.e3{animation-delay:.8s;}
+.hole-dot{animation:holeMove 2s ease-in-out infinite;}
+.hole-dot.h2{animation-delay:.4s;}
+@keyframes electronMove{0%,100%{transform:translateX(0);opacity:.5;}50%{transform:translateX(18px);opacity:1;}}
+@keyframes holeMove{0%,100%{transform:translateX(0);opacity:.5;}50%{transform:translateX(-18px);opacity:1;}}
+.field-arrow{animation:fieldPulse 1.8s ease-in-out infinite;}
+@keyframes fieldPulse{0%,100%{opacity:.35;}50%{opacity:1;}}
+.gen-facts{display:flex;flex-direction:column;gap:20px;}
+.gen-facts h3{font-size:20px;}
+.gen-fact{padding-left:16px;border-left:2px solid var(--accent-dim);}
+.gen-fact p{color:var(--text-lo);font-size:15px;}
+.gen-fact strong{color:var(--text-hi);}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.faq-card{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:4px;padding:28px 26px;
+}
+.faq-card h3{font-size:17px;margin-bottom:10px;}
+.faq-card h3::before{
+  content:'Q';font-family:'JetBrains Mono',monospace;
+  color:var(--accent);margin-right:10px;font-size:14px;
+}
+.faq-card p{color:var(--text-lo);font-size:14.5px;}
+
+
+.history-extend{
+  margin-top:72px;
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:36px 28px;
+}
+.history-extend > .eyebrow{margin-bottom:12px;}
+.history-extend > h3{font-size:22px;margin-bottom:8px;}
+.history-extend > .sub{color:var(--text-lo);font-size:14.5px;margin-bottom:28px;}
+.history-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.history-col{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:22px 22px;
+}
+.history-col > h4{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;
+  color:var(--accent);margin-bottom:16px;font-weight:500;
+}
+.history-item{margin-bottom:16px;}
+.history-item:last-child{margin-bottom:0;}
+.history-item .yr{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--accent);margin-bottom:4px;letter-spacing:0.04em;
+}
+.history-item p{color:var(--text-lo);font-size:13.5px;}
+.history-item strong{color:var(--text-hi);font-weight:500;}
+
+.closing{
+  text-align:center;padding:140px 0 100px;
+}
+.closing h2{max-width:600px;margin:0 auto 20px;}
+.closing p{color:var(--text-lo);max-width:520px;margin:0 auto;}
+footer{
+  text-align:center;padding:40px 24px 60px;
+  color:var(--text-lo);font-size:13px;font-family:'JetBrains Mono',monospace;
+  border-top:1px solid var(--line);
+}
+
+@media (max-width:820px){
+  .anatomy-grid{grid-template-columns:1fr;}
+  .wrap{padding:0 20px;}
+  section{padding:80px 0;}
+  .spine{display:none;}
+  .step{grid-template-columns:56px 1fr;gap:18px;}
+  .step-num{font-size:28px;}
+  .gen-panel{padding:28px 20px;}
+  .gen-grid{grid-template-columns:1fr;gap:32px;}
+  .faq-grid{grid-template-columns:1fr;}
+  .history-cols{grid-template-columns:1fr;}
+  .transmission{padding:28px 16px;}
+}
+
+.kb-home{
+  position:fixed;top:20px;left:20px;z-index:30;
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;background:rgba(11,24,38,0.72);backdrop-filter:blur(8px);
+  transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.kb-home:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 12%, rgba(11,24,38,0.85));
+}
+.page-nav{margin-top:32px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;}
+.page-nav a{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.page-nav a:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+
+.sec-nav{
+  position:fixed;left:10px;top:50%;transform:translateY(-50%);
+  z-index:28;display:flex;flex-direction:column;gap:8px;
+  padding:10px 6px;
+}
+.sec-nav a{
+  display:block;width:3px;height:26px;border-radius:2px;
+  background:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0.32;position:relative;
+  transition:opacity .2s ease, height .2s ease, transform .2s ease;
+}
+.sec-nav a:hover,.sec-nav a.active{opacity:1;}
+.sec-nav a.active{height:34px;}
+.sec-nav a::after{
+  content:attr(data-label);
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em;
+  color:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0;pointer-events:none;
+  transition:opacity .18s ease;
+}
+.sec-nav a:hover::after{opacity:1;}
+@media (max-width:900px){.sec-nav{display:none;}}
+
+
+/* content protection (deterrent only) */
+body{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+footer .copyright{
+  margin-top:12px;
+  font-size:12px;
+  opacity:0.85;
+  letter-spacing:0.02em;
+}
+
+</style>
+</head>
+<body>
+
+<a class="kb-home" href="index.html">← 回到主页</a>
+
+<nav class="sec-nav" style="--nav-accent:var(--accent)" aria-label="章节导航">
+  <a href="#top" data-label="顶栏 · 概览"></a>
+  <a href="#anatomy" data-label="01 · 构造"></a>
+  <a href="#steps" data-label="02 · 转换"></a>
+  <a href="#grid" data-label="03 · 输送"></a>
+  <a href="#faq" data-label="04 · 快问快答"></a>
+  <a href="#history-extend" data-label="历史延伸"></a>
+  <a href="#closing" data-label="小结"></a>
+</nav>
+
+<div class="spine" aria-hidden="true"></div>
+
+<section class="hero" id="top">
+  <div class="eyebrow">PHOTONS → DC → AC</div>
+  <h1>光从电池片到灯泡<br><span class="hl">一块光伏板怎么把阳光<span class="nb">变成电</span></span></h1>
+  <p>从阳光打在硅片上，到电流点亮灯 —— 中间经过了哪些装置、哪几次能量转换？往下滚动，一步步看清楚。</p>
+
+  <div class="pv-stage">
+    <svg viewBox="0 0 560 420" fill="none">
+      <!-- 太阳光线 -->
+      <line class="sun-ray" x1="280" y1="30" x2="280" y2="110"/>
+      <line class="sun-ray" x1="230" y1="50" x2="260" y2="115"/>
+      <line class="sun-ray" x1="330" y1="50" x2="300" y2="115"/>
+      <line class="sun-ray" x1="200" y1="80" x2="245" y2="125"/>
+      <line class="sun-ray" x1="360" y1="80" x2="315" y2="125"/>
+      <!-- 太阳 -->
+      <circle cx="280" cy="28" r="22" fill="#FFB25C" opacity="0.85"/>
+      <circle cx="280" cy="28" r="16" fill="#FFD98A" opacity="0.6"/>
+      <!-- 地面 -->
+      <line x1="60" y1="380" x2="500" y2="380" stroke="#1F3247" stroke-width="1"/>
+      <!-- 支架 -->
+      <polygon points="180,380 200,380 210,280 190,280" fill="#3A5068"/>
+      <polygon points="360,380 380,380 370,280 350,280" fill="#3A5068"/>
+      <!-- 光伏板 -->
+      <rect x="140" y="240" width="280" height="44" rx="3" fill="#22374D" stroke="#5A7592" stroke-width="1.5"/>
+      <rect x="148" y="246" width="64" height="32" rx="1" fill="#1B3A50" stroke="#3A5068" class="cell-glow"/>
+      <rect x="220" y="246" width="64" height="32" rx="1" fill="#1B3A50" stroke="#3A5068" class="cell-glow"/>
+      <rect x="292" y="246" width="64" height="32" rx="1" fill="#1B3A50" stroke="#3A5068" class="cell-glow"/>
+      <rect x="364" y="246" width="48" height="32" rx="1" fill="#1B3A50" stroke="#3A5068" class="cell-glow"/>
+      <!-- 电流输出 -->
+      <path d="M420 262 H480" stroke="#FFB25C" stroke-width="2" stroke-dasharray="4 6" opacity="0.6"/>
+      <text x="490" y="266" fill="#FFB25C" font-size="11" font-family="JetBrains Mono, monospace">DC</text>
+    </svg>
+  </div>
+
+  <div class="scroll-cue"><span>SCROLL</span><span class="bar"></span></div>
+</section>
+
+<section id="anatomy">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">01 · 构造</div>
+      <h2>先认识一套光伏系统</h2>
+      <p class="lede">光伏没有旋转的主轴和叶片，靠的是硅片把光直接变成电。点一点右边的部件名称，看看它在图上的位置。</p>
+    </div>
+
+    <div class="anatomy-grid reveal">
+      <div class="anatomy-svg-wrap">
+        <svg viewBox="0 0 320 420" fill="none">
+          <line x1="20" y1="400" x2="300" y2="400" stroke="#1F3247" stroke-width="1"/>
+          <!-- 支架/跟踪器 -->
+          <g class="part" data-id="mount">
+            <polygon class="part-fill" points="90,400 110,400 118,260 102,260"/>
+            <polygon class="part-fill" points="210,400 230,400 218,260 202,260"/>
+          </g>
+          <!-- 组件（玻璃/EVA/背板） -->
+          <g class="part" data-id="module">
+            <rect class="part-fill" x="70" y="220" width="180" height="42" rx="3"/>
+            <line x1="115" y1="220" x2="115" y2="262" stroke="#1F3247" stroke-width="0.8"/>
+            <line x1="160" y1="220" x2="160" y2="262" stroke="#1F3247" stroke-width="0.8"/>
+            <line x1="205" y1="220" x2="205" y2="262" stroke="#1F3247" stroke-width="0.8"/>
+          </g>
+          <!-- 光伏电池片 -->
+          <g class="part" data-id="cell">
+            <rect class="part-fill" x="78" y="228" width="34" height="26" rx="1"/>
+            <rect class="part-fill" x="122" y="228" width="34" height="26" rx="1"/>
+            <rect class="part-fill" x="166" y="228" width="34" height="26" rx="1"/>
+            <rect class="part-fill" x="210" y="228" width="34" height="26" rx="1"/>
+          </g>
+          <!-- 汇流箱 -->
+          <g class="part" data-id="combiner">
+            <rect class="part-fill" x="40" y="330" width="56" height="38" rx="3"/>
+          </g>
+          <!-- 逆变器 -->
+          <g class="part" data-id="inverter">
+            <rect class="part-fill" x="130" y="320" width="64" height="48" rx="4"/>
+            <text x="162" y="348" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">DC→AC</text>
+          </g>
+          <!-- 升压变压器 -->
+          <g class="part" data-id="transformer">
+            <rect class="part-fill" x="230" y="318" width="58" height="52" rx="3"/>
+            <circle cx="248" cy="344" r="10" stroke="#8CA3B8" stroke-width="1.5" fill="none"/>
+            <circle cx="270" cy="344" r="10" stroke="#8CA3B8" stroke-width="1.5" fill="none"/>
+          </g>
+          <!-- 电缆示意：沿支架外侧与支架间隙走线，避免穿块 -->
+          <path d="M78 262 V330 H68" stroke="#3A5068" stroke-width="2" stroke-dasharray="3 3" fill="none"/>
+          <path d="M96 349 L28 349 L28 288 L160 288 L160 320" stroke="#3A5068" stroke-width="2" stroke-dasharray="3 3" fill="none"/>
+          <path d="M194 344 H230" stroke="#3A5068" stroke-width="2" stroke-dasharray="3 3" fill="none"/>
+        </svg>
+      </div>
+
+      <div class="anatomy-list">
+        <div class="anatomy-item" data-target="cell">
+          <span class="num">01</span><h3>光伏电池片</h3>
+          <p>核心发电单元，通常是单晶硅或多晶硅薄片。光子打在上面，硅原子里的电子被"打"出来，形成电流的起点。</p>
+        </div>
+        <div class="anatomy-item" data-target="module">
+          <span class="num">02</span><h3>组件（玻璃 / EVA / 背板）</h3>
+          <p>几十片电池片串联封装成一块"板"：上层钢化玻璃透光、中间 EVA 胶膜粘合、背板防水绝缘，整体像一块三明治。</p>
+        </div>
+        <div class="anatomy-item" data-target="mount">
+          <span class="num">03</span><h3>支架 / 跟踪器</h3>
+          <p>固定组件、调整倾角。固定支架最常见；跟踪器可随太阳转动，多收一些光，但成本和维护更高。</p>
+        </div>
+        <div class="anatomy-item" data-target="combiner">
+          <span class="num">04</span><h3>汇流箱</h3>
+          <p>把多块组件的直流线缆汇集到一起，带熔断器和防雷，方便集中接入逆变器。大型电站几乎必备。</p>
+        </div>
+        <div class="anatomy-item" data-target="inverter">
+          <span class="num">05</span><h3>逆变器</h3>
+          <p>光伏的"心脏"之一：把组件输出的直流电变成与电网同步的 50 Hz 交流电。带储能的电站还会用储能逆变器，既能并网也能给电池充放电。</p>
+        </div>
+        <div class="anatomy-item" data-target="transformer">
+          <span class="num">06</span><h3>升压变压器</h3>
+          <p>逆变器出来的电压还不够高，箱式变压器把它升压到 10 kV 或 35 kV，才能并入高压输电网络、减少线路损耗。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="steps">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">02 · 转换</div>
+      <h2>光能变成电能，一共四步</h2>
+      <p class="lede">光伏没有燃烧、没有蒸汽、也没有旋转主轴 —— 能量转换发生在硅片内部：光子打出电子，形成直流电，再由逆变器变成交流电并网。先看一眼系统流程，再逐步拆解。</p>
+    </div>
+
+    <div class="transmission reveal" style="margin-bottom:72px;">
+      <h3>系统剖面 · 从太阳到电网（示意）</h3>
+      <svg viewBox="0 0 960 320" fill="none">
+        <!-- 太阳 -->
+        <circle cx="80" cy="60" r="28" fill="#FFB25C" opacity="0.8"/>
+        <circle cx="80" cy="60" r="20" fill="#FFD98A" opacity="0.5"/>
+        <text x="80" y="110" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">太阳</text>
+        <!-- 光线 -->
+        <path class="lflow" d="M108 72 H180"/>
+        <path class="lflow" d="M100 88 H180"/>
+        <path class="lflow" d="M92 104 H180"/>
+
+        <!-- 组件阵列 -->
+        <rect x="180" y="60" width="180" height="100" rx="6" fill="#16283E" stroke="#3A5068" stroke-width="1.5"/>
+        <rect x="192" y="72" width="36" height="28" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="236" y="72" width="36" height="28" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="280" y="72" width="36" height="28" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="324" y="72" width="28" height="28" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="192" y="108" width="36" height="28" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="236" y="108" width="36" height="28" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="280" y="108" width="36" height="28" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="324" y="108" width="28" height="28" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <text x="270" y="188" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">组件阵列 · 直流串联/并联</text>
+
+        <!-- 汇流箱 -->
+        <rect x="400" y="90" width="70" height="50" rx="4" fill="#22374D" stroke="#5A7592"/>
+        <text x="435" y="188" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">汇流箱</text>
+
+        <!-- 逆变器 -->
+        <rect x="510" y="78" width="90" height="74" rx="6" fill="#22374D" stroke="#5A7592"/>
+        <text x="555" y="118" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">逆变器</text>
+        <text x="555" y="134" fill="#FFB25C" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">DC → AC</text>
+        <text x="555" y="188" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">MPPT · 50 Hz</text>
+
+        <!-- 箱变 -->
+        <rect x="640" y="82" width="80" height="66" rx="4" fill="#22374D" stroke="#5A7592"/>
+        <circle cx="668" cy="115" r="14" stroke="#8CA3B8" stroke-width="1.5" fill="none"/>
+        <circle cx="692" cy="115" r="14" stroke="#8CA3B8" stroke-width="1.5" fill="none"/>
+        <text x="680" y="188" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">箱变 · 升压</text>
+
+        <!-- 电网 -->
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="780" y1="200" x2="780" y2="100"/>
+          <line x1="750" y1="120" x2="810" y2="120"/>
+          <line x1="758" y1="140" x2="802" y2="140"/>
+        </g>
+        <text x="780" y="220" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">电网</text>
+
+        <!-- 能量流：光（青）→ 直流（青）→ 交流（琥珀） -->
+        <path class="lflow" d="M360 110 H400"/>
+        <path class="lflow" d="M470 115 H510"/>
+        <path class="tflow" d="M600 115 H640"/>
+        <path class="tflow" d="M720 115 H760"/>
+
+        <!-- 标注线 -->
+        <g stroke="#5A7592" stroke-width="1" stroke-dasharray="2 4" opacity="0.6">
+          <line x1="270" y1="48" x2="270" y2="56"/>
+          <line x1="555" y1="48" x2="555" y2="74"/>
+          <line x1="680" y1="48" x2="680" y2="80"/>
+        </g>
+        <g fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">
+          <text x="270" y="42">光电效应 · 无机械旋转</text>
+          <text x="555" y="42">最大功率点跟踪 MPPT</text>
+          <text x="680" y="42">35 kV 级并网</text>
+        </g>
+      </svg>
+      <div class="leg">
+        <span><i style="background:var(--teal)"></i>青色虚线 = 光能 / 直流电</span>
+        <span><i style="background:var(--amber)"></i>琥珀虚线 = 50 Hz 交流电</span>
+      </div>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step s1">
+        <div class="step-num mono">01</div>
+        <div>
+          <h3>光子激发硅中电子，形成电子-空穴对</h3>
+          <p class="desc">阳光本质是携带能量的光子。当足够能量的光子打进硅原子，会把价带里的电子"打"到导带，同时留下一个带正电的空穴 —— 就像打台球：白球（光子）撞红球（电子），红球飞出去，原位空出一个"洞"。这一步叫光电效应，发生在每一片电池片内部，不需要任何机械运动。</p>
+          <span class="stat">所需光子能量 ≈ 1.1 eV 以上（对应硅的带隙）</span>
+        </div>
+      </div>
+
+      <div class="step s2">
+        <div class="step-num mono">02</div>
+        <div>
+          <h3>PN 结内建电场把载流子分开，形成直流电压/电流</h3>
+          <p class="desc">电池片不是纯硅，而是 P 型（掺硼，多空穴）和 N 型（掺磷，多自由电子）两层贴在一起，交界处形成 PN 结。结区里有一个内建电场，像单向阀门：电子被推向 N 侧、空穴被推向 P 侧，正负电荷分开，两端就出现电压。外接导线，电子从 N 侧流向 P 侧，就形成直流电流。</p>
+          <span class="stat">单晶硅电池片开路电压 约 0.6 V ｜ 串联升压</span>
+        </div>
+      </div>
+
+      <div class="step s3">
+        <div class="step-num mono">03</div>
+        <div>
+          <h3>多片串联并联组成组件与方阵，汇流箱汇总</h3>
+          <p class="desc">一片电池片电压太低，通常 60 片左右串联封装成一块组件（约 30–40 V），多块组件再并联或串联组成方阵。每块组件引出正负两根线，汇流箱把几十路直流汇总成几路粗电缆，方便接入逆变器。大型地面电站的方阵可以铺成几公顷的"蓝色海洋"。</p>
+          <span class="stat">单块组件 约 400–700 W ｜ 方阵可达 MW 级</span>
+        </div>
+      </div>
+
+      <div class="step s4">
+        <div class="step-num mono">04</div>
+        <div>
+          <h3>逆变器把直流变成 50 Hz 交流，再升压并网</h3>
+          <p class="desc">电网要求稳定频率和电压，不能直接吃直流。逆变器先把组件来的直流整流、再逆变成与电网严格同步的 50 Hz 交流。现代逆变器还内置 MPPT（最大功率点跟踪），实时调节工作点，让组件在光照变化时始终尽量多发电。随后经箱式变压器升压，才能并入高压输电线路。</p>
+          <span class="stat">逆变器效率 约 97–99% ｜ 箱变升压至 10–35 kV</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-panel reveal">
+      <div class="gen-grid">
+        <svg viewBox="0 0 460 400" fill="none">
+          <!-- P 型区 -->
+          <rect x="40" y="80" width="160" height="240" rx="4" fill="#1B3A50" stroke="#5A7592" stroke-width="1.5"/>
+          <text x="120" y="110" fill="#8CA3B8" font-size="14" font-weight="600" font-family="Space Grotesk, sans-serif" text-anchor="middle">P 型</text>
+          <text x="120" y="130" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">多空穴 +</text>
+          <!-- N 型区 -->
+          <rect x="200" y="80" width="160" height="240" rx="4" fill="#22374D" stroke="#5A7592" stroke-width="1.5"/>
+          <text x="280" y="110" fill="#8CA3B8" font-size="14" font-weight="600" font-family="Space Grotesk, sans-serif" text-anchor="middle">N 型</text>
+          <text x="280" y="130" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">多电子 −</text>
+          <!-- PN 结 / 耗尽层 -->
+          <rect x="188" y="80" width="24" height="240" fill="#16283E" stroke="#5CE1D8" stroke-width="1.5" opacity="0.9"/>
+          <text x="200" y="340" fill="#5CE1D8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">PN 结</text>
+          <!-- 空穴（P 侧） -->
+          <circle class="hole-dot" cx="90" cy="180" r="8" fill="#FFB25C" opacity="0.7"/>
+          <text x="90" y="184" fill="#0B1826" font-size="10" font-weight="700" font-family="Space Grotesk, sans-serif" text-anchor="middle">+</text>
+          <circle class="hole-dot h2" cx="130" cy="220" r="8" fill="#FFB25C" opacity="0.7"/>
+          <text x="130" y="224" fill="#0B1826" font-size="10" font-weight="700" font-family="Space Grotesk, sans-serif" text-anchor="middle">+</text>
+          <!-- 电子（N 侧） -->
+          <circle class="electron-dot" cx="250" cy="180" r="8" fill="#5CE1D8" opacity="0.7"/>
+          <text x="250" y="184" fill="#0B1826" font-size="10" font-weight="700" font-family="Space Grotesk, sans-serif" text-anchor="middle">−</text>
+          <circle class="electron-dot e2" cx="290" cy="220" r="8" fill="#5CE1D8" opacity="0.7"/>
+          <text x="290" y="224" fill="#0B1826" font-size="10" font-weight="700" font-family="Space Grotesk, sans-serif" text-anchor="middle">−</text>
+          <circle class="electron-dot e3" cx="330" cy="260" r="8" fill="#5CE1D8" opacity="0.7"/>
+          <text x="330" y="264" fill="#0B1826" font-size="10" font-weight="700" font-family="Space Grotesk, sans-serif" text-anchor="middle">−</text>
+          <!-- 内建电场箭头 -->
+          <g class="field-arrow">
+            <line x1="175" y1="200" x2="155" y2="200" stroke="#5CE1D8" stroke-width="2"/>
+            <polygon points="155,200 163,196 163,204" fill="#5CE1D8"/>
+            <line x1="225" y1="200" x2="245" y2="200" stroke="#FFB25C" stroke-width="2"/>
+            <polygon points="245,200 237,196 237,204" fill="#FFB25C"/>
+          </g>
+          <text x="200" y="195" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">内建电场</text>
+          <!-- 外电路 -->
+          <path d="M40 160 H20 V60 H420 V60 H400" stroke="#3A5068" stroke-width="2" fill="none"/>
+          <path class="tflow" d="M20 60 H420"/>
+          <text x="220" y="48" fill="#FFB25C" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">外接导线 · 直流电流 →</text>
+          <!-- 标注 -->
+          <line x1="380" y1="300" x2="340" y2="260" stroke="#5A7592" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
+          <text x="384" y="312" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace">电子被推向 N 侧</text>
+          <line x1="60" y1="300" x2="100" y2="260" stroke="#5A7592" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
+          <text x="14" y="312" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace">空穴留在 P 侧</text>
+        </svg>
+
+        <div class="gen-facts">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px;">图解 · 电池片内部</div>
+            <h3>PN 结：发电的最小单元</h3>
+          </div>
+          <div class="gen-fact">
+            <p><strong>P 型硅</strong>：掺入少量硼，硼只有三个价电子，会留下"空位" —— 这些空位就是空穴，带正电，像缺了球的球坑。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>N 型硅</strong>：掺入少量磷，磷多一个价电子，多出来的电子可以自由移动，带负电。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>PN 结与内建电场</strong>：两层贴在一起，交界处的电子和空穴互相"复合"掉，留下一个不带自由载流子的薄层（耗尽层），两侧形成内建电场 —— 像单向阀门，只允许电子从 N 侧经外电路流向 P 侧，这就是电池片能持续输出直流电的原因。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grid">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">03 · 输送</div>
+      <h2>发出的电，去了哪里</h2>
+      <p class="lede">光伏可以建在大片荒滩上（集中式），也可以铺在工厂或居民屋顶（分布式）。路径不同，但都要经过逆变、升压，才能汇入大电网或就地使用。</p>
+    </div>
+
+    <div class="transmission reveal">
+      <h3>集中式 vs 分布式 · 电流去向（示意）</h3>
+      <svg viewBox="0 0 1000 300" fill="none">
+        <!-- 集中式：方阵 -->
+        <rect x="30" y="70" width="120" height="70" rx="4" fill="#16283E" stroke="#3A5068"/>
+        <rect x="40" y="80" width="24" height="18" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="70" y="80" width="24" height="18" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="100" y="80" width="24" height="18" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="40" y="104" width="24" height="18" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="70" y="104" width="24" height="18" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <rect x="100" y="104" width="24" height="18" rx="1" fill="#1B3A50" stroke="#5A7592"/>
+        <text x="90" y="160" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">集中式方阵</text>
+
+        <!-- 分布式：屋顶 -->
+        <polygon points="820,90 860,60 920,60 960,90 960,130 820,130" fill="#3A5068"/>
+        <rect x="840" y="95" width="80" height="22" rx="2" fill="#1B3A50" stroke="#5CE1D8" stroke-width="1"/>
+        <text x="890" y="160" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">屋顶分布式</text>
+
+        <!-- 逆变器 -->
+        <rect x="200" y="95" width="50" height="36" rx="3" fill="#22374D" stroke="#5A7592"/>
+        <text x="225" y="148" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">逆变器</text>
+
+        <rect x="780" y="95" width="50" height="36" rx="3" fill="#22374D" stroke="#5A7592"/>
+        <text x="805" y="148" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">逆变器</text>
+
+        <!-- 箱变 -->
+        <rect x="310" y="88" width="48" height="50" rx="3" fill="#4A6280" stroke="#5A7592"/>
+        <text x="334" y="148" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">箱变</text>
+
+        <!-- 升压站 -->
+        <rect x="420" y="78" width="60" height="60" rx="3" fill="#4A6280" stroke="#5A7592"/>
+        <text x="450" y="155" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">升压站</text>
+        <text x="450" y="168" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">110/220kV</text>
+
+        <!-- 电网 -->
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="560" y1="200" x2="560" y2="90"/>
+          <line x1="530" y1="110" x2="590" y2="110"/>
+          <line x1="538" y1="130" x2="582" y2="130"/>
+        </g>
+        <text x="560" y="218" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">电网</text>
+
+        <!-- 用户 -->
+        <rect x="660" y="130" width="40" height="30" fill="#3A5068"/>
+        <polygon points="660,130 666,118 672,130" fill="#3A5068"/>
+        <text x="680" y="178" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">工厂</text>
+
+        <polygon points="720,130 736,112 752,130" fill="#3A5068"/>
+        <rect x="724" y="130" width="24" height="26" fill="#3A5068"/>
+        <text x="736" y="178" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">居民</text>
+
+        <!-- 主流程 -->
+        <path class="tflow" d="M150 108 H200"/>
+        <path class="tflow" d="M250 113 H310"/>
+        <path class="tflow" d="M358 113 H420"/>
+        <path class="tflow" d="M480 108 H530"/>
+        <path class="tflow" d="M590 108 H660"/>
+        <path class="tflow" d="M700 145 H720"/>
+
+        <!-- 分布式旁路：就地消纳 -->
+        <path class="lflow" d="M890 117 H700 V145 H660" stroke-dasharray="4 8"/>
+        <text x="780" y="200" fill="#5CE1D8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">余电上网 · 或就地消纳</text>
+        <path class="lflow" d="M830 117 V200 H736 V156"/>
+        <text x="800" y="230" fill="#5CE1D8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">自发自用</text>
+      </svg>
+
+      <div class="leg">
+        <span><i style="background:#16283E;border:1px solid #3A5068"></i>光伏方阵 / 屋顶</span>
+        <span><i style="background:#4A6280"></i>箱变 / 升压站</span>
+        <span><i style="background:var(--amber)"></i>琥珀虚线 = 并网主路径</span>
+        <span><i style="background:var(--teal)"></i>青色虚线 = 分布式就地消纳</span>
+      </div>
+    </div>
+
+    <p class="lede reveal" style="margin-top:28px;margin-bottom:0;">
+      简单说：<strong>集中式</strong>是方阵 → 汇流 → 逆变器 → 箱变 → 升压站 → 高压电网 → 降压 → 用户；<strong>分布式</strong>规模小，逆变器就在屋顶或楼旁，发的电优先给自家或工厂用（自发自用），用不完的才"倒送"进电网。电压同样要升高压才能远距离送、再降压到 220 V 进插座。
+    </p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">04 · 快问快答</div>
+      <h2>几个常见的好奇</h2>
+      <p class="lede">看完全流程，你可能还有这些疑问。</p>
+    </div>
+
+    <div class="faq-grid reveal">
+      <div class="faq-card">
+        <h3>阴天/晚上怎么办？</h3>
+        <p>晚上没有阳光，组件自然不发电。阴天仍有散射光，能发电但功率明显下降。所以光伏需要电网或其他电源"兜底" —— 白天多发可以上网，晚上从电网买电；配储能电池的话，白天存的电晚上也能用，但成本更高。</p>
+      </div>
+      <div class="faq-card">
+        <h3>转换效率为什么只有约 20%？</h3>
+        <p>阳光里各种颜色的光能量不同，硅只能吸收一部分；被吸收的光也有部分变成热而非电流；还有反射、串联电阻等损耗。单晶硅组件商用效率大约 20%–23%，实验室纪录更高，但离 100% 很远 —— 这是材料物理的限制，不是工程偷懒。</p>
+      </div>
+      <div class="faq-card">
+        <h3>双面组件是什么？</h3>
+        <p>普通组件只有正面受光，双面组件背板也能透光或反光，背面也能发电 —— 适合安装在白色屋顶、雪地或支架反射面之上，整体多发 5%–25% 的电，取决于安装环境。</p>
+      </div>
+      <div class="faq-card">
+        <h3>光伏板寿命多久、会不会「很脏就不发电」？</h3>
+        <p>主流组件质保 25 年，实际往往能用更久，只是 decades 后效率会缓慢衰减（每年约 0.5%）。表面落灰、鸟粪确实会挡光、降低出力，但通常只影响几个百分点；雨水能冲掉大部分灰尘，严重污染地区才需要人工清洗。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="history-extend">
+  <div class="wrap">
+
+    <div class="history-extend reveal">
+      <div class="eyebrow">历史延伸</div>
+      <h3>光伏如何从卫星电源走到地面电站</h3>
+      <p class="sub">从发明到落地，各摘几段关键节点。</p>
+      <div class="history-cols">
+        <div class="history-col">
+          <h4>世界</h4>
+          <div class="history-item"><div class="yr">1954</div><p><strong>贝尔实验室硅电池</strong>：实用硅太阳能电池问世，先服务于卫星等「不计成本」场景。</p></div>
+          <div class="history-item"><div class="yr">1970s–90s</div><p><strong>地面示范缓慢爬坡</strong>：效率提升与政策补贴并存，但仍偏贵，难进主流电网。</p></div>
+          <div class="history-item"><div class="yr">2010s–</div><p><strong>成本曲线塌陷</strong>：硅片与组件规模化让度电成本骤降，光伏从「贵的绿电」变成最具竞争力的新建电源之一。</p></div>
+        </div>
+        <div class="history-col">
+          <h4>中国</h4>
+          <div class="history-item"><div class="yr">2000s</div><p><strong>出口导向的制造业</strong>：中国迅速成为全球组件制造中心，产业链从多晶硅到逆变器全面铺开。</p></div>
+          <div class="history-item"><div class="yr">2013 前后</div><p><strong>国内装机加速</strong>：标杆电价与领跑者计划推动集中式电站与分布式并行发展。</p></div>
+          <div class="history-item"><div class="yr">近年</div><p><strong>沙戈荒大基地 + 整县屋顶</strong>：装机规模全球领先；消纳、储能与电网柔性成为下一道题。</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="closing" id="closing">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="justify-content:center;">SUMMARY</div>
+    <h2>一句话说完全过程</h2>
+    <p>阳光里的光子打进硅片，PN 结把电子和空穴分开形成直流电，组件串联汇流后由逆变器变成 50 Hz 交流，再升压并入电网或就地使用。光伏没有旋转机械，核心转换只有一步 —— 硅片里的光生伏特效应。</p>
+    <div class="page-nav">
+      <a href="index.html">← 回到主页</a>
+      <a href="#top">↑ 回到顶部</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>SOLAR PV PRINCIPLE · 图解仅用于科普，实际电站参数因规模、组件与并网方式不同而有差异</div>
+  <div class="copyright">© 2026 superj. All rights reserved. 未经许可，禁止转载与复制。</div>
+</footer>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+},{threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+
+const items = document.querySelectorAll('.anatomy-item');
+const parts = document.querySelectorAll('.part');
+function setActive(id){
+  parts.forEach(p=>p.classList.toggle('active', !!id && p.dataset.id===id));
+  items.forEach(it=>it.classList.toggle('active', !!id && it.dataset.target===id));
+}
+function clearActive(){ setActive(null); }
+items.forEach(it=>{
+  it.addEventListener('mouseenter',()=>setActive(it.dataset.target));
+  it.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(it.dataset.target); });
+});
+parts.forEach(p=>{
+  p.addEventListener('mouseenter',()=>setActive(p.dataset.id));
+  p.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(p.dataset.id); });
+});
+document.addEventListener('click', (e)=>{
+  if(e.target.closest('.part') || e.target.closest('.anatomy-item')) return;
+  clearActive();
+});
+
+(function(){
+  const links=[...document.querySelectorAll('.sec-nav a[href^="#"]')];
+  if(!links.length) return;
+  const sections=links.map(a=>{
+    const id=a.getAttribute('href').slice(1);
+    const el=document.getElementById(id);
+    return el?{a,el,id}:null;
+  }).filter(Boolean);
+  function sectionTop(el){
+    if(el===document.body || el===document.documentElement) return 0;
+    return el.getBoundingClientRect().top + window.scrollY;
+  }
+  function update(){
+    const maxScroll=Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    if(window.scrollY < 120){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===0));
+      return;
+    }
+    // 滚到页尾时，末段往往够不着中线判定，强制高亮最后一条
+    if(maxScroll > 0 && window.scrollY >= maxScroll - 24){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===sections.length-1));
+      return;
+    }
+    const mark=window.scrollY + window.innerHeight*0.28;
+    let current=sections[0];
+    for(const s of sections){
+      if(sectionTop(s.el) <= mark) current=s;
+    }
+    sections.forEach(s=>s.a.classList.toggle('active', s===current));
+  }
+  update();
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+})();
+
+
+(function(){
+  // 轻度防护：挡普通复制/右键，无法阻止查看源码或直接下载页面
+  const block = (e) => e.preventDefault();
+  document.addEventListener('contextmenu', block);
+  document.addEventListener('selectstart', block);
+  document.addEventListener('copy', block);
+  document.addEventListener('cut', block);
+  document.addEventListener('dragstart', block);
+})();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>火从燃料到灯泡 —— 火力发电全过程图解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0B1826;
+  --bg-panel:#122338;
+  --bg-panel-2:#0E1D2F;
+  --steel:#3A5068;
+  --steel-light:#5A7592;
+  --teal:#5CE1D8;
+  --teal-dim:#2C7A75;
+  --amber:#FFB25C;
+  --amber-dim:#8A5A2A;
+  --text-hi:#EAF2F8;
+  --text-lo:#8CA3B8;
+  --line:#1F3247;
+  --accent:#E07A3A;
+  --accent-dim:#9A4E22;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg-deep);
+  color:var(--text-hi);
+  font-family:'IBM Plex Sans','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{
+  font-family:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif;
+  font-weight:600;
+  letter-spacing:0.01em;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;}
+.spine{
+  position:absolute;
+  left:50%;
+  top:100vh;
+  width:2px;
+  height:calc(100% - 100vh);
+  background:linear-gradient(180deg,
+    var(--accent) 0%, var(--accent) 32%,
+    var(--amber) 62%, var(--amber) 100%);
+  opacity:0.35;
+  z-index:0;
+}
+section{position:relative;z-index:1;padding:120px 0;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:18px;
+}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--accent);}
+.eyebrow.amber{color:var(--amber);}
+.eyebrow.amber::before{background:var(--amber);}
+h2{font-size:clamp(28px,4vw,40px);margin-bottom:16px;}
+.lede{color:var(--text-lo);font-size:17px;margin-bottom:56px;}
+
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;padding:80px 24px;
+  background:
+    radial-gradient(ellipse 900px 520px at 50% 18%, rgba(224,122,58,0.16), transparent 70%),
+    radial-gradient(ellipse 700px 420px at 50% 72%, rgba(224,122,58,0.07), transparent 65%);
+}
+.hero .eyebrow{justify-content:center;}
+.hero .eyebrow::before{display:none;}
+.hero h1{
+  font-size:clamp(36px,6vw,64px);
+  line-height:1.15;
+  max-width:840px;
+  margin:0 auto 20px;
+  padding:0 16px;
+  text-wrap:balance;
+}
+.hero h1 .hl{
+  color:var(--accent);
+  font-size:clamp(20px,3.2vw,30px);
+  font-weight:500;
+  display:inline-block;
+  margin-top:10px;
+  max-width:min(92vw,720px);
+  word-break:keep-all;
+  line-break:strict;
+  text-wrap:balance;
+}
+.hero h1 .hl .nb{white-space:nowrap;}
+.hero p{color:var(--text-lo);font-size:18px;max-width:520px;margin-bottom:56px;}
+.plant-stage{width:min(560px,80vw);position:relative;}
+.plant-stage svg{width:100%;height:auto;display:block;}
+.flame{
+  transform-box:fill-box;transform-origin:50% 100%;
+  animation:flicker 1.4s ease-in-out infinite alternate;
+}
+.flame.f2{animation-delay:0.35s;animation-duration:1.6s;}
+.flame.f3{animation-delay:0.7s;animation-duration:1.25s;}
+@keyframes flicker{
+  0%{opacity:0.75;transform:scaleY(0.96) scaleX(1);}
+  100%{opacity:1;transform:scaleY(1.06) scaleX(0.97);}
+}
+.steam-puff{stroke:var(--teal);stroke-width:2;opacity:0;stroke-dasharray:4 8;animation:steamUp 2.8s ease-out infinite;}
+.steam-puff:nth-child(2){animation-delay:0.8s;}
+.steam-puff:nth-child(3){animation-delay:1.6s;}
+@keyframes steamUp{
+  0%{opacity:0;stroke-dashoffset:30;transform:translateY(0);}
+  20%{opacity:0.6;}
+  100%{opacity:0;stroke-dashoffset:0;transform:translateY(-24px);}
+}
+.smoke-line{stroke:#8CA3B8;stroke-width:2;opacity:0;stroke-dasharray:5 10;animation:smokeDrift 4s linear infinite;}
+.smoke-line:nth-child(2){animation-delay:1.2s;}
+@keyframes smokeDrift{
+  0%{opacity:0;stroke-dashoffset:40;}
+  15%{opacity:0.5;}
+  80%{opacity:0.4;}
+  100%{opacity:0;stroke-dashoffset:0;}
+}
+.scroll-cue{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-lo);font-size:12px;font-family:'JetBrains Mono',monospace;
+  letter-spacing:0.1em;
+}
+.scroll-cue .bar{width:1px;height:36px;background:linear-gradient(180deg,var(--accent),transparent);animation:pulseDown 1.8s ease-in-out infinite;}
+@keyframes pulseDown{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+.anatomy-grid{
+  display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;
+}
+.anatomy-svg-wrap{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:24px;
+}
+.anatomy-svg-wrap svg{width:100%;height:auto;display:block;}
+.part{cursor:pointer;transition:opacity .25s ease;}
+.part-fill{fill:var(--steel);stroke:var(--steel-light);stroke-width:1.5;transition:fill .25s ease,stroke .25s ease,opacity .25s ease;}
+.part-fill.hollow{fill:transparent;}
+.part.active .part-fill{fill:var(--accent-dim);stroke:var(--accent);}
+.part.active .part-fill.hollow{fill:transparent;stroke:var(--accent);}
+.anatomy-svg-wrap:has(.part.active) .part{opacity:0.35;}
+.anatomy-svg-wrap:has(.part.active) .part.active{opacity:1;}
+.part-label{fill:#8CA3B8;font-size:11px;font-family:'JetBrains Mono',monospace;pointer-events:none;}
+.part.active .part-label{fill:var(--accent);}
+.flow-hint{stroke:var(--accent);stroke-width:2.2;fill:none;stroke-dasharray:5 5;opacity:0.75;}
+.flow-hint.water{stroke:var(--teal);opacity:0.8;}
+.anatomy-list{display:flex;flex-direction:column;gap:2px;}
+.anatomy-item{
+  padding:16px 18px;border-radius:4px;cursor:pointer;
+  border:1px solid transparent;
+  transition:background .2s ease,border-color .2s ease;
+}
+.anatomy-item:hover,.anatomy-item.active{
+  background:var(--bg-panel);border-color:var(--line);
+}
+.anatomy-item .num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px;margin-right:10px;}
+.anatomy-item h3{font-size:16px;display:inline;font-weight:600;}
+.anatomy-item p{color:var(--text-lo);font-size:14px;margin-top:6px;}
+
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{
+  display:grid;grid-template-columns:96px 1fr;gap:28px;
+  padding:36px 0;border-top:1px solid var(--line);
+}
+.step:last-child{border-bottom:1px solid var(--line);}
+.step-num{
+  font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;
+  color:var(--line);
+}
+.step.s1 .step-num{color:var(--accent);}
+.step.s2 .step-num{color:#7fd8cf;}
+.step.s3 .step-num{color:#c9b06e;}
+.step.s4 .step-num{color:var(--amber);}
+.step h3{font-size:20px;margin-bottom:8px;}
+.step .stat{
+  display:inline-block;margin-top:14px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--text-lo);background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:3px;padding:6px 12px;
+}
+.step p.desc{color:var(--text-lo);font-size:15px;max-width:620px;}
+
+.transmission{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:40px 24px;
+  overflow-x:auto;
+}
+.transmission svg{display:block;margin:0 auto;min-width:900px;width:100%;height:auto;}
+.transmission h3{font-size:16px;margin-bottom:20px;color:var(--text-hi);}
+.tflow{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.mflow{stroke:var(--teal);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.sflow{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.wflow{stroke:var(--teal);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-24;}}
+.leg{
+  display:flex;flex-wrap:wrap;gap:20px 32px;margin-top:28px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-lo);
+}
+.leg span{display:inline-flex;align-items:center;gap:8px;}
+.leg i{width:10px;height:10px;border-radius:2px;display:inline-block;background:var(--steel);}
+
+.gen-panel{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:44px 36px;
+  margin-top:72px;
+}
+.gen-grid{
+  display:grid;grid-template-columns:minmax(260px,400px) 1fr;
+  gap:48px;align-items:center;
+}
+.gen-grid svg{width:100%;height:auto;display:block;}
+.cycle-arrow{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:5 6;animation:dash 2s linear infinite;}
+.cycle-water{stroke:var(--teal);stroke-width:2;fill:none;stroke-dasharray:5 6;animation:dash 2.4s linear infinite;}
+.rankine-boiler{animation:boilerGlow 2s ease-in-out infinite alternate;}
+@keyframes boilerGlow{0%{opacity:0.85;}100%{opacity:1;}}
+.gen-facts{display:flex;flex-direction:column;gap:20px;}
+.gen-facts h3{font-size:20px;}
+.gen-fact{padding-left:16px;border-left:2px solid var(--accent-dim);}
+.gen-fact p{color:var(--text-lo);font-size:15px;}
+.gen-fact strong{color:var(--text-hi);}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.faq-card{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:4px;padding:28px 26px;
+}
+.faq-card h3{font-size:17px;margin-bottom:10px;}
+.faq-card h3::before{
+  content:'Q';font-family:'JetBrains Mono',monospace;
+  color:var(--accent);margin-right:10px;font-size:14px;
+}
+.faq-card p{color:var(--text-lo);font-size:14.5px;}
+
+.fuel-panel{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:36px 28px;
+  margin-bottom:72px;
+}
+.fuel-tabs{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-bottom:28px;
+}
+.fuel-tab{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);background:transparent;
+  border:1px solid var(--line);border-radius:3px;
+  padding:10px 16px;cursor:pointer;
+  transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.fuel-tab:hover{color:var(--text-hi);border-color:var(--steel-light);}
+.fuel-tab[aria-selected="true"]{
+  color:var(--accent);border-color:var(--accent);
+  background:rgba(224,122,58,0.08);
+}
+.fuel-panel-body{display:none;}
+.fuel-panel-body.active{display:block;}
+.fuel-panel-body h3{font-size:18px;margin-bottom:16px;}
+.fuel-layout{
+  display:grid;grid-template-columns:1.15fr 1fr;gap:28px;align-items:start;
+}
+.fuel-diagram{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:4px;padding:16px 12px;
+}
+.fuel-diagram svg{width:100%;height:auto;display:block;}
+.fuel-facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fuel-fact{
+  padding:14px 16px;border-left:2px solid var(--accent-dim);
+  background:var(--bg-panel);border-radius:0 4px 4px 0;
+}
+.fuel-fact strong{display:block;color:var(--text-hi);font-size:13px;margin-bottom:6px;}
+.fuel-fact p{color:var(--text-lo);font-size:13px;}
+.fuel-note{
+  margin-top:24px;padding-top:20px;border-top:1px solid var(--line);
+  color:var(--text-lo);font-size:14.5px;
+}
+.fuel-note strong{color:var(--text-hi);font-weight:500;}
+.fuel-hist{
+  margin-top:28px;padding-top:24px;border-top:1px solid var(--line);
+}
+.fuel-hist h3{font-size:16px;margin-bottom:8px;}
+.fuel-hist .sub{color:var(--text-lo);font-size:13.5px;margin-bottom:20px;}
+.fuel-hist-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fuel-hist-col{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:4px;padding:18px 18px;
+}
+.fuel-hist-col h4{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;
+  color:var(--accent);margin-bottom:14px;font-weight:500;
+}
+.fuel-hist-item{display:grid;grid-template-columns:72px 1fr;gap:10px;margin-bottom:12px;}
+.fuel-hist-item:last-child{margin-bottom:0;}
+.fuel-hist-item .yr{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);
+  line-height:1.4;
+}
+.fuel-hist-item p{color:var(--text-lo);font-size:13px;}
+.fuel-hist-item strong{color:var(--text-hi);font-weight:500;}
+.fuel-cap{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--text-lo);margin-top:10px;text-align:center;
+}
+
+
+.history-extend{
+  margin-top:72px;
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:36px 28px;
+}
+.history-extend > .eyebrow{margin-bottom:12px;}
+.history-extend > h3{font-size:22px;margin-bottom:8px;}
+.history-extend > .sub{color:var(--text-lo);font-size:14.5px;margin-bottom:28px;}
+.history-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.history-col{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:22px 22px;
+}
+.history-col > h4{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;
+  color:var(--accent);margin-bottom:16px;font-weight:500;
+}
+.history-item{margin-bottom:16px;}
+.history-item:last-child{margin-bottom:0;}
+.history-item .yr{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--accent);margin-bottom:4px;letter-spacing:0.04em;
+}
+.history-item p{color:var(--text-lo);font-size:13.5px;}
+.history-item strong{color:var(--text-hi);font-weight:500;}
+
+.closing{
+  text-align:center;padding:140px 0 100px;
+}
+.closing h2{max-width:600px;margin:0 auto 20px;}
+.closing p{color:var(--text-lo);max-width:520px;margin:0 auto;}
+footer{
+  text-align:center;padding:40px 24px 60px;
+  color:var(--text-lo);font-size:13px;font-family:'JetBrains Mono',monospace;
+  border-top:1px solid var(--line);
+}
+
+@media (max-width:820px){
+  .anatomy-grid{grid-template-columns:1fr;}
+  .wrap{padding:0 20px;}
+  section{padding:80px 0;}
+  .spine{display:none;}
+  .step{grid-template-columns:56px 1fr;gap:18px;}
+  .step-num{font-size:28px;}
+  .gen-panel{padding:28px 20px;}
+  .gen-grid{grid-template-columns:1fr;gap:32px;}
+  .faq-grid{grid-template-columns:1fr;}
+  .history-cols{grid-template-columns:1fr;}
+  .fuel-facts{grid-template-columns:1fr;}
+  .fuel-layout{grid-template-columns:1fr;}
+  .fuel-hist-grid{grid-template-columns:1fr;}
+  .transmission{padding:28px 16px;}
+}
+
+.kb-home{
+  position:fixed;top:20px;left:20px;z-index:30;
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;background:rgba(11,24,38,0.72);backdrop-filter:blur(8px);
+  transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.kb-home:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 12%, rgba(11,24,38,0.85));
+}
+.page-nav{margin-top:32px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;}
+.page-nav a{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.page-nav a:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+
+.sec-nav{
+  position:fixed;left:10px;top:50%;transform:translateY(-50%);
+  z-index:28;display:flex;flex-direction:column;gap:8px;
+  padding:10px 6px;
+}
+.sec-nav a{
+  display:block;width:3px;height:26px;border-radius:2px;
+  background:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0.32;position:relative;
+  transition:opacity .2s ease, height .2s ease, transform .2s ease;
+}
+.sec-nav a:hover,.sec-nav a.active{opacity:1;}
+.sec-nav a.active{height:34px;}
+.sec-nav a::after{
+  content:attr(data-label);
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em;
+  color:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0;pointer-events:none;
+  transition:opacity .18s ease;
+}
+.sec-nav a:hover::after{opacity:1;}
+@media (max-width:900px){.sec-nav{display:none;}}
+
+
+/* content protection (deterrent only) */
+body{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+footer .copyright{
+  margin-top:12px;
+  font-size:12px;
+  opacity:0.85;
+  letter-spacing:0.02em;
+}
+
+</style>
+</head>
+<body>
+
+<a class="kb-home" href="index.html">← 回到主页</a>
+
+<nav class="sec-nav" style="--nav-accent:var(--accent)" aria-label="章节导航">
+  <a href="#top" data-label="顶栏 · 概览"></a>
+  <a href="#fuels" data-label="00 · 燃料家族"></a>
+  <a href="#anatomy" data-label="01 · 构造"></a>
+  <a href="#steps" data-label="02 · 转换"></a>
+  <a href="#grid" data-label="03 · 输送"></a>
+  <a href="#faq" data-label="04 · 快问快答"></a>
+  <a href="#history-extend" data-label="历史延伸"></a>
+  <a href="#closing" data-label="小结"></a>
+</nav>
+
+<div class="spine" aria-hidden="true"></div>
+
+<section class="hero" id="top">
+  <div class="eyebrow">CHEMICAL → THERMAL → MECHANICAL → ELECTRICAL</div>
+  <h1>火从燃料到灯泡<br><span class="hl">一座火电厂怎么把燃料<span class="nb">变成电</span></span></h1>
+  <p>火电是一个「燃料家族」：煤、天然气、燃油、生物质都能烧出驱动热机的热量。先认清不同燃料的差别，再深入看燃煤电厂如何从燃烧走到并网。</p>
+
+  <div class="plant-stage">
+    <svg viewBox="0 0 560 380" fill="none">
+      <line x1="40" y1="340" x2="520" y2="340" stroke="#1F3247" stroke-width="1"/>
+      <!-- 锅炉厂房 -->
+      <rect x="80" y="180" width="180" height="160" rx="4" fill="#22374D" stroke="#3A5068"/>
+      <rect x="100" y="200" width="60" height="80" rx="3" fill="#1B2F44" stroke="#5A7592"/>
+      <!-- 扁平几何火焰：与剪影画风一致，位移外层 / 动画内层 -->
+      <g transform="translate(130,272)">
+        <g class="flame f1">
+          <path d="M0,0 L-7,-6 L-4,-28 L0,-38 L4,-28 L7,-6 Z" fill="#E07A3A" opacity="0.9"/>
+        </g>
+      </g>
+      <g transform="translate(118,274)">
+        <g class="flame f2">
+          <path d="M0,0 L-5,-5 L-3,-22 L0,-30 L3,-22 L5,-5 Z" fill="#FFB25C" opacity="0.85"/>
+        </g>
+      </g>
+      <g transform="translate(142,274)">
+        <g class="flame f3">
+          <path d="M0,0 L-5,-5 L-2,-20 L0,-28 L3,-20 L5,-5 Z" fill="#FFB25C" opacity="0.75"/>
+        </g>
+      </g>
+      <!-- 汽轮机厂房 -->
+      <rect x="270" y="220" width="120" height="120" rx="4" fill="#22374D" stroke="#3A5068"/>
+      <circle cx="330" cy="280" r="28" stroke="#5A7592" stroke-width="3" fill="none"/>
+      <!-- 烟囱 -->
+      <rect x="420" y="80" width="36" height="260" rx="2" fill="#3A5068" stroke="#5A7592"/>
+      <rect x="412" y="72" width="52" height="14" rx="2" fill="#4A6280"/>
+      <path class="smoke-line" d="M430 60 Q450 30 470 10"/>
+      <path class="smoke-line" d="M448 55 Q468 25 488 5"/>
+      <!-- 冷却塔 -->
+      <path d="M460 340 L500 340 L488 200 Q474 180 460 200 Z" fill="#22374D" stroke="#3A5068"/>
+      <path class="steam-puff" d="M474 190 Q478 170 474 150"/>
+      <path class="steam-puff" d="M482 188 Q486 168 482 148"/>
+      <path class="steam-puff" d="M466 192 Q470 172 466 152"/>
+      <!-- 输电线 -->
+      <line x1="390" y1="240" x2="520" y2="200" stroke="#5A7592" stroke-width="1.5"/>
+      <line x1="520" y1="200" x2="520" y2="120" stroke="#5A7592" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="scroll-cue"><span>SCROLL</span><span class="bar"></span></div>
+</section>
+
+<section id="fuels">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">00 · 燃料家族</div>
+      <h2>火电不只烧煤</h2>
+      <p class="lede">「火力」指的是燃烧放热驱动热机发电。燃料不同，前端装置与效率、排放、调峰能力差很多；后半程「热 → 机械 → 电」才更接近。四种常见燃料，各自的典型路线如下。</p>
+    </div>
+
+    <div class="fuel-panel reveal">
+      <div class="fuel-tabs" role="tablist" aria-label="火电燃料类型">
+        <button class="fuel-tab" role="tab" aria-selected="true" data-fuel="coal">燃煤</button>
+        <button class="fuel-tab" role="tab" aria-selected="false" data-fuel="gas">天然气</button>
+        <button class="fuel-tab" role="tab" aria-selected="false" data-fuel="oil">燃油</button>
+        <button class="fuel-tab" role="tab" aria-selected="false" data-fuel="bio">生物质</button>
+      </div>
+
+      <div class="fuel-panel-body active" data-fuel="coal" role="tabpanel">
+        <h3>燃煤 · 朗肯循环汽轮机</h3>
+        <div class="fuel-layout">
+          <div class="fuel-diagram">
+            <svg viewBox="0 0 520 160" fill="none">
+              <rect x="10" y="40" width="54" height="70" rx="4" fill="#22374D" stroke="#5A7592"/>
+              <text x="37" y="80" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">煤仓</text>
+              <path class="sflow" d="M64 75 H88"/>
+              <rect x="88" y="50" width="44" height="50" rx="4" fill="#22374D" stroke="#5A7592"/>
+              <text x="110" y="80" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">磨煤</text>
+              <path class="sflow" d="M132 75 H156"/>
+              <rect x="156" y="30" width="70" height="90" rx="5" fill="#22374D" stroke="#E07A3A"/>
+              <rect x="170" y="48" width="42" height="40" rx="3" fill="#1B2F44"/>
+              <path d="M191 88 L186 72 L191 58 L196 72 Z" fill="#E07A3A" opacity="0.85"/>
+              <text x="191" y="136" fill="#EAF2F8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">锅炉</text>
+              <path class="sflow" d="M226 75 H252"/>
+              <rect x="252" y="48" width="72" height="54" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <circle cx="288" cy="75" r="16" stroke="#8CA3B8" stroke-width="2" fill="none"/>
+              <text x="288" y="136" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">汽轮机</text>
+              <path class="sflow" d="M324 75 H348"/>
+              <rect x="348" y="48" width="54" height="54" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <text x="375" y="80" fill="#8CA3B8" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+              <text x="375" y="136" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">发电机</text>
+              <path class="wflow" d="M375 102 V128 H191 V120"/>
+              <text x="280" y="152" fill="#5A7592" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">青线：冷凝水回炉</text>
+              <rect x="420" y="36" width="40" height="88" rx="2" fill="#3A5068" stroke="#5A7592"/>
+              <text x="440" y="136" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">烟囱</text>
+            </svg>
+            <p class="fuel-cap">示意：煤 → 磨细 → 锅炉产汽 → 汽轮机 → 发电机</p>
+          </div>
+          <div class="fuel-facts">
+            <div class="fuel-fact"><strong>典型路线</strong><p>磨煤后喷入锅炉燃烧产汽，汽轮机带动发电机；凝汽冷却后水再回炉。</p></div>
+            <div class="fuel-fact"><strong>装置特征</strong><p>标志是高大锅炉房、冷却塔与长烟囱；单机常 600–1000 MW。</p></div>
+            <div class="fuel-fact"><strong>应用场景</strong><p>基荷与调峰主力；坑口电厂、港口煤运沿线常见。</p></div>
+            <div class="fuel-fact"><strong>效率 / 排放</strong><p>效率约 38–45%；粉尘与硫氮需末端治理，碳排仍高。</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fuel-panel-body" data-fuel="gas" role="tabpanel">
+        <h3>天然气 · 燃机或联合循环</h3>
+        <div class="fuel-layout">
+          <div class="fuel-diagram">
+            <svg viewBox="0 0 520 160" fill="none">
+              <circle cx="36" cy="75" r="22" fill="#22374D" stroke="#5A7592"/>
+              <text x="36" y="79" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">气</text>
+              <path class="sflow" d="M58 75 H90"/>
+              <rect x="90" y="42" width="88" height="66" rx="8" fill="#22374D" stroke="#E07A3A"/>
+              <ellipse cx="134" cy="75" rx="28" ry="18" stroke="#8CA3B8" stroke-width="2" fill="none"/>
+              <text x="134" y="128" fill="#EAF2F8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">燃气轮机</text>
+              <path class="sflow" d="M178 75 H198"/>
+              <path class="sflow" d="M134 108 V120 H250 V95"/>
+              <rect x="198" y="42" width="54" height="54" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <text x="225" y="74" fill="#8CA3B8" font-size="14" font-family="JetBrains Mono, monospace" text-anchor="middle">G1</text>
+              <text x="225" y="128" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">发电机</text>
+              <rect x="270" y="48" width="70" height="70" rx="5" fill="#22374D" stroke="#FFB25C"/>
+              <text x="305" y="88" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">余热</text>
+              <text x="305" y="102" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">锅炉</text>
+              <path class="sflow" d="M340 75 H364"/>
+              <rect x="364" y="48" width="60" height="54" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <circle cx="394" cy="75" r="14" stroke="#8CA3B8" stroke-width="2" fill="none"/>
+              <text x="394" y="128" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">汽轮机</text>
+              <path class="sflow" d="M424 75 H446"/>
+              <rect x="446" y="48" width="48" height="54" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <text x="470" y="80" fill="#8CA3B8" font-size="14" font-family="JetBrains Mono, monospace" text-anchor="middle">G2</text>
+              <text x="260" y="152" fill="#5A7592" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">联合循环：燃机发电 + 尾气再产汽发电</text>
+            </svg>
+            <p class="fuel-cap">示意：天然气 → 燃气轮机发电 → 余热锅炉 → 汽轮机再发电</p>
+          </div>
+          <div class="fuel-facts">
+            <div class="fuel-fact"><strong>典型路线</strong><p>燃机直接发电；大型项目常加余热锅炉与汽轮机，组成联合循环。</p></div>
+            <div class="fuel-fact"><strong>与煤电不同</strong><p>没有磨煤大锅炉主流程；厂房更紧凑，启动更快。</p></div>
+            <div class="fuel-fact"><strong>应用场景</strong><p>城市周边调峰、热电联产；对气源与气价更敏感。</p></div>
+            <div class="fuel-fact"><strong>效率 / 排放</strong><p>联合循环可超 55%；几乎无粉尘，碳排约煤电一半量级。</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fuel-panel-body" data-fuel="oil" role="tabpanel">
+        <h3>燃油 · 锅炉或燃机，多作调峰备用</h3>
+        <div class="fuel-layout">
+          <div class="fuel-diagram">
+            <svg viewBox="0 0 520 160" fill="none">
+              <ellipse cx="40" cy="78" rx="28" ry="34" fill="#22374D" stroke="#5A7592"/>
+              <ellipse cx="40" cy="58" rx="18" ry="8" fill="#1B2F44" stroke="#5A7592"/>
+              <text x="40" y="128" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">油罐</text>
+              <path class="sflow" d="M68 78 H100"/>
+              <!-- 两条支路示意 -->
+              <path class="sflow" d="M100 78 H120"/>
+              <path d="M120 78 V48 H148" stroke="#FFB25C" stroke-width="2" fill="none" stroke-dasharray="4 6"/>
+              <path d="M120 78 V108 H148" stroke="#5CE1D8" stroke-width="2" fill="none" stroke-dasharray="4 6"/>
+              <rect x="148" y="28" width="70" height="44" rx="5" fill="#22374D" stroke="#E07A3A"/>
+              <text x="183" y="54" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">燃油锅炉</text>
+              <rect x="148" y="92" width="70" height="44" rx="5" fill="#22374D" stroke="#E07A3A"/>
+              <ellipse cx="183" cy="114" rx="20" ry="12" stroke="#8CA3B8" stroke-width="2" fill="none"/>
+              <text x="183" y="152" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">或燃油燃机</text>
+              <path class="sflow" d="M218 50 H260"/>
+              <path class="sflow" d="M218 114 H260"/>
+              <path d="M260 50 V82" stroke="#FFB25C" stroke-width="2" fill="none" stroke-dasharray="4 6"/>
+              <path d="M260 114 V82" stroke="#5CE1D8" stroke-width="2" fill="none" stroke-dasharray="4 6"/>
+              <rect x="260" y="55" width="72" height="54" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <circle cx="296" cy="82" r="14" stroke="#8CA3B8" stroke-width="2" fill="none"/>
+              <text x="296" y="132" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">汽轮机/轴系</text>
+              <path class="sflow" d="M332 82 H364"/>
+              <rect x="364" y="55" width="54" height="54" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <text x="391" y="88" fill="#8CA3B8" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+              <text x="440" y="88" fill="#5A7592" font-size="10" font-family="JetBrains Mono, monospace">两条常见支路</text>
+            </svg>
+            <p class="fuel-cap">示意：储油 → 燃油锅炉产汽，或燃油燃机直接做功 → 发电</p>
+          </div>
+          <div class="fuel-facts">
+            <div class="fuel-fact"><strong>典型路线</strong><p>可走燃油锅炉 + 汽轮机，也可走轻油/重油燃机，后半程仍是热机发电。</p></div>
+            <div class="fuel-fact"><strong>与煤电不同</strong><p>燃料贵、罐区紧凑；少见超大型基荷煤电那种体量。</p></div>
+            <div class="fuel-fact"><strong>应用场景</strong><p>岛屿、应急备用、部分老旧调峰机组；大陆大型电源占比很低。</p></div>
+            <div class="fuel-fact"><strong>效率 / 排放</strong><p>通常不及先进煤电与气电联合循环；仍需硫氮治理。</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fuel-panel-body" data-fuel="bio" role="tabpanel">
+        <h3>生物质 · 小锅炉蒸汽路线</h3>
+        <div class="fuel-layout">
+          <div class="fuel-diagram">
+            <svg viewBox="0 0 520 160" fill="none">
+              <rect x="16" y="52" width="64" height="56" rx="4" fill="#22374D" stroke="#5A7592"/>
+              <path d="M28 70 H68 M28 82 H68 M28 94 H60" stroke="#8CA3B8" stroke-width="2"/>
+              <text x="48" y="132" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">秸秆/木屑</text>
+              <path class="sflow" d="M80 80 H110"/>
+              <rect x="110" y="40" width="64" height="80" rx="5" fill="#22374D" stroke="#E07A3A"/>
+              <rect x="122" y="56" width="40" height="36" rx="3" fill="#1B2F44"/>
+              <path d="M142 92 L138 78 L142 66 L146 78 Z" fill="#E07A3A" opacity="0.85"/>
+              <text x="142" y="138" fill="#EAF2F8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">锅炉</text>
+              <text x="142" y="28" fill="#5A7592" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">体量通常小于煤电</text>
+              <path class="sflow" d="M174 80 H206"/>
+              <rect x="206" y="52" width="70" height="56" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <circle cx="241" cy="80" r="15" stroke="#8CA3B8" stroke-width="2" fill="none"/>
+              <text x="241" y="132" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">汽轮机</text>
+              <path class="sflow" d="M276 80 H308"/>
+              <rect x="308" y="52" width="54" height="56" rx="5" fill="#22374D" stroke="#5A7592"/>
+              <text x="335" y="86" fill="#8CA3B8" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+              <text x="335" y="132" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">发电机</text>
+              <rect x="390" y="48" width="48" height="64" rx="3" fill="#3A5068" stroke="#5A7592"/>
+              <text x="414" y="132" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">烟囱</text>
+              <text x="250" y="152" fill="#5A7592" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">外形像「缩小版煤电」，燃料与锅炉材质要求不同</text>
+            </svg>
+            <p class="fuel-cap">示意：生物质进料 → 锅炉产汽 → 汽轮机 → 发电机（主机布局接近煤电）</p>
+          </div>
+          <div class="fuel-facts">
+            <div class="fuel-fact"><strong>典型路线</strong><p>秸秆、林木剩余物等进锅炉燃烧产汽，汽轮机发电，主机很像小型燃煤机组。</p></div>
+            <div class="fuel-fact"><strong>与煤电不同</strong><p>热值低、收集半径有限；锅炉更防结渣腐蚀，单机容量更小。</p></div>
+            <div class="fuel-fact"><strong>应用场景</strong><p>农林产区就近消纳、垃圾焚烧发电，常兼废弃物处理。</p></div>
+            <div class="fuel-fact"><strong>效率 / 排放</strong><p>热效率一般低于大型煤电；可持续原料在政策上常按低碳核算。</p></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="fuel-note">后文构造、剖面与四步，以<strong>燃煤汽轮机组（朗肯循环）</strong>为例展开。天然气发电常常不是「把煤换成气的同一套锅炉」，而是燃气轮机，或「燃机 + 余热锅炉 + 汽轮机」的联合循环。</p>
+
+      <div class="fuel-hist">
+        <h3>燃料家族简史</h3>
+        <p class="sub">四种燃料不是同时登场的：煤最早撑起公用电力，油与气后来补上灵活与清洁，生物质则更偏废弃物与就近消纳。</p>
+        <div class="fuel-hist-grid">
+          <div class="fuel-hist-col">
+            <h4>世界</h4>
+            <div class="fuel-hist-item"><div class="yr">1880s–</div><p><strong>燃煤</strong>：早期公用电厂以燃煤蒸汽机/汽轮机为主，煤成为工业化电力的默认燃料。</p></div>
+            <div class="fuel-hist-item"><div class="yr">20 世纪中</div><p><strong>燃油</strong>：部分地区用燃油锅炉或燃机补峰、应急；油价高企后大型燃油基荷逐渐退场。</p></div>
+            <div class="fuel-hist-item"><div class="yr">战后–今</div><p><strong>天然气</strong>：燃气轮机与联合循环普及，气电成为调峰与相对清洁的化石电力主力之一。</p></div>
+            <div class="fuel-hist-item"><div class="yr">近几十年</div><p><strong>生物质</strong>：秸秆、林木剩余物与垃圾发电兴起，常兼废弃物处理，单机规模通常小于煤电。</p></div>
+          </div>
+          <div class="fuel-hist-col">
+            <h4>中国</h4>
+            <div class="fuel-hist-item"><div class="yr">长期</div><p><strong>燃煤为主</strong>：煤多油少气相对不足，火电电量长期由煤电扛起工业化与保供。</p></div>
+            <div class="fuel-hist-item"><div class="yr">局部</div><p><strong>燃油很少作主力</strong>：大陆大型电源极少依赖燃油；多见于特殊场景或历史机组。</p></div>
+            <div class="fuel-hist-item"><div class="yr">近年增多</div><p><strong>天然气调峰</strong>：沿海与负荷中心建设燃机/联合循环，服务尖峰与热电联产。</p></div>
+            <div class="fuel-hist-item"><div class="yr">同步推进</div><p><strong>生物质与垃圾发电</strong>：农林产区与城市固废处理带动一批中小型生物质机组。</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="anatomy">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">01 · 构造</div>
+      <h2>先认识一座燃煤火电厂</h2>
+      <p class="lede">一座 600 MW 级燃煤电厂占地可达数十公顷。下图按「煤进来 → 蒸汽做功 → 电送出 → 水散热 → 烟气净化」排布。点右侧名称或左侧图形，两边会一起高亮。</p>
+    </div>
+
+    <div class="anatomy-grid reveal">
+      <div class="anatomy-svg-wrap">
+        <svg viewBox="0 0 460 450" fill="none">
+          <line x1="16" y1="420" x2="444" y2="420" stroke="#1F3247" stroke-width="1"/>
+
+          <!-- 主蒸汽链：煤仓→锅炉→汽轮机→发电机（右侧留空给烟囱） -->
+          <g class="part" data-id="coal">
+            <rect class="part-fill" x="20" y="100" width="46" height="68" rx="4"/>
+            <path class="part-fill" d="M26 100 L31 84 L55 84 L60 100 Z"/>
+            <text class="part-label" x="43" y="188" text-anchor="middle">01 煤仓</text>
+          </g>
+          <path class="flow-hint" d="M66 134 H88"/>
+          <polygon points="84,130 94,134 84,138" fill="var(--accent)" opacity="0.8"/>
+
+          <g class="part" data-id="boiler">
+            <rect class="part-fill" x="88" y="78" width="86" height="168" rx="6"/>
+            <rect class="part-fill" x="104" y="104" width="54" height="80" rx="3" opacity="0.75"/>
+            <path d="M131 174 L126 156 L131 140 L136 156 Z" fill="#E07A3A" opacity="0.7"/>
+            <text class="part-label" x="131" y="266" text-anchor="middle">02 锅炉</text>
+          </g>
+          <path class="flow-hint" d="M174 140 H198"/>
+          <polygon points="194,136 204,140 194,144" fill="var(--accent)" opacity="0.8"/>
+
+          <g class="part" data-id="turbine">
+            <rect class="part-fill" x="198" y="110" width="72" height="64" rx="6"/>
+            <circle class="part-fill hollow" cx="234" cy="142" r="18" stroke-width="3"/>
+            <text class="part-label" x="234" y="198" text-anchor="middle">03 汽轮机</text>
+          </g>
+          <path class="flow-hint" d="M270 142 H292"/>
+          <polygon points="288,138 298,142 288,146" fill="var(--accent)" opacity="0.8"/>
+
+          <g class="part" data-id="generator">
+            <rect class="part-fill" x="292" y="118" width="46" height="48" rx="5"/>
+            <line x1="304" y1="130" x2="304" y2="154" stroke="#1F3247" stroke-width="2"/>
+            <line x1="315" y1="130" x2="315" y2="154" stroke="#1F3247" stroke-width="2"/>
+            <line x1="326" y1="130" x2="326" y2="154" stroke="#1F3247" stroke-width="2"/>
+            <text class="part-label" x="315" y="188" text-anchor="middle">04 发电机</text>
+          </g>
+
+          <!-- 凝汽器 / 冷却水回路 -->
+          <path class="flow-hint water" d="M234 174 V216"/>
+          <g class="part" data-id="condenser">
+            <rect class="part-fill" x="196" y="216" width="92" height="40" rx="5"/>
+            <text class="part-label" x="242" y="274" text-anchor="middle">05 凝汽器</text>
+          </g>
+          <path class="flow-hint water" d="M196 236 H150"/>
+          <polygon points="154,232 144,236 154,240" fill="var(--teal)" opacity="0.85"/>
+
+          <g class="part" data-id="cooling">
+            <path class="part-fill" d="M70 410 L142 410 L130 290 Q108 268 88 290 Z"/>
+            <ellipse cx="109" cy="288" rx="12" ry="5" fill="#1B2F44" stroke="#5A7592"/>
+            <text class="part-label" x="109" y="434" text-anchor="middle">06 冷却塔</text>
+          </g>
+
+          <!-- 烟气支路远离发电机：锅炉顶→上方脱硫→再右折到远端烟囱 -->
+          <path class="flow-hint" d="M131 78 V40 H250"/>
+          <polygon points="246,36 256,40 246,44" fill="var(--accent)" opacity="0.8"/>
+          <g class="part" data-id="stack">
+            <rect class="part-fill" x="250" y="28" width="58" height="46" rx="4"/>
+            <text class="part-label" x="279" y="55" text-anchor="middle" font-size="9">脱硫除尘</text>
+            <path class="flow-hint" d="M308 51 H390"/>
+            <polygon points="386,47 396,51 386,55" fill="var(--accent)" opacity="0.8"/>
+            <rect class="part-fill" x="390" y="24" width="30" height="220" rx="2"/>
+            <rect class="part-fill" x="384" y="18" width="42" height="12" rx="2"/>
+            <text class="part-label" x="405" y="260" text-anchor="middle">07 烟囱</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="anatomy-list">
+        <div class="anatomy-item" data-target="coal">
+          <span class="num">01</span><h3>煤仓</h3>
+          <p>储存并向下供给原煤。煤先在这里汇集，再送去磨成煤粉，是整条燃烧链的起点。</p>
+        </div>
+        <div class="anatomy-item" data-target="boiler">
+          <span class="num">02</span><h3>锅炉</h3>
+          <p>煤粉在炉膛燃烧，把给水加热成高温高压蒸汽。600 MW 机组每小时约烧 200 吨煤，蒸汽约 540–600°C。</p>
+        </div>
+        <div class="anatomy-item" data-target="turbine">
+          <span class="num">03</span><h3>汽轮机</h3>
+          <p>高压蒸汽推动多级叶片高速旋转，转速约 3000 转/分，把蒸汽的膨胀功变成机械能。</p>
+        </div>
+        <div class="anatomy-item" data-target="generator">
+          <span class="num">04</span><h3>发电机</h3>
+          <p>与汽轮机同轴。转子磁场切割定子线圈，感应出约 20 kV 交流电，再经主变升压送出。</p>
+        </div>
+        <div class="anatomy-item" data-target="condenser">
+          <span class="num">05</span><h3>凝汽器</h3>
+          <p>汽轮机乏汽在这里被冷却成水，形成真空帮助继续做功；废热主要由循环冷却水带走。</p>
+        </div>
+        <div class="anatomy-item" data-target="cooling">
+          <span class="num">06</span><h3>冷却塔</h3>
+          <p>把循环冷却水的热量排到大气。双曲线高塔是煤电厂最显眼的外形特征之一。</p>
+        </div>
+        <div class="anatomy-item" data-target="stack">
+          <span class="num">07</span><h3>环保装置与烟囱</h3>
+          <p>烟气先经除尘、脱硫、脱硝，再从厂区远端的高烟囱排出。图中上方是脱硫除尘设备，最右侧高塔才是烟囱，与发电机分开布置。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="steps">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">02 · 转换</div>
+      <h2>化学能变成电能，一共四步</h2>
+      <p class="lede">整个过程是一连串的能量"接力"：化学能 → 热能 → 蒸汽机械能 → 电能。核心工艺叫朗肯循环 —— 烧煤产汽、汽推轮机、轮带发电机、乏汽冷凝成水再泵回锅炉。先看一眼流程剖面，再逐步拆解。</p>
+    </div>
+
+    <div class="transmission reveal" style="margin-bottom:72px;">
+      <h3>主流程剖面 · 蒸汽与水循环（示意）</h3>
+      <svg viewBox="0 0 960 340" fill="none">
+        <!-- 煤仓 -->
+        <rect x="30" y="80" width="50" height="70" rx="4" fill="#1B2F44" stroke="#3A5068"/>
+        <text x="55" y="125" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">煤仓</text>
+        <path class="sflow" d="M80 115 H120"/>
+        <!-- 锅炉 -->
+        <rect x="120" y="60" width="120" height="180" rx="8" fill="#22374D" stroke="#5A7592"/>
+        <rect x="140" y="90" width="80" height="100" rx="4" fill="#1B2F44" stroke="#3A5068"/>
+        <text x="180" y="260" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">锅炉</text>
+        <!-- 过热器 -->
+        <rect x="250" y="100" width="60" height="50" rx="4" fill="#2A4058" stroke="#5A7592"/>
+        <text x="280" y="170" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">过热器</text>
+        <!-- 汽轮机 -->
+        <rect x="330" y="120" width="140" height="100" rx="8" fill="#22374D" stroke="#5A7592"/>
+        <circle cx="400" cy="170" r="32" stroke="#8CA3B8" stroke-width="3" fill="none"/>
+        <text x="400" y="240" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">汽轮机</text>
+        <!-- 发电机 -->
+        <rect x="490" y="130" width="80" height="80" rx="8" fill="#22374D" stroke="#5A7592"/>
+        <text x="530" y="178" fill="#8CA3B8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+        <text x="530" y="240" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">发电机</text>
+        <!-- 凝汽器 -->
+        <rect x="330" y="250" width="160" height="50" rx="6" fill="#1B2F44" stroke="#5A7592"/>
+        <text x="410" y="282" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">凝汽器</text>
+        <!-- 给水泵 -->
+        <circle cx="180" cy="290" r="22" fill="#22374D" stroke="#5A7592"/>
+        <text x="180" y="295" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">泵</text>
+        <text x="180" y="330" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">给水泵</text>
+        <!-- 再热（简略） -->
+        <rect x="250" y="200" width="50" height="30" rx="3" fill="#2A4058" stroke="#5A7592" opacity="0.7"/>
+        <text x="275" y="220" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">再热</text>
+        <!-- 蒸汽流（琥珀） -->
+        <path class="sflow" d="M240 125 H250"/>
+        <path class="sflow" d="M310 125 H330"/>
+        <path class="sflow" d="M470 170 H490"/>
+        <path class="sflow" d="M400 200 V250"/>
+        <!-- 水流（青） -->
+        <path class="wflow" d="M490 275 H600"/>
+        <path class="wflow" d="M600 275 V290 H202"/>
+        <path class="wflow" d="M202 290 H158"/>
+        <path class="wflow" d="M158 290 V240 H140"/>
+        <!-- 标注 -->
+        <g fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">
+          <text x="180" y="48">540–600°C 高压蒸汽</text>
+          <text x="530" y="48">≈20 kV 交流电</text>
+          <text x="650" y="268">冷却水回塔</text>
+        </g>
+        <g stroke="#5A7592" stroke-width="1" stroke-dasharray="2 4" opacity="0.6">
+          <line x1="400" y1="252" x2="400" y2="268"/>
+        </g>
+      </svg>
+      <div class="leg">
+        <span><i style="background:var(--amber)"></i>琥珀虚线 = 高温蒸汽</span>
+        <span><i style="background:var(--teal)"></i>青色虚线 = 冷凝水 / 给水</span>
+      </div>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step s1">
+        <div class="step-num mono">01</div>
+        <div>
+          <h3>煤燃烧 → 把水烧成高压高温蒸汽</h3>
+          <p class="desc">磨煤机把煤磨成细粉，经燃烧器喷入炉膛与空气混合燃烧，火焰中心温度可达 1300°C 以上。热量通过水冷壁、过热器传递给管道中的水，最终产出过热蒸汽。亚临界机组蒸汽约 540°C / 17 MPa；超临界机组参数超过水的临界点（374°C / 22.1 MPa），效率更高；超超临界可达 600°C 级、效率约 45% 以上。</p>
+          <span class="stat">典型蒸汽参数 540–600°C ｜ 17–25 MPa ｜ 煤耗约 270–300 g/kWh</span>
+        </div>
+      </div>
+
+      <div class="step s2">
+        <div class="step-num mono">02</div>
+        <div>
+          <h3>蒸汽推动汽轮机叶片旋转</h3>
+          <p class="desc">高压蒸汽先进入高压缸做功，再经再热器加热后进入中压缸、低压缸逐级膨胀。每一级叶片把蒸汽的内能变成轴的旋转动能。600 MW 机组的汽轮机通常分 3 缸（高+中+低），整根轴长近 10 米，转速锁定 3000 转/分 —— 因为电网频率 50 Hz 要求同步转速。</p>
+          <span class="stat">转速 3000 转/分（50 Hz） ｜ 排汽真空约 −95 kPa</span>
+        </div>
+      </div>
+
+      <div class="step s3">
+        <div class="step-num mono">03</div>
+        <div>
+          <h3>汽轮机轴带动发电机</h3>
+          <p class="desc">汽轮机与发电机刚性联轴，同轴旋转。发电机转子上的励磁绕组通直流后变成电磁铁，旋转时磁场切割定子上的三相线圈，感应出与电网同步的 50 Hz 交流电 —— 原理与风机、水轮发电机完全相同，都是电磁感应。600 MW 机组发电机出口电压约 20 kV，电流可达近 2 万安培。</p>
+          <span class="stat">出口电压 约 18–22 kV ｜ 单机容量 600 / 1000 MW 级</span>
+        </div>
+      </div>
+
+      <div class="step s4">
+        <div class="step-num mono">04</div>
+        <div>
+          <h3>凝汽回收 · 升压并网 · 烟气净化</h3>
+          <p class="desc">做功后的"乏汽"进入凝汽器，被循环冷却水冷凝成水，由给水泵升压后送回锅炉 —— 完成闭环。同时，厂内主变压器把 20 kV 升至 220 kV 或 500 kV 并入电网。燃烧产生的烟气则经除尘（捕集 99%+ 飞灰）、脱硫（脱硫率 95%+）、脱硝后，才从烟囱排入大气。</p>
+          <span class="stat">厂内升压 20 kV → 220/500 kV ｜ 全厂效率 约 38–46%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-panel reveal">
+      <div class="gen-grid">
+        <svg viewBox="0 0 460 400" fill="none">
+          <!-- 朗肯循环示意 -->
+          <rect class="rankine-boiler" x="60" y="60" width="100" height="120" rx="8" fill="#22374D" stroke="#FFB25C" stroke-width="2"/>
+          <text x="110" y="125" fill="#FFB25C" font-size="14" font-family="JetBrains Mono, monospace" text-anchor="middle">锅炉</text>
+          <!-- 汽轮机 -->
+          <circle cx="280" cy="120" r="40" fill="#22374D" stroke="#5A7592" stroke-width="2"/>
+          <text x="280" y="126" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">汽轮机</text>
+          <!-- 凝汽器 -->
+          <rect x="220" y="240" width="120" height="50" rx="6" fill="#1B2F44" stroke="#5CE1D8" stroke-width="2"/>
+          <text x="280" y="272" fill="#5CE1D8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">凝汽器</text>
+          <!-- 水泵 -->
+          <circle cx="110" cy="265" r="28" fill="#22374D" stroke="#5A7592" stroke-width="2"/>
+          <text x="110" y="270" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">泵</text>
+          <!-- 循环箭头：蒸汽（琥珀） -->
+          <path class="cycle-arrow" d="M160 90 H240"/>
+          <polygon points="240,90 232,86 232,94" fill="#FFB25C"/>
+          <path class="cycle-arrow" d="M300 160 V240"/>
+          <polygon points="300,240 296,232 304,232" fill="#FFB25C"/>
+          <!-- 循环箭头：水（青） -->
+          <path class="cycle-water" d="M220 265 H138"/>
+          <polygon points="138,265 146,261 146,269" fill="#5CE1D8"/>
+          <path class="cycle-water" d="M110 237 V120"/>
+          <polygon points="110,120 106,128 114,128" fill="#5CE1D8"/>
+          <!-- 热量散失 -->
+          <line x1="340" y1="265" x2="400" y2="265" stroke="#8CA3B8" stroke-width="1" stroke-dasharray="3 4"/>
+          <text x="400" y="260" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace">废热 → 冷却塔</text>
+          <text x="200" y="50" fill="#FFB25C" font-size="11" font-family="JetBrains Mono, monospace">加热水→蒸汽</text>
+          <text x="320" y="200" fill="#FFB25C" font-size="11" font-family="JetBrains Mono, monospace">膨胀做功</text>
+          <text x="60" y="320" fill="#5CE1D8" font-size="11" font-family="JetBrains Mono, monospace">冷凝回水</text>
+        </svg>
+
+        <div class="gen-facts">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px;">图解 · 朗肯循环</div>
+            <h3>为什么蒸汽做功后还要冷凝回来再烧？</h3>
+          </div>
+          <div class="gen-fact">
+            <p><strong>闭环才能反复做功</strong>：如果蒸汽推完汽轮机就直接排入大气，每小时要消耗数千吨纯净水，任何河流都供不起。冷凝成水、泵回锅炉，水在系统里循环使用，只需偶尔补少量损耗。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>真空 = 更大的推动力</strong>：凝汽器把排汽压强降到约 0.005 MPa（真空），相当于在叶片出口"抽"着蒸汽继续膨胀，汽轮机两端压差越大，同样多的蒸汽能多做功。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>代价是大量废热</strong>：朗肯循环的"硬伤"在于，蒸汽在凝汽器里必须释放约 60% 的输入热量才能变回液态水 —— 这些热从冷却塔散入大气，是火电效率只有约 40% 的主因。提高蒸汽参数（超临界/超超临界）和再热，都是在尽量压缩这部分损失。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grid">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">03 · 输送</div>
+      <h2>发出的电，去了哪里</h2>
+      <p class="lede">火电厂单机容量大 —— 一台 600 MW 机组满发时相当于 120 台 5 MW 风机同时转。厂内主变压器把 20 kV 升至 220 kV 或 500 kV，才能高效送入国家级输电网络。</p>
+    </div>
+
+    <div class="transmission reveal">
+      <svg viewBox="0 0 1000 260" fill="none">
+        <!-- 发电机 -->
+        <rect x="40" y="170" width="70" height="50" rx="4" fill="#22374D" stroke="#5A7592"/>
+        <text x="75" y="200" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+        <text x="75" y="240" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">发电机 ≈20kV</text>
+
+        <path class="tflow" d="M110 195 H180"/>
+
+        <!-- 主变压器 -->
+        <rect x="180" y="175" width="50" height="40" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="205" y="240" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">主变压器</text>
+
+        <path class="tflow" d="M230 195 H310"/>
+
+        <!-- 升压站 -->
+        <rect x="310" y="155" width="70" height="60" rx="3" fill="#4A6280" stroke="#5A7592"/>
+        <text x="345" y="235" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">升压站</text>
+        <text x="345" y="249" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">220/500kV</text>
+
+        <path class="tflow" d="M380 185 H460"/>
+
+        <!-- 高压线路 -->
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="480" y1="220" x2="480" y2="100"/>
+          <line x1="450" y1="120" x2="510" y2="120"/>
+          <line x1="458" y1="140" x2="502" y2="140"/>
+        </g>
+        <path class="tflow" d="M460 120 H600"/>
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="620" y1="220" x2="620" y2="100"/>
+          <line x1="590" y1="120" x2="650" y2="120"/>
+          <line x1="598" y1="140" x2="642" y2="140"/>
+        </g>
+        <text x="550" y="90" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">高压输电线路</text>
+
+        <path class="tflow" d="M650 120 H720"/>
+
+        <!-- 区域变电站 -->
+        <rect x="720" y="95" width="56" height="42" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="748" y="154" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">区域变电站</text>
+        <text x="748" y="168" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">降压至 10kV</text>
+
+        <path class="tflow" d="M776 116 H860"/>
+        <g>
+          <rect x="860" y="140" width="46" height="34" fill="#3A5068"/>
+          <polygon points="860,140 866,128 872,140" fill="#3A5068"/>
+          <text x="883" y="190" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">工厂</text>
+        </g>
+        <g>
+          <polygon points="930,140 950,122 970,140" fill="#3A5068"/>
+          <rect x="934" y="140" width="32" height="30" fill="#3A5068"/>
+          <text x="950" y="190" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">居民用户</text>
+        </g>
+        <path class="tflow" d="M860 155 H776"/>
+        <path class="tflow" d="M950 140 V116 H860"/>
+      </svg>
+
+      <div class="leg">
+        <span><i style="background:#4A6280"></i>变电站 / 变压器</span>
+        <span><i style="background:#5A7592"></i>输电铁塔</span>
+        <span><i style="background:var(--amber)"></i>流动虚线 = 电流传输方向</span>
+      </div>
+    </div>
+
+    <p class="lede reveal" style="margin-top:28px;margin-bottom:0;">
+      简单说：<strong>发电机（≈20 kV）→ 厂内主变压器 → 升压站（220/500 kV）→ 高压线路远距离输送 → 区域变电站降压（10 kV）→ 配电网 → 工厂与居民用户。</strong>
+      火电厂通常建在煤炭运输便利或水源充足的地方，单机 600–1000 MW，是电网的"重型基荷电源" —— 电压一路升高再降低，原理与风电相同：高压低流，减少线路发热损耗。
+    </p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">04 · 快问快答</div>
+      <h2>几个常见的好奇</h2>
+      <p class="lede">看完全流程，你可能还有这些疑问。</p>
+    </div>
+
+    <div class="faq-grid reveal">
+      <div class="faq-card">
+        <h3>火电只有煤吗？</h3>
+        <p>不是。煤、天然气、燃油、生物质都属于火力发电「燃料家族」。中国电量里燃煤占比最高；天然气常走燃机或联合循环，效率与调峰特性都不同于磨煤锅炉。</p>
+      </div>
+      <div class="faq-card">
+        <h3>煤电效率为什么只有约 40%？</h3>
+        <p>卡诺定理告诉我们：即使完美热机，效率也受限于高温热源与低温冷源之间的温差。实际锅炉出口约 600°C，冷却塔出口约 30°C，理论上限大约 65% 左右。再加上排烟带走约 5–8% 热量、机械摩擦与辅机耗电，600 MW 级机组实际效率约 38–42%，超超临界可达 45% 以上 —— 剩下 55%+ 的能量变成了烟囱热损失和冷却塔散失的废热。</p>
+      </div>
+      <div class="faq-card">
+        <h3>「清洁煤电」指的是什么？</h3>
+        <p>专指燃煤机组的末端治理，不是零碳：电除尘捕集 99.9% 以上的飞灰，石灰石-石膏湿法脱硫脱除 95%+ 的 SO₂，SCR 脱硝把 NOₓ 降到 50 mg/m³ 以下。烟囱冒的"白烟"主要是水蒸气。但 CO₂ 仍随烟气排出 —— 深度减排要靠碳捕集或燃料替代。</p>
+      </div>
+      <div class="faq-card">
+        <h3>为什么电网还需要火电？</h3>
+        <p>风光出力随天气波动，需要能调节出力的电源"托底"。燃煤机组可深度调峰，气电启动更快，二者都承担灵活性角色。在储能大规模普及之前，火电仍是保障频率稳定与供电可靠的"压舱石"。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="history-extend">
+  <div class="wrap">
+
+    <div class="history-extend reveal">
+      <div class="eyebrow">历史延伸</div>
+      <h3>火电如何从街区电厂走到超超临界</h3>
+      <p class="sub">从发明到落地，各摘几段关键节点。</p>
+      <div class="history-cols">
+        <div class="history-col">
+          <h4>世界</h4>
+          <div class="history-item"><div class="yr">1882</div><p><strong>Pearl Street</strong>：爱迪生在纽约建成早期商用燃煤电厂，电开始以公用事业方式售卖。</p></div>
+          <div class="history-item"><div class="yr">20 世纪</div><p><strong>汽轮机取代往复蒸汽机</strong>：单机容量与蒸汽参数一路攀升，火电成为工业化国家的电力骨架。</p></div>
+          <div class="history-item"><div class="yr">战后–今</div><p><strong>超临界与联合循环</strong>：煤电追求更高参数提效；气电则以燃机/联合循环提供灵活低碳化石电力。</p></div>
+        </div>
+        <div class="history-col">
+          <h4>中国</h4>
+          <div class="history-item"><div class="yr">1882 前后</div><p><strong>口岸早期电厂</strong>：上海等口岸出现中国最早的电灯与火电实践，电力随开埠城市进入日常生活。</p></div>
+          <div class="history-item"><div class="yr">1950s–80s</div><p><strong>煤电托起工业化</strong>：在「煤多」禀赋下，火电装机与电网同步扩张，成为电量绝对主力。</p></div>
+          <div class="history-item"><div class="yr">近年</div><p><strong>超超临界 + 灵活改造</strong>：新建煤电效率逼近上限，存量机组强化调峰，服务高比例风光电网。</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="closing" id="closing">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="justify-content:center;">SUMMARY</div>
+    <h2>一句话说完全过程</h2>
+    <p>以燃煤为例：煤在锅炉里燃烧，化学能变成高温蒸汽；蒸汽推动汽轮机，变成机械能；汽轮机带动发电机，变成电能；乏汽冷凝回炉，烟气净化后排出；电流经主变升压送上电网。气电等燃料换了前端热机，但「热 → 转轴 → 电」的终点相同。</p>
+    <div class="page-nav">
+      <a href="index.html">← 回到主页</a>
+      <a href="#top">↑ 回到顶部</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>THERMAL POWER PRINCIPLE · 图解仅用于科普，实际机组参数因容量等级与厂商不同而有差异</div>
+  <div class="copyright">© 2026 superj. All rights reserved. 未经许可，禁止转载与复制。</div>
+</footer>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+},{threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+
+const items = document.querySelectorAll('.anatomy-item');
+const parts = document.querySelectorAll('.part');
+function setActive(id){
+  parts.forEach(p=>p.classList.toggle('active', !!id && p.dataset.id===id));
+  items.forEach(it=>it.classList.toggle('active', !!id && it.dataset.target===id));
+}
+function clearActive(){ setActive(null); }
+items.forEach(it=>{
+  it.addEventListener('mouseenter',()=>setActive(it.dataset.target));
+  it.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(it.dataset.target); });
+});
+parts.forEach(p=>{
+  p.addEventListener('mouseenter',()=>setActive(p.dataset.id));
+  p.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(p.dataset.id); });
+});
+document.addEventListener('click', (e)=>{
+  if(e.target.closest('.part') || e.target.closest('.anatomy-item')) return;
+  clearActive();
+});
+
+const fuelTabs = document.querySelectorAll('.fuel-tab');
+const fuelPanels = document.querySelectorAll('.fuel-panel-body');
+fuelTabs.forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const id = tab.dataset.fuel;
+    fuelTabs.forEach(t=>t.setAttribute('aria-selected', t===tab ? 'true' : 'false'));
+    fuelPanels.forEach(p=>p.classList.toggle('active', p.dataset.fuel===id));
+  });
+});
+
+(function(){
+  const links=[...document.querySelectorAll('.sec-nav a[href^="#"]')];
+  if(!links.length) return;
+  const sections=links.map(a=>{
+    const id=a.getAttribute('href').slice(1);
+    const el=document.getElementById(id);
+    return el?{a,el,id}:null;
+  }).filter(Boolean);
+  function sectionTop(el){
+    if(el===document.body || el===document.documentElement) return 0;
+    return el.getBoundingClientRect().top + window.scrollY;
+  }
+  function update(){
+    const maxScroll=Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    if(window.scrollY < 120){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===0));
+      return;
+    }
+    // 滚到页尾时，末段往往够不着中线判定，强制高亮最后一条
+    if(maxScroll > 0 && window.scrollY >= maxScroll - 24){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===sections.length-1));
+      return;
+    }
+    const mark=window.scrollY + window.innerHeight*0.28;
+    let current=sections[0];
+    for(const s of sections){
+      if(sectionTop(s.el) <= mark) current=s;
+    }
+    sections.forEach(s=>s.a.classList.toggle('active', s===current));
+  }
+  update();
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+})();
+
+
+(function(){
+  // 轻度防护：挡普通复制/右键，无法阻止查看源码或直接下载页面
+  const block = (e) => e.preventDefault();
+  document.addEventListener('contextmenu', block);
+  document.addEventListener('selectstart', block);
+  document.addEventListener('copy', block);
+  document.addEventListener('cut', block);
+  document.addEventListener('dragstart', block);
+})();
+
+</script>
+
+</body>
+</html>

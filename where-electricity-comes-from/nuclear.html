@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>热从堆芯到灯泡 —— 核电站发电全过程图解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0B1826;
+  --bg-panel:#122338;
+  --bg-panel-2:#0E1D2F;
+  --steel:#3A5068;
+  --steel-light:#5A7592;
+  --teal:#5CE1D8;
+  --teal-dim:#2C7A75;
+  --amber:#FFB25C;
+  --amber-dim:#8A5A2A;
+  --nuclear:#9B7ED9; /* legacy */
+  --nuclear-dim:#6B52A0;
+  --accent:#9B7ED9;
+  --accent-dim:#6B52A0;
+  --text-hi:#EAF2F8;
+  --text-lo:#8CA3B8;
+  --line:#1F3247;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg-deep);
+  color:var(--text-hi);
+  font-family:'IBM Plex Sans','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{
+  font-family:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif;
+  font-weight:600;
+  letter-spacing:0.01em;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;}
+.spine{
+  position:absolute;
+  left:50%;
+  top:100vh;
+  width:2px;
+  height:calc(100% - 100vh);
+  background:linear-gradient(180deg,
+    var(--accent) 0%, var(--accent) 28%,
+    var(--teal) 55%, var(--teal) 72%,
+    var(--amber) 100%);
+  opacity:0.35;
+  z-index:0;
+}
+section{position:relative;z-index:1;padding:120px 0;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:18px;
+}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--accent);}
+.eyebrow.amber{color:var(--amber);}
+.eyebrow.amber::before{background:var(--amber);}
+.eyebrow.accent,.eyebrow.nuclear{color:var(--accent);}
+.eyebrow.accent::before,.eyebrow.nuclear::before{background:var(--accent);}
+h2{font-size:clamp(28px,4vw,40px);margin-bottom:16px;}
+.lede{color:var(--text-lo);font-size:17px;margin-bottom:56px;}
+
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;padding:80px 24px;
+  background:
+    radial-gradient(ellipse 900px 520px at 50% 18%, rgba(155,126,217,0.16), transparent 70%),
+    radial-gradient(ellipse 700px 420px at 50% 72%, rgba(155,126,217,0.07), transparent 65%);
+}
+.hero .eyebrow{justify-content:center;color:var(--accent);}
+.hero .eyebrow::before{display:none;}
+.hero h1{
+  font-size:clamp(36px,6vw,64px);
+  line-height:1.15;
+  max-width:840px;
+  margin:0 auto 20px;
+  padding:0 16px;
+  text-wrap:balance;
+}
+.hero h1 .hl{
+  color:var(--accent);
+  font-size:clamp(20px,3.2vw,30px);
+  font-weight:500;
+  display:inline-block;
+  margin-top:10px;
+  max-width:min(92vw,720px);
+  word-break:keep-all;
+  line-break:strict;
+  text-wrap:balance;
+}
+.hero h1 .hl .nb{white-space:nowrap;}
+.hero p{color:var(--text-lo);font-size:18px;max-width:520px;margin-bottom:56px;}
+.plant-stage{width:min(560px,80vw);position:relative;}
+.plant-stage svg{width:100%;height:auto;display:block;}
+.core-glow{animation:corePulse 2.4s ease-in-out infinite alternate;}
+@keyframes corePulse{
+  0%{opacity:0.55;filter:drop-shadow(0 0 4px rgba(155,126,217,0.3));}
+  100%{opacity:0.95;filter:drop-shadow(0 0 14px rgba(155,126,217,0.55));}
+}
+.steam-puff{stroke:var(--teal);stroke-width:2;opacity:0;stroke-dasharray:4 8;animation:steamUp 2.8s ease-out infinite;}
+.steam-puff:nth-child(2){animation-delay:0.8s;}
+.steam-puff:nth-child(3){animation-delay:1.6s;}
+@keyframes steamUp{
+  0%{opacity:0;stroke-dashoffset:30;transform:translateY(0);}
+  20%{opacity:0.6;}
+  100%{opacity:0;stroke-dashoffset:0;transform:translateY(-24px);}
+}
+.scroll-cue{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-lo);font-size:12px;font-family:'JetBrains Mono',monospace;
+  letter-spacing:0.1em;
+}
+.scroll-cue .bar{width:1px;height:36px;background:linear-gradient(180deg,var(--accent),transparent);animation:pulseDown 1.8s ease-in-out infinite;}
+@keyframes pulseDown{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+.anatomy-grid{
+  display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;
+}
+.anatomy-svg-wrap{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:24px;
+}
+.anatomy-svg-wrap svg{width:100%;height:auto;display:block;}
+.part{cursor:pointer;transition:opacity .25s ease;}
+.part-fill{fill:var(--steel);stroke:var(--steel-light);stroke-width:1;transition:fill .25s ease,stroke .25s ease;}
+.part.active .part-fill{fill:var(--accent-dim);stroke:var(--accent);}
+.anatomy-list{display:flex;flex-direction:column;gap:2px;}
+.anatomy-item{
+  padding:16px 18px;border-radius:4px;cursor:pointer;
+  border:1px solid transparent;
+  transition:background .2s ease,border-color .2s ease;
+}
+.anatomy-item:hover,.anatomy-item.active{
+  background:var(--bg-panel);border-color:var(--line);
+}
+.anatomy-item .num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px;margin-right:10px;}
+.anatomy-item h3{font-size:16px;display:inline;font-weight:600;}
+.anatomy-item p{color:var(--text-lo);font-size:14px;margin-top:6px;}
+
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{
+  display:grid;grid-template-columns:96px 1fr;gap:28px;
+  padding:36px 0;border-top:1px solid var(--line);
+}
+.step:last-child{border-bottom:1px solid var(--line);}
+.step-num{
+  font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;
+  color:var(--line);
+}
+.step.s1 .step-num{color:var(--accent);}
+.step.s2 .step-num{color:#b89ee8;}
+.step.s3 .step-num{color:#c9b06e;}
+.step.s4 .step-num{color:var(--amber);}
+.step h3{font-size:20px;margin-bottom:8px;}
+.step .stat{
+  display:inline-block;margin-top:14px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--text-lo);background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:3px;padding:6px 12px;
+}
+.step p.desc{color:var(--text-lo);font-size:15px;max-width:620px;}
+
+.transmission{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:40px 24px;
+  overflow-x:auto;
+}
+.transmission svg{display:block;margin:0 auto;min-width:900px;width:100%;height:auto;}
+.transmission h3{font-size:16px;margin-bottom:20px;color:var(--text-hi);}
+.tflow{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.pflow{stroke:var(--accent);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.sflow{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.wflow{stroke:var(--teal);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-24;}}
+.leg{
+  display:flex;flex-wrap:wrap;gap:20px 32px;margin-top:28px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-lo);
+}
+.leg span{display:inline-flex;align-items:center;gap:8px;}
+.leg i{width:10px;height:10px;border-radius:2px;display:inline-block;background:var(--steel);}
+
+.gen-panel{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:44px 36px;
+  margin-top:72px;
+}
+.gen-grid{
+  display:grid;grid-template-columns:minmax(260px,400px) 1fr;
+  gap:48px;align-items:center;
+}
+.gen-grid svg{width:100%;height:auto;display:block;}
+.neutron{fill:var(--accent);opacity:0;animation:neutronFly 2.2s ease-in-out infinite;}
+.neutron.n2{animation-delay:0.4s;}
+.neutron.n3{animation-delay:0.8s;}
+.neutron.n4{animation-delay:1.2s;}
+@keyframes neutronFly{
+  0%{opacity:0;transform:translate(0,0) scale(0.6);}
+  20%{opacity:1;}
+  80%{opacity:0.8;}
+  100%{opacity:0;transform:translate(40px,-20px) scale(1);}
+}
+.fission-flash{animation:fissionFlash 2.2s ease-in-out infinite;}
+@keyframes fissionFlash{
+  0%,100%{opacity:0.3;}
+  15%,25%{opacity:1;}
+}
+.control-rod{animation:rodPulse 3s ease-in-out infinite alternate;}
+@keyframes rodPulse{0%{opacity:0.6;}100%{opacity:1;}}
+.gen-facts{display:flex;flex-direction:column;gap:20px;}
+.gen-facts h3{font-size:20px;}
+.gen-fact{padding-left:16px;border-left:2px solid var(--accent-dim);}
+.gen-fact p{color:var(--text-lo);font-size:15px;}
+.gen-fact strong{color:var(--text-hi);}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.faq-card{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:4px;padding:28px 26px;
+}
+.faq-card h3{font-size:17px;margin-bottom:10px;}
+.faq-card h3::before{
+  content:'Q';font-family:'JetBrains Mono',monospace;
+  color:var(--accent);margin-right:10px;font-size:14px;
+}
+.faq-card p{color:var(--text-lo);font-size:14.5px;}
+
+
+.history-extend{
+  margin-top:72px;
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:36px 28px;
+}
+.history-extend > .eyebrow{margin-bottom:12px;}
+.history-extend > h3{font-size:22px;margin-bottom:8px;}
+.history-extend > .sub{color:var(--text-lo);font-size:14.5px;margin-bottom:28px;}
+.history-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.history-col{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:22px 22px;
+}
+.history-col > h4{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;
+  color:var(--accent);margin-bottom:16px;font-weight:500;
+}
+.history-item{margin-bottom:16px;}
+.history-item:last-child{margin-bottom:0;}
+.history-item .yr{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--accent);margin-bottom:4px;letter-spacing:0.04em;
+}
+.history-item p{color:var(--text-lo);font-size:13.5px;}
+.history-item strong{color:var(--text-hi);font-weight:500;}
+
+.closing{
+  text-align:center;padding:140px 0 100px;
+}
+.closing h2{max-width:600px;margin:0 auto 20px;}
+.closing p{color:var(--text-lo);max-width:520px;margin:0 auto;}
+footer{
+  text-align:center;padding:40px 24px 60px;
+  color:var(--text-lo);font-size:13px;font-family:'JetBrains Mono',monospace;
+  border-top:1px solid var(--line);
+}
+
+@media (max-width:820px){
+  .anatomy-grid{grid-template-columns:1fr;}
+  .wrap{padding:0 20px;}
+  section{padding:80px 0;}
+  .spine{display:none;}
+  .step{grid-template-columns:56px 1fr;gap:18px;}
+  .step-num{font-size:28px;}
+  .gen-panel{padding:28px 20px;}
+  .gen-grid{grid-template-columns:1fr;gap:32px;}
+  .faq-grid{grid-template-columns:1fr;}
+  .history-cols{grid-template-columns:1fr;}
+  .transmission{padding:28px 16px;}
+}
+
+.kb-home{
+  position:fixed;top:20px;left:20px;z-index:30;
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;background:rgba(11,24,38,0.72);backdrop-filter:blur(8px);
+  transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.kb-home:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 12%, rgba(11,24,38,0.85));
+}
+.page-nav{margin-top:32px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;}
+.page-nav a{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.page-nav a:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+
+.sec-nav{
+  position:fixed;left:10px;top:50%;transform:translateY(-50%);
+  z-index:28;display:flex;flex-direction:column;gap:8px;
+  padding:10px 6px;
+}
+.sec-nav a{
+  display:block;width:3px;height:26px;border-radius:2px;
+  background:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0.32;position:relative;
+  transition:opacity .2s ease, height .2s ease, transform .2s ease;
+}
+.sec-nav a:hover,.sec-nav a.active{opacity:1;}
+.sec-nav a.active{height:34px;}
+.sec-nav a::after{
+  content:attr(data-label);
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em;
+  color:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0;pointer-events:none;
+  transition:opacity .18s ease;
+}
+.sec-nav a:hover::after{opacity:1;}
+@media (max-width:900px){.sec-nav{display:none;}}
+
+
+/* content protection (deterrent only) */
+body{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+footer .copyright{
+  margin-top:12px;
+  font-size:12px;
+  opacity:0.85;
+  letter-spacing:0.02em;
+}
+
+</style>
+</head>
+<body>
+
+<a class="kb-home" href="index.html">← 回到主页</a>
+
+<nav class="sec-nav" style="--nav-accent:var(--accent)" aria-label="章节导航">
+  <a href="#top" data-label="顶栏 · 概览"></a>
+  <a href="#anatomy" data-label="01 · 构造"></a>
+  <a href="#steps" data-label="02 · 转换"></a>
+  <a href="#grid" data-label="03 · 输送"></a>
+  <a href="#faq" data-label="04 · 快问快答"></a>
+  <a href="#history-extend" data-label="历史延伸"></a>
+  <a href="#closing" data-label="小结"></a>
+</nav>
+
+<div class="spine" aria-hidden="true"></div>
+
+<section class="hero" id="top">
+  <div class="eyebrow">NUCLEAR → THERMAL → MECHANICAL → ELECTRICAL</div>
+  <h1>热从堆芯到灯泡<br><span class="hl">一座核电站怎么把裂变<span class="nb">变成电</span></span></h1>
+  <p>从铀燃料在堆芯里裂变放热，到电流送上电网 —— 中间经过了哪些回路、哪几次能量转换？往下滚动，一步步看清楚。</p>
+
+  <div class="plant-stage">
+    <svg viewBox="0 0 560 380" fill="none">
+      <line x1="40" y1="340" x2="520" y2="340" stroke="#1F3247" stroke-width="1"/>
+      <!-- 安全壳圆顶 -->
+      <path d="M100 340 L100 200 Q180 120 260 200 L260 340 Z" fill="#22374D" stroke="#3A5068"/>
+      <ellipse cx="180" cy="200" rx="80" ry="24" fill="#1B2F44" stroke="#5A7592"/>
+      <!-- 堆芯 glow -->
+      <rect class="core-glow" x="150" y="255" width="60" height="48" rx="4" fill="#6B52A0" stroke="#9B7ED9" stroke-width="2"/>
+      <text x="180" y="282" fill="#EAF2F8" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.85">堆芯</text>
+      <!-- 汽轮机厂房 -->
+      <rect x="280" y="220" width="120" height="120" rx="4" fill="#22374D" stroke="#3A5068"/>
+      <circle cx="340" cy="280" r="28" stroke="#5A7592" stroke-width="3" fill="none"/>
+      <!-- 发电机 -->
+      <rect x="410" y="235" width="44" height="50" rx="3" fill="#22374D" stroke="#3A5068"/>
+      <!-- 冷却塔 -->
+      <path d="M460 340 L500 340 L488 180 Q474 160 460 180 Z" fill="#22374D" stroke="#3A5068"/>
+      <path class="steam-puff" d="M474 170 Q478 150 474 130"/>
+      <path class="steam-puff" d="M482 168 Q486 148 482 128"/>
+      <path class="steam-puff" d="M466 172 Q470 152 466 132"/>
+      <!-- 输电线：上绕，避开冷却塔 -->
+      <polyline points="454,240 454,150 535,150 535,120" stroke="#5A7592" stroke-width="1.5" fill="none"/>
+      <!-- 安全壳标注放在建筑下方，避免压住堆芯 -->
+      <text x="180" y="358" fill="#9B7ED9" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">安全壳</text>
+    </svg>
+  </div>
+
+  <div class="scroll-cue"><span>SCROLL</span><span class="bar"></span></div>
+</section>
+
+<section id="anatomy">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">01 · 构造</div>
+      <h2>先认识一座压水堆核电站</h2>
+      <p class="lede">一座百万千瓦级压水堆（PWR）电站占地可达数十公顷，核心是一组"堆芯放热—一回路循环—蒸汽发生器产汽—汽轮机发电—冷凝回水"的装置链。放射性水基本不离开一回路，与发电用的二回路物理隔离。点一点右边的部件名称，看看它在图上的位置。</p>
+    </div>
+
+    <div class="anatomy-grid reveal">
+      <div class="anatomy-svg-wrap">
+        <svg viewBox="0 0 360 420" fill="none">
+          <line x1="20" y1="400" x2="340" y2="400" stroke="#1F3247" stroke-width="1"/>
+          <!-- 安全壳（外层） -->
+          <g class="part" data-id="containment">
+            <path class="part-fill" d="M40 400 L40 180 Q180 80 320 180 L320 400 Z" opacity="0.5"/>
+          </g>
+          <!-- 堆芯 / 压力容器 -->
+          <g class="part" data-id="core">
+            <rect class="part-fill" x="130" y="240" width="100" height="120" rx="8"/>
+            <rect class="part-fill" x="150" y="270" width="60" height="60" rx="4" opacity="0.8"/>
+          </g>
+          <!-- 蒸汽发生器 -->
+          <g class="part" data-id="sg">
+            <rect class="part-fill" x="250" y="200" width="70" height="100" rx="6"/>
+            <line x1="265" y1="230" x2="305" y2="230" stroke="#1F3247" stroke-width="2"/>
+            <line x1="265" y1="260" x2="305" y2="260" stroke="#1F3247" stroke-width="2"/>
+          </g>
+          <!-- 主泵（内收，避免压穿安全壳轮廓） -->
+          <g class="part" data-id="pump">
+            <circle class="part-fill" cx="125" cy="228" r="24"/>
+            <text x="125" y="233" fill="#1F3247" font-size="13" font-family="JetBrains Mono, monospace" text-anchor="middle">P</text>
+          </g>
+          <!-- 稳压器 -->
+          <g class="part" data-id="pressurizer">
+            <rect class="part-fill" x="88" y="168" width="22" height="48" rx="3"/>
+          </g>
+          <!-- 汽轮机 + 发电机 -->
+          <g class="part" data-id="turbine">
+            <rect class="part-fill" x="240" y="320" width="60" height="50" rx="5"/>
+            <circle class="part-fill" cx="270" cy="345" r="16" fill="none" stroke-width="2"/>
+            <rect class="part-fill" x="310" y="325" width="36" height="40" rx="4"/>
+          </g>
+          <!-- 冷却塔 -->
+          <g class="part" data-id="cooling">
+            <path class="part-fill" d="M30 400 L70 400 L62 260 Q48 240 30 260 Z"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="anatomy-list">
+        <div class="anatomy-item" data-target="core">
+          <span class="num">01</span><h3>反应堆压力容器 / 堆芯</h3>
+          <p>堆芯里排列着约 3 万根以上燃料棒，内含低浓度铀-235（约 3–5%）。中子引发裂变链式反应，持续释放热量。一回路高压水（约 15 MPa）流过堆芯被加热到约 300°C 以上，但压力足够高，不会沸腾。控制棒插入堆芯可吸收中子、调节功率。</p>
+        </div>
+        <div class="anatomy-item" data-target="sg">
+          <span class="num">02</span><h3>蒸汽发生器</h3>
+          <p>一回路与二回路的"换热器"。一回路热水在 U 形传热管里流动，把热量传给管外的二回路给水，产生饱和或过热蒸汽。管壁把两侧流体隔开 —— 带放射性的水不会进入汽轮机。百万千瓦机组通常有 2–4 台蒸汽发生器，单台高度可达 20 米以上。</p>
+        </div>
+        <div class="anatomy-item" data-target="pump">
+          <span class="num">03</span><h3>主泵</h3>
+          <p>驱动一回路水在"堆芯 → 蒸汽发生器 → 主泵 → 堆芯"的闭环里循环。通常每台机组配 2–4 台主泵，单台流量可达 6 万 m³/h 量级，是维持堆芯冷却的关键设备。主泵停运会触发保护逻辑，堆芯功率必须相应降低。</p>
+        </div>
+        <div class="anatomy-item" data-target="pressurizer">
+          <span class="num">04</span><h3>稳压器</h3>
+          <p>维持一回路系统压力稳定的立式容器。上部汽腔、下部水体，通过电加热器蒸发或喷淋冷凝调节压力，保证堆芯冷却水在约 15 MPa 下保持液态、不沸腾。它是压水堆一回路特有的关键设备，通常也布置在安全壳内。</p>
+        </div>
+        <div class="anatomy-item" data-target="turbine">
+          <span class="num">05</span><h3>汽轮机 · 发电机</h3>
+          <p>二回路蒸汽进入汽轮机多级膨胀做功，推动轴系旋转 —— 后半程与火电厂几乎一样。100 万千瓦级机组汽轮机转速锁定 3000 转/分（50 Hz 电网），同轴带动发电机感应出交流电。单机出口电压约 20 kV，再由主变压器升压送出。</p>
+        </div>
+        <div class="anatomy-item" data-target="containment">
+          <span class="num">06</span><h3>安全壳</h3>
+          <p>包裹反应堆和一回路关键设备的巨型钢筋混凝土结构，内衬钢板，设计可承受一定内压。万一一回路发生泄漏，安全壳把放射性物质限制在内部，配合喷淋、过滤等系统，是纵深防御的最后一道物理屏障。外观常呈圆顶或圆柱形，是核电站最标志性的轮廓。</p>
+        </div>
+        <div class="anatomy-item" data-target="cooling">
+          <span class="num">07</span><h3>冷却塔 / 三回路</h3>
+          <p>汽轮机排汽在凝汽器里被三回路冷却水（河水、海水或冷却塔循环水）冷凝成水，由给水泵送回蒸汽发生器。核电站约 33% 的裂变热能最终从这里散入环境 —— 所以冷却塔冒出的"白烟"主要是水蒸气，不是放射性物质。滨海厂址也可直接用海水冷却，不一定有冷却塔。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="steps">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">02 · 转换</div>
+      <h2>裂变热变成电能，一共四步</h2>
+      <p class="lede">整个过程是一连串的能量"接力"：核能 → 热能 → 蒸汽机械能 → 电能。压水堆用三道回路把"带放射性的热"和"干净的蒸汽"分开 —— 一回路热水在蒸汽发生器里传热，二回路产汽推轮机，三回路负责最终散热。先看一眼流程剖面，再逐步拆解。</p>
+    </div>
+
+    <div class="transmission reveal" style="margin-bottom:72px;">
+      <h3>主流程剖面 · 一回路 / 二回路 / 三回路（示意）</h3>
+      <svg viewBox="0 0 960 360" fill="none">
+        <!-- 一回路区域标注 -->
+        <rect x="80" y="40" width="320" height="280" rx="8" fill="none" stroke="#6B52A0" stroke-width="1" stroke-dasharray="4 6" opacity="0.5"/>
+        <text x="240" y="62" fill="#9B7ED9" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">一回路（带放射性，封闭循环）</text>
+
+        <!-- 堆芯 -->
+        <rect x="120" y="120" width="80" height="100" rx="8" fill="#22374D" stroke="#9B7ED9" stroke-width="2"/>
+        <rect x="140" y="150" width="40" height="40" rx="4" fill="#6B52A0" opacity="0.7"/>
+        <text x="160" y="240" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">堆芯</text>
+
+        <!-- 主泵 -->
+        <circle cx="120" cy="280" r="24" fill="#22374D" stroke="#9B7ED9" stroke-width="2"/>
+        <text x="120" y="285" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">主泵</text>
+
+        <!-- 蒸汽发生器 -->
+        <rect x="280" y="100" width="90" height="140" rx="8" fill="#22374D" stroke="#5A7592" stroke-width="2"/>
+        <line x1="295" y1="140" x2="355" y2="140" stroke="#3A5068" stroke-width="2"/>
+        <line x1="295" y1="180" x2="355" y2="180" stroke="#3A5068" stroke-width="2"/>
+        <line x1="295" y1="220" x2="355" y2="220" stroke="#3A5068" stroke-width="2"/>
+        <text x="325" y="260" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">蒸汽发生器</text>
+
+        <!-- 稳压器 -->
+        <rect x="200" y="80" width="30" height="50" rx="4" fill="#2A4058" stroke="#9B7ED9"/>
+        <text x="215" y="145" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">稳压器</text>
+
+        <!-- 一回路流动（紫） -->
+        <path class="pflow" d="M200 170 H280"/>
+        <path class="pflow" d="M325 240 V280 H144"/>
+        <path class="pflow" d="M144 280 H120"/>
+        <path class="pflow" d="M120 256 V170 H120"/>
+        <path class="pflow" d="M120 170 H120"/>
+
+        <!-- 二回路：蒸汽（琥珀） -->
+        <rect x="430" y="100" width="140" height="100" rx="8" fill="#22374D" stroke="#5A7592"/>
+        <circle cx="500" cy="150" r="32" stroke="#8CA3B8" stroke-width="3" fill="none"/>
+        <text x="500" y="220" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">汽轮机</text>
+
+        <rect x="590" y="110" width="70" height="80" rx="8" fill="#22374D" stroke="#5A7592"/>
+        <text x="625" y="155" fill="#8CA3B8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+        <text x="625" y="210" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">发电机</text>
+
+        <path class="sflow" d="M370 130 H430"/>
+        <path class="sflow" d="M570 150 H590"/>
+
+        <!-- 凝汽器 -->
+        <rect x="430" y="250" width="160" height="50" rx="6" fill="#1B2F44" stroke="#5A7592"/>
+        <text x="510" y="282" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">凝汽器</text>
+
+        <!-- 给水泵 -->
+        <circle cx="370" cy="290" r="22" fill="#22374D" stroke="#5A7592"/>
+        <text x="370" y="295" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">泵</text>
+        <text x="370" y="330" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">给水泵</text>
+
+        <path class="sflow" d="M500 200 V250"/>
+        <path class="wflow" d="M590 275 H720"/>
+        <path class="wflow" d="M720 275 V290 H392"/>
+        <path class="wflow" d="M392 290 H348"/>
+
+        <!-- 三回路 / 冷却塔 -->
+        <path d="M760 340 L800 340 L788 200 Q774 180 760 200 Z" fill="#22374D" stroke="#3A5068"/>
+        <text x="780" y="330" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">冷却塔</text>
+        <path class="wflow" d="M720 275 H760"/>
+        <path class="wflow" d="M780 200 V275"/>
+
+        <!-- 标注 -->
+        <g fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">
+          <text x="160" y="110">≈15 MPa 一回路水 ~300°C</text>
+          <text x="500" y="88">二回路蒸汽 → 汽轮机</text>
+          <text x="625" y="88">≈20 kV 交流电</text>
+          <text x="840" y="268">三回路冷却水</text>
+        </g>
+        <text x="480" y="340" fill="#9B7ED9" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">一二回路通过传热管物理隔离 · 放射性水不进入汽轮机</text>
+      </svg>
+      <div class="leg">
+        <span><i style="background:var(--accent)"></i>紫色虚线 = 一回路高压水（封闭）</span>
+        <span><i style="background:var(--amber)"></i>琥珀虚线 = 二回路蒸汽 / 给水</span>
+        <span><i style="background:var(--teal)"></i>青色虚线 = 三回路冷却水</span>
+      </div>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step s1">
+        <div class="step-num mono">01</div>
+        <div>
+          <h3>铀-235 裂变放热，加热一回路高压水</h3>
+          <p class="desc">中子轰击铀-235 原子核，核分裂成两个较轻的碎片并释放约 200 MeV 能量（主要是动能和瞬发γ射线），同时再放出 2–3 个中子。若平均每个裂变产生的中子里有一个能引发下一次裂变，链式反应就持续进行。一回路水在约 15 MPa 高压下流过堆芯，被加热到约 300°C 以上但不沸腾 —— 这是压水堆"压水"二字的含义。</p>
+          <span class="stat">一回路压力 ≈15 MPa ｜ 堆芯出口 ~300°C ｜ 铀浓度 ~3–5%</span>
+        </div>
+      </div>
+
+      <div class="step s2">
+        <div class="step-num mono">02</div>
+        <div>
+          <h3>蒸汽发生器传热产汽，一二回路物理隔离</h3>
+          <p class="desc">一回路热水进入蒸汽发生器的传热管，把热量传给管外的二回路给水，二回路侧产生约 6–7 MPa 的饱和或过热蒸汽。两侧流体由管壁隔开，放射性物质不会随蒸汽进入汽轮机。这是压水堆安全设计的关键：把"核"和"电"在物理上分开，汽轮机厂房可按常规电厂标准维护。</p>
+          <span class="stat">二回路蒸汽 ~260–280°C ｜ 6–7 MPa ｜ 2–4 台蒸汽发生器/机组</span>
+        </div>
+      </div>
+
+      <div class="step s3">
+        <div class="step-num mono">03</div>
+        <div>
+          <h3>蒸汽推动汽轮机，带动发电机</h3>
+          <p class="desc">二回路蒸汽进入高压缸、低压缸逐级膨胀，推动汽轮机高速旋转。100 万千瓦级机组汽轮机轴长约 10 米、转速 3000 转/分，与发电机同轴。发电机转子磁场切割定子线圈，感应出 50 Hz 三相交流电 —— 从这一步起，和火电厂几乎没有区别，都是"蒸汽推轮、轮带发电"。</p>
+          <span class="stat">转速 3000 转/分（50 Hz） ｜ 单机容量 1000 MW 级 ｜ 出口 ~20 kV</span>
+        </div>
+      </div>
+
+      <div class="step s4">
+        <div class="step-num mono">04</div>
+        <div>
+          <h3>凝汽回收 · 升压并网 · 乏燃料与防护</h3>
+          <p class="desc">做功后的乏汽进入凝汽器，被三回路冷却水冷凝成水，由给水泵升压后送回蒸汽发生器，完成二回路闭环。厂内主变压器把 20 kV 升至 500 kV 或更高并入电网。约 33% 的堆芯热量从冷却塔散失 —— 这是热力学决定的，不是"浪费"。烧过的燃料棒（乏燃料）卸出堆芯后先在乏燃料池里冷却，再转运至中间贮存或后处理设施；多层屏障（燃料包壳、一回路压力边界、安全壳）把放射性物质限制在可控范围内。</p>
+          <span class="stat">厂内升压 20 kV → 500 kV ｜ 热效率 ~33–37% ｜ 年利用小时 7000–8000 h</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-panel reveal">
+      <div class="gen-grid">
+        <svg viewBox="0 0 460 400" fill="none">
+          <!-- 铀核 -->
+          <circle cx="180" cy="180" r="36" fill="#22374D" stroke="#9B7ED9" stroke-width="2"/>
+          <text x="180" y="186" fill="#9B7ED9" font-size="14" font-family="JetBrains Mono, monospace" text-anchor="middle">U-235</text>
+          <!-- 中子 incoming -->
+          <circle class="neutron n1" cx="80" cy="160" r="6"/>
+          <circle class="neutron n2" cx="90" cy="200" r="6"/>
+          <!-- 裂变产物 -->
+          <circle class="fission-flash" cx="140" cy="150" r="14" fill="#6B52A0" opacity="0.6"/>
+          <circle class="fission-flash" cx="220" cy="200" r="12" fill="#6B52A0" opacity="0.6"/>
+          <text x="130" y="130" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace">碎片 A</text>
+          <text x="210" y="230" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace">碎片 B</text>
+          <!-- 新中子 -->
+          <circle class="neutron n3" cx="240" cy="140" r="6"/>
+          <circle class="neutron n4" cx="160" cy="240" r="6"/>
+          <!-- 控制棒 -->
+          <rect class="control-rod" x="168" y="60" width="24" height="80" rx="3" fill="#4A6280" stroke="#5A7592"/>
+          <text x="180" y="50" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">控制棒</text>
+          <!-- 箭头说明 -->
+          <path d="M80 160 L140 170" stroke="#9B7ED9" stroke-width="1.5" marker-end="url(#arr)"/>
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6" fill="#9B7ED9"/>
+            </marker>
+          </defs>
+          <text x="230" y="320" fill="#9B7ED9" font-size="11" font-family="JetBrains Mono, monospace">链式反应：1 裂 → 2–3 新中子 → 再裂 …</text>
+          <text x="230" y="340" fill="#FFB25C" font-size="11" font-family="JetBrains Mono, monospace">控制棒插入 → 吸收中子 → 降功率</text>
+          <text x="230" y="360" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace">拔出 → 中子增多 → 升功率</text>
+        </svg>
+
+        <div class="gen-facts">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px;">图解 · 裂变链式反应</div>
+            <h3>堆芯里到底在发生什么？</h3>
+          </div>
+          <div class="gen-fact">
+            <p><strong>中子打铀核，核"裂开"并放热</strong>：一个中子被铀-235 吸收后，原子核变得不稳定，分裂成两个中等质量的碎片（裂变产物），同时释放约 200 MeV 能量和 2–3 个新中子。这些能量最终变成堆芯里的热能 —— 核电站发电的"源头"。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>链式反应需要"刚刚好"</strong>：如果每个裂变产生的中子里，平均有一个能再次引发裂变，反应就稳定自持。浓度太低（如天然铀 0.7%）或中子泄漏太多，反应就维持不了 —— 所以燃料需要浓缩到约 3–5%，远低于武器级（90%+）。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>控制棒 = 功率调节器</strong>：控制棒由强中子吸收材料（如硼、镉）制成。插入堆芯越深，吸收的中子越多，链式反应越弱、功率越低；拔出则相反。正常运行中，控制棒配合硼酸浓度微调，把堆芯功率稳定在设定值。紧急停堆时，控制棒靠重力或弹簧快速全部插入，数秒内切断链式反应。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grid">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">03 · 输送</div>
+      <h2>发出的电，去了哪里</h2>
+      <p class="lede">核电站单机容量大 —— 一台「华龙一号」机组约 100 万千瓦（1000 MW），满发时相当于 200 台 5 MW 风机同时转。核电年利用小时通常 7000–8000 小时，远高于风电（2000–3000 小时），是电网的"重型基荷电源"。厂内主变压器把 20 kV 升至 500 kV 级，才能高效送入国家级输电网络。</p>
+    </div>
+
+    <div class="transmission reveal">
+      <svg viewBox="0 0 1000 260" fill="none">
+        <!-- 发电机 -->
+        <rect x="40" y="170" width="70" height="50" rx="4" fill="#22374D" stroke="#5A7592"/>
+        <text x="75" y="200" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+        <text x="75" y="240" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">发电机 ≈20kV</text>
+
+        <path class="tflow" d="M110 195 H180"/>
+
+        <!-- 主变压器 -->
+        <rect x="180" y="175" width="50" height="40" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="205" y="240" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">主变压器</text>
+
+        <path class="tflow" d="M230 195 H310"/>
+
+        <!-- 升压站 -->
+        <rect x="310" y="155" width="70" height="60" rx="3" fill="#4A6280" stroke="#5A7592"/>
+        <text x="345" y="235" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">升压站</text>
+        <text x="345" y="249" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">500kV</text>
+
+        <path class="tflow" d="M380 185 H460"/>
+
+        <!-- 高压线路 -->
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="480" y1="220" x2="480" y2="100"/>
+          <line x1="450" y1="120" x2="510" y2="120"/>
+          <line x1="458" y1="140" x2="502" y2="140"/>
+        </g>
+        <path class="tflow" d="M460 120 H600"/>
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="620" y1="220" x2="620" y2="100"/>
+          <line x1="590" y1="120" x2="650" y2="120"/>
+          <line x1="598" y1="140" x2="642" y2="140"/>
+        </g>
+        <text x="550" y="90" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">500 kV 高压输电</text>
+
+        <path class="tflow" d="M650 120 H720"/>
+
+        <!-- 区域变电站 -->
+        <rect x="720" y="95" width="56" height="42" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="748" y="154" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">区域变电站</text>
+        <text x="748" y="168" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">降压至 10kV</text>
+
+        <path class="tflow" d="M776 116 H860"/>
+        <g>
+          <rect x="860" y="140" width="46" height="34" fill="#3A5068"/>
+          <polygon points="860,140 866,128 872,140" fill="#3A5068"/>
+          <text x="883" y="190" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">工厂</text>
+        </g>
+        <g>
+          <polygon points="930,140 950,122 970,140" fill="#3A5068"/>
+          <rect x="934" y="140" width="32" height="30" fill="#3A5068"/>
+          <text x="950" y="190" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">居民用户</text>
+        </g>
+        <path class="tflow" d="M860 155 H776"/>
+        <path class="tflow" d="M950 140 V116 H860"/>
+      </svg>
+
+      <div class="leg">
+        <span><i style="background:#4A6280"></i>变电站 / 变压器</span>
+        <span><i style="background:#5A7592"></i>输电铁塔</span>
+        <span><i style="background:var(--amber)"></i>流动虚线 = 电流传输方向</span>
+      </div>
+    </div>
+
+    <p class="lede reveal" style="margin-top:28px;margin-bottom:0;">
+      简单说：<strong>发电机（≈20 kV）→ 厂内主变压器 → 升压站（500 kV）→ 超高压线路远距离输送 → 区域变电站降压（10 kV）→ 配电网 → 工厂与居民用户。</strong>
+      核电通常建在沿海或水源充足处，单机 100 万千瓦级、年发电 70–80 亿度，承担电网基荷 —— 电压一路升高再降低，原理与火电、风电相同：高压低流，减少线路发热损耗。核电出力稳定、不受天气影响，是替代煤电降碳的重要基荷电源。
+    </p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">04 · 快问快答</div>
+      <h2>几个常见的好奇</h2>
+      <p class="lede">看完全流程，你可能还有这些疑问。</p>
+    </div>
+
+    <div class="faq-grid reveal">
+      <div class="faq-card">
+        <h3>核电会不会像原子弹一样爆炸？</h3>
+        <p>不会。民用压水堆与原子弹有三点根本不同：① 燃料铀-235 浓度仅约 3–5%，原子弹需要 90% 以上；② 堆芯几何结构与慢化剂设计使链式反应可控、可停，原子弹需要瞬间超临界；③ 多层安全系统（控制棒、应急停堆、安全壳）确保功率不会失控。严重事故（如堆芯过热）可能导致堆芯熔毁和放射性泄漏，但不会产生核爆炸。切尔诺贝利是石墨堆设计缺陷加违规操作，福岛是海啸导致断电失去冷却 —— 都与压水堆设计不同。</p>
+      </div>
+      <div class="faq-card">
+        <h3>核废料怎么处理？</h3>
+        <p>核电站运行产生的放射性废物分三类：低放废物（如工作服、过滤器）经压缩固化后送专门处置场；中放废物（如废树脂、废过滤芯）同样固化后深埋；高放废物主要是卸出的乏燃料棒，先在厂内乏燃料池里用水冷却 5–10 年，再转运至中间贮存库或后处理厂。中国正在推进深地质处置库选址，计划将高放废物固化后埋入地下数百米稳定岩层。一座百万千瓦机组运行 40 年，全部乏燃料约一个游泳池体积 —— 总量不大，但需严格管理数千年。</p>
+      </div>
+      <div class="faq-card">
+        <h3>为什么说核电是低碳基荷？</h3>
+        <p>核电运行过程不燃烧化石燃料，全生命周期碳排放约 5–15 g/kWh，与风电、光伏同量级，远低于煤电（800–900 g/kWh）。同时，核电机组出力稳定、年利用小时 7000–8000 小时，可 7×24 小时承担电网"基荷"（最低负荷那层），不像光伏中午才发、风电看天吃饭。在储能大规模普及之前，核电是替代煤电、保障供电可靠性同时大幅降碳的关键选项。</p>
+      </div>
+      <div class="faq-card">
+        <h3>中国主流堆型是什么？</h3>
+        <p>压水堆（PWR）是中国绝对主流 —— 在运和在建机组绝大多数是压水堆，包括引进的法系 M310/EPR、美式 AP1000，以及完全自主的「华龙一号」（HPR1000）。「华龙一号」单台容量约 116.1 万千瓦，采用能动与非能动相结合的安全系统，已实现批量化建设并出口巴基斯坦。此外，中国也在研发小型模块化反应堆（SMR）和第四代高温气冷堆等新型堆型，但短期内压水堆仍是最成熟、装机规模最大的路线。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="history-extend">
+  <div class="wrap">
+
+    <div class="history-extend reveal">
+      <div class="eyebrow">历史延伸</div>
+      <h3>核电如何从军用堆走向民用基荷</h3>
+      <p class="sub">从发明到落地，各摘几段关键节点。</p>
+      <div class="history-cols">
+        <div class="history-col">
+          <h4>世界</h4>
+          <div class="history-item"><div class="yr">1954–57</div><p><strong>奥布宁斯克与 Shippingport</strong>：民用核电示范证明裂变热可驱动汽轮发电机组。</p></div>
+          <div class="history-item"><div class="yr">1960s–70s</div><p><strong>压水堆成为主流</strong>：轻水堆技术路线在多国商用铺开，核电进入基荷俱乐部。</p></div>
+          <div class="history-item"><div class="yr">事故后–今</div><p><strong>安全强化与三代堆</strong>：三哩岛、切尔诺贝利、福岛之后标准显著加严；被动安全与模块化成为新方向。</p></div>
+        </div>
+        <div class="history-col">
+          <h4>中国</h4>
+          <div class="history-item"><div class="yr">1991–94</div><p><strong>秦山与大亚湾</strong>：大陆商用核电起步，分别走出自主设计与引进消化两条路径。</p></div>
+          <div class="history-item"><div class="yr">2000s–</div><p><strong>批量建设压水堆</strong>：沿海多省形成核电集群，单机迈向百万千瓦级。</p></div>
+          <div class="history-item"><div class="yr">近年</div><p><strong>华龙一号等三代堆</strong>：自主三代技术走出国门与多项目落地，核电继续充当低碳基荷。</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="closing" id="closing">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="justify-content:center;">SUMMARY</div>
+    <h2>一句话说完全过程</h2>
+    <p>铀-235 在堆芯里裂变放热，一回路高压水把热带到蒸汽发生器；二回路产汽推动汽轮机旋转，带动发电机发出交流电；乏汽冷凝回水、电流经主变压器升压，沿超高压线路输送、降压，最终流进工厂和家里的插座 —— 全程放射性水封闭在一回路里，与发电侧物理隔离。</p>
+    <div class="page-nav">
+      <a href="index.html">← 回到主页</a>
+      <a href="#top">↑ 回到顶部</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>NUCLEAR POWER PRINCIPLE · 图解仅用于科普，参数因堆型与机组而异</div>
+  <div class="copyright">© 2026 superj. All rights reserved. 未经许可，禁止转载与复制。</div>
+</footer>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+},{threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+
+const items = document.querySelectorAll('.anatomy-item');
+const parts = document.querySelectorAll('.part');
+function setActive(id){
+  parts.forEach(p=>p.classList.toggle('active', !!id && p.dataset.id===id));
+  items.forEach(it=>it.classList.toggle('active', !!id && it.dataset.target===id));
+}
+function clearActive(){ setActive(null); }
+items.forEach(it=>{
+  it.addEventListener('mouseenter',()=>setActive(it.dataset.target));
+  it.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(it.dataset.target); });
+});
+parts.forEach(p=>{
+  p.addEventListener('mouseenter',()=>setActive(p.dataset.id));
+  p.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(p.dataset.id); });
+});
+document.addEventListener('click', (e)=>{
+  if(e.target.closest('.part') || e.target.closest('.anatomy-item')) return;
+  clearActive();
+});
+
+(function(){
+  const links=[...document.querySelectorAll('.sec-nav a[href^="#"]')];
+  if(!links.length) return;
+  const sections=links.map(a=>{
+    const id=a.getAttribute('href').slice(1);
+    const el=document.getElementById(id);
+    return el?{a,el,id}:null;
+  }).filter(Boolean);
+  function sectionTop(el){
+    if(el===document.body || el===document.documentElement) return 0;
+    return el.getBoundingClientRect().top + window.scrollY;
+  }
+  function update(){
+    const maxScroll=Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    if(window.scrollY < 120){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===0));
+      return;
+    }
+    // 滚到页尾时，末段往往够不着中线判定，强制高亮最后一条
+    if(maxScroll > 0 && window.scrollY >= maxScroll - 24){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===sections.length-1));
+      return;
+    }
+    const mark=window.scrollY + window.innerHeight*0.28;
+    let current=sections[0];
+    for(const s of sections){
+      if(sectionTop(s.el) <= mark) current=s;
+    }
+    sections.forEach(s=>s.a.classList.toggle('active', s===current));
+  }
+  update();
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+})();
+
+
+(function(){
+  // 轻度防护：挡普通复制/右键，无法阻止查看源码或直接下载页面
+  const block = (e) => e.preventDefault();
+  document.addEventListener('contextmenu', block);
+  document.addEventListener('selectstart', block);
+  document.addEventListener('copy', block);
+  document.addEventListener('cut', block);
+  document.addEventListener('dragstart', block);
+})();
+
+</script>
+
+</body>
+</html>
