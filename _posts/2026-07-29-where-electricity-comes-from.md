@@ -5,25 +5,26 @@ categories: [科普]
 tags: [电力, 发电, 科普]
 ---
 
-家里插座里的电，到底是从哪来的？
+插上充电器的那一瞬间，你有没有突然愣一下：这电……到底从哪冒出来的？
 
-这套独立网页从「总览」一路拆到五种主流发电方式：火力、水力、风力、光伏、核能。每种都尽量讲清构造、能量怎么转成电、又怎样送上电网，并顺手回答几个常见问题。
+别急，我做了一套小网页，把「火力 / 水力 / 风力 / 光伏 / 核能」五种发电方式摊开来讲——从机器长什么样，到能量怎么一步步变成插座里的电流。
 
-→ **[打开知识库入口](/pages/where-electricity-comes-from/)**
+<!--more-->
 
-## 页面导航
+## 先从这里进
 
-| 页面 | 链接 |
-|------|------|
-| 总览首页 | [/pages/where-electricity-comes-from/](/pages/where-electricity-comes-from/) |
-| 火力发电 | [/pages/where-electricity-comes-from/thermal.html](/pages/where-electricity-comes-from/thermal.html) |
-| 水力发电 | [/pages/where-electricity-comes-from/hydro.html](/pages/where-electricity-comes-from/hydro.html) |
-| 风力发电 | [/pages/where-electricity-comes-from/wind.html](/pages/where-electricity-comes-from/wind.html) |
-| 光伏发电 | [/pages/where-electricity-comes-from/solar.html](/pages/where-electricity-comes-from/solar.html) |
-| 核能发电 | [/pages/where-electricity-comes-from/nuclear.html](/pages/where-electricity-comes-from/nuclear.html) |
+👉 **[点我打开「电从哪来」知识库](/pages/where-electricity-comes-from/)**
 
-如果你也好奇「电从哪来」，欢迎点进去随便翻翻。内容偏科普向，图解只作理解用，实际机组参数会因容量、厂商和场景而不同。
+想直接跳某一章也行：
+
+- [火力发电](/pages/where-electricity-comes-from/thermal.html) —— 烧出来的电
+- [水力发电](/pages/where-electricity-comes-from/hydro.html) —— 水冲出来的电
+- [风力发电](/pages/where-electricity-comes-from/wind.html) —— 风刮出来的电
+- [光伏发电](/pages/where-electricity-comes-from/solar.html) —— 太阳晒出来的电
+- [核能发电](/pages/where-electricity-comes-from/nuclear.html) —— 原子核里抠出来的电
+
+内容偏科普向，图解只为帮你建立直觉；真实电厂参数会随容量、厂商和场景变化，别拿去做工程手册就好～
 
 ---
 
-如果对你有帮助，欢迎点赞、关注、评论交流；有讲得不清楚或想补充的地方，也欢迎留言告诉我。
+要是看完觉得「哦原来是这样」，欢迎点赞、关注，或者在评论区甩个问题；讲得不清楚的地方，也随时拍砖。
