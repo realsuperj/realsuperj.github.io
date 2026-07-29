@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>风从叶片到灯泡 —— 风力发电全过程图解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0B1826;
+  --bg-panel:#122338;
+  --bg-panel-2:#0E1D2F;
+  --steel:#3A5068;
+  --steel-light:#5A7592;
+  --teal:#5CE1D8;
+  --teal-dim:#2C7A75;
+  --amber:#FFB25C;
+  --amber-dim:#8A5A2A;
+  --text-hi:#EAF2F8;
+  --text-lo:#8CA3B8;
+  --line:#1F3247;
+  --accent:#6BCBDE;
+  --accent-dim:#2F7A8A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg-deep);
+  color:var(--text-hi);
+  font-family:'IBM Plex Sans','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{
+  font-family:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif;
+  font-weight:600;
+  letter-spacing:0.01em;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;}
+.spine{
+  position:absolute;
+  left:50%;
+  top:100vh; /* 从首屏之后开始，避免竖线穿过 hero 文字 */
+  width:2px;
+  height:calc(100% - 100vh);
+  background:linear-gradient(180deg,
+    var(--accent) 0%, var(--accent) 32%,
+    var(--amber) 62%, var(--amber) 100%);
+  opacity:0.35;
+  z-index:0;
+}
+section{position:relative;z-index:1;padding:120px 0;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:18px;
+}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--accent);}
+.eyebrow.amber{color:var(--amber);}
+.eyebrow.amber::before{background:var(--amber);}
+h2{font-size:clamp(28px,4vw,40px);margin-bottom:16px;}
+.lede{color:var(--text-lo);font-size:17px;margin-bottom:56px;}
+
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;padding:80px 24px;
+  background:
+    radial-gradient(ellipse 900px 520px at 50% 18%, rgba(107,203,222,0.16), transparent 70%),
+    radial-gradient(ellipse 700px 420px at 50% 72%, rgba(107,203,222,0.07), transparent 65%);
+}
+.hero .eyebrow{justify-content:center;}
+.hero .eyebrow::before{display:none;}
+.hero h1{
+  font-size:clamp(36px,6vw,64px);
+  line-height:1.15;
+  max-width:840px;
+  margin:0 auto 20px;
+  padding:0 16px;
+  text-wrap:balance;
+}
+.hero h1 .hl{
+  color:var(--accent);
+  font-size:clamp(20px,3.2vw,30px);
+  font-weight:500;
+  display:inline-block;
+  margin-top:10px;
+  max-width:min(92vw,720px);
+  word-break:keep-all;
+  line-break:strict;
+  text-wrap:balance;
+}
+.hero h1 .hl .nb{white-space:nowrap;}
+.hero p{color:var(--text-lo);font-size:18px;max-width:520px;margin-bottom:56px;}
+.turbine-stage{width:min(560px,80vw);position:relative;}
+.turbine-stage svg{width:100%;height:auto;display:block;}
+.blade-group{transform-origin:280px 175px;animation:spin 7s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.wind-line{stroke:var(--accent);stroke-width:2;opacity:0;stroke-dasharray:6 10;animation:blow 3.2s linear infinite;}
+.wind-line:nth-child(1){animation-delay:0s;}
+.wind-line:nth-child(2){animation-delay:0.6s;}
+.wind-line:nth-child(3){animation-delay:1.2s;}
+@keyframes blow{
+  0%{opacity:0;stroke-dashoffset:60;}
+  15%{opacity:0.7;}
+  80%{opacity:0.7;}
+  100%{opacity:0;stroke-dashoffset:0;}
+}
+.scroll-cue{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-lo);font-size:12px;font-family:'JetBrains Mono',monospace;
+  letter-spacing:0.1em;
+}
+.scroll-cue .bar{width:1px;height:36px;background:linear-gradient(180deg,var(--accent),transparent);animation:pulseDown 1.8s ease-in-out infinite;}
+@keyframes pulseDown{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+.anatomy-grid{
+  display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;
+}
+.anatomy-svg-wrap{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:24px;
+}
+.anatomy-svg-wrap svg{width:100%;height:auto;display:block;}
+.part{cursor:pointer;transition:opacity .25s ease;}
+.part-fill{fill:var(--steel);stroke:var(--steel-light);stroke-width:1;transition:fill .25s ease;}
+.part.active .part-fill{fill:var(--accent-dim);stroke:var(--accent);}
+.anatomy-list{display:flex;flex-direction:column;gap:2px;}
+.anatomy-item{
+  padding:16px 18px;border-radius:4px;cursor:pointer;
+  border:1px solid transparent;
+  transition:background .2s ease,border-color .2s ease;
+}
+.anatomy-item:hover,.anatomy-item.active{
+  background:var(--bg-panel);border-color:var(--line);
+}
+.anatomy-item .num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px;margin-right:10px;}
+.anatomy-item h3{font-size:16px;display:inline;font-weight:600;}
+.anatomy-item p{color:var(--text-lo);font-size:14px;margin-top:6px;}
+
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{
+  display:grid;grid-template-columns:96px 1fr;gap:28px;
+  padding:36px 0;border-top:1px solid var(--line);
+}
+.step:last-child{border-bottom:1px solid var(--line);}
+.step-num{
+  font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;
+  color:var(--line);
+}
+.step.s1 .step-num{color:var(--accent);}
+.step.s2 .step-num{color:#7fd8cf;}
+.step.s3 .step-num{color:#c9b06e;}
+.step.s4 .step-num{color:var(--amber);}
+.step h3{font-size:20px;margin-bottom:8px;}
+.step .stat{
+  display:inline-block;margin-top:14px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--text-lo);background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:3px;padding:6px 12px;
+}
+.step p.desc{color:var(--text-lo);font-size:15px;max-width:620px;}
+
+.transmission{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:40px 24px;
+  overflow-x:auto;
+}
+.transmission svg{display:block;margin:0 auto;min-width:900px;width:100%;height:auto;}
+.transmission h3{font-size:16px;margin-bottom:20px;color:var(--text-hi);}
+.tflow{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.mflow{stroke:var(--teal);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-24;}}
+.leg{
+  display:flex;flex-wrap:wrap;gap:20px 32px;margin-top:28px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-lo);
+}
+.leg span{display:inline-flex;align-items:center;gap:8px;}
+.leg i{width:10px;height:10px;border-radius:2px;display:inline-block;background:var(--steel);}
+
+.gen-panel{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:44px 36px;
+  margin-top:72px;
+}
+.gen-grid{
+  display:grid;grid-template-columns:minmax(260px,400px) 1fr;
+  gap:48px;align-items:center;
+}
+.gen-grid svg{width:100%;height:auto;display:block;}
+.rotor-group{transform-origin:200px 200px;animation:spin 6s linear infinite;}
+.coil{animation:coilPulse 1.5s ease-in-out infinite;}
+.coil.c2{animation-delay:.25s;}
+.coil.c3{animation-delay:.5s;}
+.coil.c4{animation-delay:.75s;}
+.coil.c5{animation-delay:1s;}
+.coil.c6{animation-delay:1.25s;}
+@keyframes coilPulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+.gen-facts{display:flex;flex-direction:column;gap:20px;}
+.gen-facts h3{font-size:20px;}
+.gen-fact{padding-left:16px;border-left:2px solid var(--accent-dim);}
+.gen-fact p{color:var(--text-lo);font-size:15px;}
+.gen-fact strong{color:var(--text-hi);}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.faq-card{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:4px;padding:28px 26px;
+}
+.faq-card h3{font-size:17px;margin-bottom:10px;}
+.faq-card h3::before{
+  content:'Q';font-family:'JetBrains Mono',monospace;
+  color:var(--accent);margin-right:10px;font-size:14px;
+}
+.faq-card p{color:var(--text-lo);font-size:14.5px;}
+
+
+.history-extend{
+  margin-top:72px;
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:36px 28px;
+}
+.history-extend > .eyebrow{margin-bottom:12px;}
+.history-extend > h3{font-size:22px;margin-bottom:8px;}
+.history-extend > .sub{color:var(--text-lo);font-size:14.5px;margin-bottom:28px;}
+.history-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.history-col{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:22px 22px;
+}
+.history-col > h4{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;
+  color:var(--accent);margin-bottom:16px;font-weight:500;
+}
+.history-item{margin-bottom:16px;}
+.history-item:last-child{margin-bottom:0;}
+.history-item .yr{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--accent);margin-bottom:4px;letter-spacing:0.04em;
+}
+.history-item p{color:var(--text-lo);font-size:13.5px;}
+.history-item strong{color:var(--text-hi);font-weight:500;}
+
+.closing{
+  text-align:center;padding:140px 0 100px;
+}
+.closing h2{max-width:600px;margin:0 auto 20px;}
+.closing p{color:var(--text-lo);max-width:520px;margin:0 auto;}
+footer{
+  text-align:center;padding:40px 24px 60px;
+  color:var(--text-lo);font-size:13px;font-family:'JetBrains Mono',monospace;
+  border-top:1px solid var(--line);
+}
+
+@media (max-width:820px){
+  .anatomy-grid{grid-template-columns:1fr;}
+  .wrap{padding:0 20px;}
+  section{padding:80px 0;}
+  .spine{display:none;} /* 小屏下竖线会压住文字左缘，直接隐藏 */
+  .step{grid-template-columns:56px 1fr;gap:18px;}
+  .step-num{font-size:28px;}
+  .gen-panel{padding:28px 20px;}
+  .gen-grid{grid-template-columns:1fr;gap:32px;}
+  .faq-grid{grid-template-columns:1fr;}
+  .history-cols{grid-template-columns:1fr;}
+  .transmission{padding:28px 16px;}
+}
+
+.kb-home{
+  position:fixed;top:20px;left:20px;z-index:30;
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;background:rgba(11,24,38,0.72);backdrop-filter:blur(8px);
+  transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.kb-home:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 12%, rgba(11,24,38,0.85));
+}
+.page-nav{margin-top:32px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;}
+.page-nav a{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.page-nav a:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+
+.sec-nav{
+  position:fixed;left:10px;top:50%;transform:translateY(-50%);
+  z-index:28;display:flex;flex-direction:column;gap:8px;
+  padding:10px 6px;
+}
+.sec-nav a{
+  display:block;width:3px;height:26px;border-radius:2px;
+  background:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0.32;position:relative;
+  transition:opacity .2s ease, height .2s ease, transform .2s ease;
+}
+.sec-nav a:hover,.sec-nav a.active{opacity:1;}
+.sec-nav a.active{height:34px;}
+.sec-nav a::after{
+  content:attr(data-label);
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em;
+  color:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0;pointer-events:none;
+  transition:opacity .18s ease;
+}
+.sec-nav a:hover::after{opacity:1;}
+@media (max-width:900px){.sec-nav{display:none;}}
+
+
+/* content protection (deterrent only) */
+body{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+footer .copyright{
+  margin-top:12px;
+  font-size:12px;
+  opacity:0.85;
+  letter-spacing:0.02em;
+}
+
+</style>
+</head>
+<body>
+
+<a class="kb-home" href="index.html">← 回到主页</a>
+
+<nav class="sec-nav" style="--nav-accent:var(--accent)" aria-label="章节导航">
+  <a href="#top" data-label="顶栏 · 概览"></a>
+  <a href="#anatomy" data-label="01 · 构造"></a>
+  <a href="#steps" data-label="02 · 转换"></a>
+  <a href="#grid" data-label="03 · 输送"></a>
+  <a href="#faq" data-label="04 · 快问快答"></a>
+  <a href="#history-extend" data-label="历史延伸"></a>
+  <a href="#closing" data-label="小结"></a>
+</nav>
+
+<div class="spine" aria-hidden="true"></div>
+
+<section class="hero" id="top">
+  <div class="eyebrow">WIND → MECHANICAL → ELECTRICAL</div>
+  <h1>风从叶片到灯泡<br><span class="hl">一台风机怎么把风<span class="nb">变成电</span></span></h1>
+  <p>从一阵风吹过叶片，到电流点亮千里之外的一盏灯 —— 中间经过了哪些装置、哪几次能量转换？往下滚动，一步步看清楚。</p>
+
+  <div class="turbine-stage">
+    <svg viewBox="0 0 560 420" fill="none">
+      <path class="wind-line" d="M20 150 H120"/>
+      <path class="wind-line" d="M10 190 H130"/>
+      <path class="wind-line" d="M30 230 H110"/>
+      <line x1="60" y1="400" x2="500" y2="400" stroke="#1F3247" stroke-width="1"/>
+      <polygon points="272,400 288,400 282,185 278,185" fill="#3A5068"/>
+      <rect x="245" y="165" width="70" height="26" rx="4" fill="#5A7592"/>
+      <g class="blade-group">
+        <g transform="translate(280,178)">
+          <path d="M0,0 L4,-4 L10,-150 C10,-160 -10,-160 -10,-150 L-4,-4 Z" fill="#EAF2F8" opacity="0.92"/>
+          <path d="M0,0 L4,-4 L10,-150 C10,-160 -10,-160 -10,-150 L-4,-4 Z" fill="#EAF2F8" opacity="0.92" transform="rotate(120)"/>
+          <path d="M0,0 L4,-4 L10,-150 C10,-160 -10,-160 -10,-150 L-4,-4 Z" fill="#EAF2F8" opacity="0.92" transform="rotate(240)"/>
+          <circle r="9" fill="#8CA3B8"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="scroll-cue"><span>SCROLL</span><span class="bar"></span></div>
+</section>
+
+<section id="anatomy">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">01 · 构造</div>
+      <h2>先认识一台风机</h2>
+      <p class="lede">一台大型陆上风机高约 80–120 米，塔筒之上是机舱和三片叶片。点一点右边的部件名称，看看它在图上的位置。</p>
+    </div>
+
+    <div class="anatomy-grid reveal">
+      <div class="anatomy-svg-wrap">
+        <svg viewBox="0 0 320 420" fill="none">
+          <line x1="20" y1="400" x2="300" y2="400" stroke="#1F3247" stroke-width="1"/>
+          <g class="part" data-id="tower">
+            <polygon class="part-fill" points="150,400 170,400 158,120 162,120"/>
+          </g>
+          <g class="part" data-id="foundation">
+            <ellipse class="part-fill" cx="160" cy="400" rx="34" ry="8"/>
+          </g>
+          <g class="part" data-id="nacelle">
+            <rect class="part-fill" x="110" y="98" width="90" height="34" rx="5"/>
+          </g>
+          <g class="part" data-id="yaw">
+            <rect class="part-fill" x="148" y="128" width="24" height="8" rx="2"/>
+          </g>
+          <g class="part" data-id="blades">
+            <g transform="translate(112,115)">
+              <path class="part-fill" d="M0,0 L3,-3 L7,-108 C7,-115 -7,-115 -7,-108 L-3,-3 Z" transform="rotate(-15)"/>
+              <path class="part-fill" d="M0,0 L3,-3 L7,-108 C7,-115 -7,-115 -7,-108 L-3,-3 Z" transform="rotate(105)"/>
+              <path class="part-fill" d="M0,0 L3,-3 L7,-108 C7,-115 -7,-115 -7,-108 L-3,-3 Z" transform="rotate(225)"/>
+            </g>
+          </g>
+          <g class="part" data-id="hub">
+            <circle class="part-fill" cx="112" cy="115" r="8"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="anatomy-list">
+        <div class="anatomy-item" data-target="blades">
+          <span class="num">01</span><h3>叶片</h3>
+          <p>翼型截面，靠气流压力差产生升力推动旋转，是捕捉风能的第一环节。</p>
+        </div>
+        <div class="anatomy-item" data-target="hub">
+          <span class="num">02</span><h3>轮毂</h3>
+          <p>连接三片叶片与主轴，内部装有变桨机构，可转动叶片角度。</p>
+        </div>
+        <div class="anatomy-item" data-target="nacelle">
+          <span class="num">03</span><h3>机舱</h3>
+          <p>安装在塔筒顶部，内部藏着主轴、齿轮箱、发电机与控制系统 —— 真正的"能量转换车间"。</p>
+        </div>
+        <div class="anatomy-item" data-target="yaw">
+          <span class="num">04</span><h3>偏航系统</h3>
+          <p>驱动机舱水平转动，让叶片始终正对风向，捕风效率最大化。</p>
+        </div>
+        <div class="anatomy-item" data-target="tower">
+          <span class="num">05</span><h3>塔筒</h3>
+          <p>钢制锥形结构，把机舱抬升到更高、风速更大更稳定的空中。</p>
+        </div>
+        <div class="anatomy-item" data-target="foundation">
+          <span class="num">06</span><h3>基础</h3>
+          <p>埋入地下的钢筋混凝土基座，抵抗整机自重与风载引起的倾覆力矩。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="steps">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">02 · 转换</div>
+      <h2>风能变成电能，一共四步</h2>
+      <p class="lede">整个过程是一连串的能量"接力"：风能 → 机械能 → 更高转速的机械能 → 电能。这条"流水线"全部装在塔顶的机舱里，先看一眼剖面，再逐步拆解。</p>
+    </div>
+
+    <div class="transmission reveal" style="margin-bottom:72px;">
+      <h3>机舱剖面 · 能量的流水线（示意）</h3>
+      <svg viewBox="0 0 960 320" fill="none">
+        <!-- 塔筒 -->
+        <polygon points="718,320 762,320 755,250 725,250" fill="#3A5068"/>
+        <!-- 机舱外壳 -->
+        <rect x="120" y="90" width="700" height="160" rx="14" fill="#16283E" stroke="#3A5068" stroke-width="1.5"/>
+        <!-- 叶片（截断示意） -->
+        <polygon points="92,146 108,146 104,30 96,30" fill="#EAF2F8" opacity="0.85"/>
+        <line x1="88" y1="188" x2="46" y2="216" stroke="#EAF2F8" stroke-width="9" stroke-linecap="round" opacity="0.4"/>
+        <!-- 轮毂 -->
+        <circle cx="100" cy="170" r="28" fill="#5A7592"/>
+        <!-- 低速轴 -->
+        <rect x="128" y="162" width="160" height="16" rx="3" fill="#3A5068"/>
+        <!-- 齿轮箱 -->
+        <rect x="288" y="120" width="130" height="100" rx="8" fill="#22374D" stroke="#5A7592"/>
+        <circle cx="330" cy="170" r="30" stroke="#8CA3B8" stroke-width="3" stroke-dasharray="5 3"/>
+        <circle cx="384" cy="170" r="15" stroke="#8CA3B8" stroke-width="3" stroke-dasharray="4 3"/>
+        <!-- 高速轴 -->
+        <rect x="418" y="166" width="100" height="8" rx="2" fill="#3A5068"/>
+        <!-- 发电机 -->
+        <rect x="518" y="128" width="150" height="84" rx="10" fill="#22374D" stroke="#5A7592"/>
+        <line x1="545" y1="140" x2="545" y2="200" stroke="#3A5068" stroke-width="2"/>
+        <line x1="565" y1="140" x2="565" y2="200" stroke="#3A5068" stroke-width="2"/>
+        <text x="613" y="180" fill="#8CA3B8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+        <!-- 变流器·控制柜 -->
+        <rect x="694" y="136" width="86" height="72" rx="4" fill="#1B2F44" stroke="#5A7592"/>
+        <text x="737" y="177" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">AC·DC·AC</text>
+        <!-- 能量流：机械（青）→ 电（琥珀） -->
+        <path class="mflow" d="M128 170 H288"/>
+        <path class="mflow" d="M418 170 H518"/>
+        <path class="tflow" d="M668 170 H694"/>
+        <path class="tflow" d="M737 208 V320"/>
+        <!-- 标注 -->
+        <g stroke="#5A7592" stroke-width="1" stroke-dasharray="2 4" opacity="0.6">
+          <line x1="353" y1="78" x2="353" y2="116"/>
+          <line x1="737" y1="78" x2="737" y2="132"/>
+          <line x1="100" y1="202" x2="100" y2="276"/>
+          <line x1="208" y1="182" x2="208" y2="276"/>
+          <line x1="468" y1="180" x2="468" y2="276"/>
+          <line x1="593" y1="216" x2="593" y2="276"/>
+        </g>
+        <g fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">
+          <text x="353" y="68">齿轮箱 · 增速约 1:100</text>
+          <text x="737" y="68">变流器 · 控制柜</text>
+          <text x="100" y="294">轮毂</text>
+          <text x="208" y="294">低速轴 ≈10–20 转/分</text>
+          <text x="468" y="294">高速轴 ≈1000–1800 转/分</text>
+          <text x="593" y="294">发电机 ≈690 V</text>
+          <text x="850" y="294" text-anchor="middle">电缆沿塔筒下行</text>
+        </g>
+      </svg>
+      <div class="leg">
+        <span><i style="background:var(--teal)"></i>青色虚线 = 旋转的机械能</span>
+        <span><i style="background:var(--amber)"></i>琥珀虚线 = 电能</span>
+      </div>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step s1">
+        <div class="step-num mono">01</div>
+        <div>
+          <h3>风能 → 叶片旋转的机械能</h3>
+          <p class="desc">风吹过叶片翼型表面，两侧产生压力差形成升力，推动叶片绕轮毂旋转。风速越大、迎风角度越合适，捕获的能量越多。风太小（低于约 3 m/s）风机不启动；风太大（超过约 25 m/s）时叶片会"顺桨"——转到几乎与风平行、不再受力的角度——并刹车停机，防止超速损坏。</p>
+          <span class="stat">工作风速 约 3–25 m/s ｜ 叶轮转速 约 10–20 转/分</span>
+        </div>
+      </div>
+
+      <div class="step s2">
+        <div class="step-num mono">02</div>
+        <div>
+          <h3>低速轴 → 齿轮箱增速 → 高速轴</h3>
+          <p class="desc">叶轮转速太低，发电机无法直接高效发电，齿轮箱把每分钟十几转的低速旋转，增速到发电机需要的转速。部分"直驱式"机型省去齿轮箱，改用多极发电机直接匹配低转速。</p>
+          <span class="stat">典型增速比 约 1:100 ｜ 高速轴转速 约 1000–1800 转/分</span>
+        </div>
+      </div>
+
+      <div class="step s3">
+        <div class="step-num mono">03</div>
+        <div>
+          <h3>机械能 → 电能</h3>
+          <p class="desc">高速旋转的主轴带动发电机转子，转子磁场与定子线圈相对运动，切割磁感线，在线圈中感应出交流电 —— 这一步是电磁感应，也是所有旋转发电方式的共同原理。转子和定子是什么，下文有单独图解。</p>
+          <span class="stat">发电机输出电压 约 690 V 交流</span>
+        </div>
+      </div>
+
+      <div class="step s4">
+        <div class="step-num mono">04</div>
+        <div>
+          <h3>变流 · 升压 · 并网</h3>
+          <p class="desc">风速忽大忽小，发电机转速跟着波动，发出的电频率并不稳定，不能直接入网。变流器先把这股"不稳定的电"整流成直流，再逆变成与电网严格同步的 50 Hz 标准交流；随后经机舱或塔筒底部的箱式变压器升压，减小传输电流、降低损耗，才能送入输电线路。</p>
+          <span class="stat">箱变升压至 约 35 kV</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-panel reveal">
+      <div class="gen-grid">
+        <svg viewBox="0 0 460 400" fill="none">
+          <!-- 定子：外环 + 六组线圈（固定不动） -->
+          <circle cx="200" cy="200" r="160" stroke="#22374D" stroke-width="34"/>
+          <circle cx="200" cy="200" r="177" stroke="#3A5068" stroke-width="1"/>
+          <g fill="#1F5F5A" stroke="#5CE1D8" stroke-width="1.5">
+            <g transform="rotate(0 200 200)"><rect class="coil c1" x="186" y="30" width="28" height="36" rx="8"/></g>
+            <g transform="rotate(60 200 200)"><rect class="coil c2" x="186" y="30" width="28" height="36" rx="8"/></g>
+            <g transform="rotate(120 200 200)"><rect class="coil c3" x="186" y="30" width="28" height="36" rx="8"/></g>
+            <g transform="rotate(180 200 200)"><rect class="coil c4" x="186" y="30" width="28" height="36" rx="8"/></g>
+            <g transform="rotate(240 200 200)"><rect class="coil c5" x="186" y="30" width="28" height="36" rx="8"/></g>
+            <g transform="rotate(300 200 200)"><rect class="coil c6" x="186" y="30" width="28" height="36" rx="8"/></g>
+          </g>
+          <!-- 转子：跟主轴一起旋转的磁体 -->
+          <g class="rotor-group">
+            <path d="M96 200 A104 104 0 0 1 304 200 Z" fill="#7A4E22" stroke="#FFB25C"/>
+            <path d="M96 200 A104 104 0 0 0 304 200 Z" fill="#1B3A50" stroke="#5A7592"/>
+            <text x="200" y="162" fill="#FFB25C" font-size="26" font-weight="700" font-family="Space Grotesk, sans-serif" text-anchor="middle">N</text>
+            <text x="200" y="262" fill="#8CA3B8" font-size="26" font-weight="700" font-family="Space Grotesk, sans-serif" text-anchor="middle">S</text>
+          </g>
+          <circle cx="200" cy="200" r="16" fill="#5A7592" stroke="#8CA3B8"/>
+          <!-- 标注 -->
+          <line x1="52" y1="38" x2="72" y2="102" stroke="#5A7592" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
+          <text x="14" y="30" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace">定子 · 不动的线圈</text>
+          <line x1="88" y1="368" x2="128" y2="282" stroke="#5A7592" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
+          <text x="14" y="386" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace">转子 · 旋转的磁体</text>
+          <path class="tflow" d="M378 190 H448"/>
+          <path class="tflow" d="M378 210 H448"/>
+          <text x="448" y="178" fill="#FFB25C" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="end">感应电流 →</text>
+        </svg>
+
+        <div class="gen-facts">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px;">图解 · 发电机内部</div>
+            <h3>转子与定子：发电的最后一厘米</h3>
+          </div>
+          <div class="gen-fact">
+            <p><strong>定子</strong>："定"就是定住不动。它是发电机固定的外壳，内壁绕满了一圈圈铜线圈，电流最终就从这些线圈里被"感应"出来。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>转子</strong>："转"就是跟着轴转。它是中间被主轴带着旋转的部分，本质是一块强磁铁（或通电励磁的电磁铁），转起来就带着磁场一起扫过四周的线圈。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>电磁感应</strong>：磁铁在线圈旁运动，线圈里就会产生电流 —— 这正是初中物理"磁铁插入线圈、电流表指针摆动"实验的放大版。转得越快、磁场越强、线圈越多，发出的电就越多。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grid">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">03 · 输送</div>
+      <h2>发出的电，去了哪里</h2>
+      <p class="lede">一台风机的电量很小，真正送上电网的，是一整片风电场几十上百台风机汇集后、层层升压的电流。</p>
+    </div>
+
+    <div class="transmission reveal">
+      <svg viewBox="0 0 1000 260" fill="none">
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="60" y1="220" x2="60" y2="120"/>
+          <line x1="60" y1="120" x2="40" y2="90"/>
+          <line x1="60" y1="120" x2="80" y2="95"/>
+          <line x1="60" y1="120" x2="55" y2="150"/>
+          <line x1="130" y1="220" x2="130" y2="140"/>
+          <line x1="130" y1="140" x2="112" y2="112"/>
+          <line x1="130" y1="140" x2="150" y2="116"/>
+          <line x1="130" y1="140" x2="126" y2="168"/>
+        </g>
+        <text x="95" y="240" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">风电场 · 多台风机</text>
+
+        <rect x="210" y="190" width="34" height="26" rx="2" fill="#3A5068"/>
+        <text x="227" y="235" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">箱变 35kV</text>
+
+        <path class="tflow" d="M60 220 H210"/>
+        <path class="tflow" d="M130 220 H210"/>
+        <path class="tflow" d="M244 203 H330"/>
+
+        <rect x="330" y="170" width="60" height="46" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="360" y="232" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">升压站</text>
+        <text x="360" y="246" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">110/220kV</text>
+
+        <path class="tflow" d="M390 193 H460"/>
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="480" y1="220" x2="480" y2="110"/>
+          <line x1="450" y1="130" x2="510" y2="130"/>
+          <line x1="458" y1="150" x2="502" y2="150"/>
+        </g>
+        <path class="tflow" d="M460 130 H600"/>
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="620" y1="220" x2="620" y2="110"/>
+          <line x1="590" y1="130" x2="650" y2="130"/>
+          <line x1="598" y1="150" x2="642" y2="150"/>
+        </g>
+        <text x="550" y="105" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">高压输电线路</text>
+
+        <path class="tflow" d="M650 130 H720"/>
+        <rect x="720" y="105" width="56" height="42" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="748" y="164" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">区域变电站</text>
+        <text x="748" y="178" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">降压至 10kV</text>
+
+        <path class="tflow" d="M776 126 H860"/>
+        <g>
+          <rect x="860" y="150" width="46" height="34" fill="#3A5068"/>
+          <polygon points="860,150 866,138 872,150" fill="#3A5068"/>
+          <text x="883" y="200" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">工厂</text>
+        </g>
+        <g>
+          <polygon points="930,150 950,132 970,150" fill="#3A5068"/>
+          <rect x="934" y="150" width="32" height="30" fill="#3A5068"/>
+          <text x="950" y="200" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">居民用户</text>
+        </g>
+        <path class="tflow" d="M860 165 H776"/>
+        <path class="tflow" d="M950 150 V126 H860"/>
+      </svg>
+
+      <div class="leg">
+        <span><i style="background:#5A7592"></i>风机与线塔</span>
+        <span><i style="background:#4A6280"></i>变电站</span>
+        <span><i style="background:var(--amber)"></i>流动虚线 = 电流传输方向</span>
+      </div>
+    </div>
+
+    <p class="lede reveal" style="margin-top:28px;margin-bottom:0;">
+      简单说：<strong>风机发电（690V）→ 箱变升压（35kV）→ 多台风机汇流 → 升压站升压（110/220kV）→ 高压线路远距离输送 → 区域变电站降压（10kV）→ 配电网 → 工厂与居民用户。</strong>
+      电压之所以要一路升高再降低，是因为同样的功率下，电压越高、电流越小，输电线路发热损耗就越小。
+    </p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">04 · 快问快答</div>
+      <h2>几个常见的好奇</h2>
+      <p class="lede">看完全流程，你可能还有这些疑问。</p>
+    </div>
+
+    <div class="faq-grid reveal">
+      <div class="faq-card">
+        <h3>为什么偏偏是三片叶片？</h3>
+        <p>叶片不是越多越好——叶片之间会互相"抢风"。三片是效率、平衡与成本的最佳折中：两片在旋转中受力不均、抖动明显，四片以上多出来的发电量抵不过多出来的重量和造价。</p>
+      </div>
+      <div class="faq-card">
+        <h3>能把吹来的风 100% 变成电吗？</h3>
+        <p>不能。如果风的动能被全部拦下，风就会在叶轮后方"堵死"，后面的风进不来。理论上最多只能提取约 59.3%（贝茨极限），现代风机实际能做到 40%–50%，已经相当接近理论上限。</p>
+      </div>
+      <div class="faq-card">
+        <h3>一台风机能发多少电？</h3>
+        <p>一台 5 MW 的主流陆上风机，满功率转 1 小时就是 5000 度电——大约够一个普通家庭用上一两年。按典型的年利用小时折算，一台风机一年发的电能满足几千户家庭的全年用电。</p>
+      </div>
+      <div class="faq-card">
+        <h3>为什么有的风机没有齿轮箱？</h3>
+        <p>"直驱式"风机让叶轮直接带动一台多极环形发电机，用更多的磁极对来弥补转速低。省去齿轮箱意味着少一个易损部件、维护更省，代价是发电机更大更重、造价更高——两条技术路线至今并存。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="history-extend">
+  <div class="wrap">
+
+    <div class="history-extend reveal">
+      <div class="eyebrow">历史延伸</div>
+      <h3>风机如何从风车走到电网</h3>
+      <p class="sub">从发明到落地，各摘几段关键节点。</p>
+      <div class="history-cols">
+        <div class="history-col">
+          <h4>世界</h4>
+          <div class="history-item"><div class="yr">1887–1900s</div><p><strong>早期实验风机</strong>：苏格兰与丹麦等地出现为农场供电的小型风电机，证明「风可以发电」，但远未并网规模化。</p></div>
+          <div class="history-item"><div class="yr">1970s–80s</div><p><strong>石油危机后的三叶片机</strong>：丹麦等地定型现代水平轴三叶片并网风机，可靠性与成本开始可谈商业部署。</p></div>
+          <div class="history-item"><div class="yr">2000s–</div><p><strong>海上风电与巨型叶轮</strong>：单机容量一路冲向十余兆瓦，叶片长度超过足球场，风电进入主力新能源行列。</p></div>
+        </div>
+        <div class="history-col">
+          <h4>中国</h4>
+          <div class="history-item"><div class="yr">1980s–90s</div><p><strong>示范与引进</strong>：沿海与「三北」地区建设早期风电场，技术与设备大量引进消化。</p></div>
+          <div class="history-item"><div class="yr">2006 前后</div><p><strong>可再生能源法与产业爆发</strong>：政策与本土整机产业链成熟，装机进入高速增长。</p></div>
+          <div class="history-item"><div class="yr">近年</div><p><strong>陆上大型化 + 海上起步</strong>：风机单机越做越大，海上风电与沙戈荒大基地成为新增长点。</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="closing" id="closing">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="justify-content:center;">SUMMARY</div>
+    <h2>一句话说完全过程</h2>
+    <p>风的动能推动叶片旋转，齿轮箱把转速提高，发电机把机械能转成电能，再经过一路升压、输送、降压，最终流进工厂和家里的插座。核心的能量转换只有一步 —— 发电机里的机械能变电能。</p>
+    <div class="page-nav">
+      <a href="index.html">← 回到主页</a>
+      <a href="#top">↑ 回到顶部</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>WIND TURBINE PRINCIPLE · 图解仅用于科普，实际机型参数因厂商与容量不同而有差异</div>
+  <div class="copyright">© 2026 superj. All rights reserved. 未经许可，禁止转载与复制。</div>
+</footer>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+},{threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+
+const items = document.querySelectorAll('.anatomy-item');
+const parts = document.querySelectorAll('.part');
+function setActive(id){
+  parts.forEach(p=>p.classList.toggle('active', !!id && p.dataset.id===id));
+  items.forEach(it=>it.classList.toggle('active', !!id && it.dataset.target===id));
+}
+function clearActive(){ setActive(null); }
+items.forEach(it=>{
+  it.addEventListener('mouseenter',()=>setActive(it.dataset.target));
+  it.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(it.dataset.target); });
+});
+parts.forEach(p=>{
+  p.addEventListener('mouseenter',()=>setActive(p.dataset.id));
+  p.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(p.dataset.id); });
+});
+document.addEventListener('click', (e)=>{
+  if(e.target.closest('.part') || e.target.closest('.anatomy-item')) return;
+  clearActive();
+});
+
+(function(){
+  const links=[...document.querySelectorAll('.sec-nav a[href^="#"]')];
+  if(!links.length) return;
+  const sections=links.map(a=>{
+    const id=a.getAttribute('href').slice(1);
+    const el=document.getElementById(id);
+    return el?{a,el,id}:null;
+  }).filter(Boolean);
+  function sectionTop(el){
+    if(el===document.body || el===document.documentElement) return 0;
+    return el.getBoundingClientRect().top + window.scrollY;
+  }
+  function update(){
+    const maxScroll=Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    if(window.scrollY < 120){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===0));
+      return;
+    }
+    // 滚到页尾时，末段往往够不着中线判定，强制高亮最后一条
+    if(maxScroll > 0 && window.scrollY >= maxScroll - 24){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===sections.length-1));
+      return;
+    }
+    const mark=window.scrollY + window.innerHeight*0.28;
+    let current=sections[0];
+    for(const s of sections){
+      if(sectionTop(s.el) <= mark) current=s;
+    }
+    sections.forEach(s=>s.a.classList.toggle('active', s===current));
+  }
+  update();
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+})();
+
+
+(function(){
+  // 轻度防护：挡普通复制/右键，无法阻止查看源码或直接下载页面
+  const block = (e) => e.preventDefault();
+  document.addEventListener('contextmenu', block);
+  document.addEventListener('selectstart', block);
+  document.addEventListener('copy', block);
+  document.addEventListener('cut', block);
+  document.addEventListener('dragstart', block);
+})();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>水从水库到灯泡 —— 水力发电全过程图解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0B1826;
+  --bg-panel:#122338;
+  --bg-panel-2:#0E1D2F;
+  --steel:#3A5068;
+  --steel-light:#5A7592;
+  --teal:#5CE1D8;
+  --teal-dim:#2C7A75;
+  --amber:#FFB25C;
+  --amber-dim:#8A5A2A;
+  --text-hi:#EAF2F8;
+  --text-lo:#8CA3B8;
+  --line:#1F3247;
+  --accent:#4AA8C9;
+  --accent-dim:#2E6F88;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg-deep);
+  color:var(--text-hi);
+  font-family:'IBM Plex Sans','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{
+  font-family:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif;
+  font-weight:600;
+  letter-spacing:0.01em;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;}
+.spine{
+  position:absolute;
+  left:50%;
+  top:100vh;
+  width:2px;
+  height:calc(100% - 100vh);
+  background:linear-gradient(180deg,
+    var(--accent) 0%, var(--accent) 32%,
+    var(--amber) 62%, var(--amber) 100%);
+  opacity:0.35;
+  z-index:0;
+}
+section{position:relative;z-index:1;padding:120px 0;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:18px;
+}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--accent);}
+.eyebrow.amber{color:var(--amber);}
+.eyebrow.amber::before{background:var(--amber);}
+h2{font-size:clamp(28px,4vw,40px);margin-bottom:16px;}
+.lede{color:var(--text-lo);font-size:17px;margin-bottom:56px;}
+
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;padding:80px 24px;
+  background:
+    radial-gradient(ellipse 900px 520px at 50% 18%, rgba(74,168,201,0.16), transparent 70%),
+    radial-gradient(ellipse 700px 420px at 50% 72%, rgba(74,168,201,0.07), transparent 65%);
+}
+.hero .eyebrow{justify-content:center;}
+.hero .eyebrow::before{display:none;}
+.hero h1{
+  font-size:clamp(36px,6vw,64px);
+  line-height:1.15;
+  max-width:840px;
+  margin:0 auto 20px;
+  padding:0 16px;
+  text-wrap:balance;
+}
+.hero h1 .hl{
+  color:var(--accent);
+  font-size:clamp(20px,3.2vw,30px);
+  font-weight:500;
+  display:inline-block;
+  margin-top:10px;
+  max-width:min(92vw,720px);
+  word-break:keep-all;
+  line-break:strict;
+  text-wrap:balance;
+}
+.hero h1 .hl .nb{white-space:nowrap;}
+.hero p{color:var(--text-lo);font-size:18px;max-width:520px;margin-bottom:56px;}
+.hydro-stage{width:min(560px,80vw);position:relative;}
+.hydro-stage svg{width:100%;height:auto;display:block;}
+.water-drop{fill:var(--teal);opacity:0;animation:fall 2.4s ease-in infinite;}
+.water-drop:nth-child(1){animation-delay:0s;}
+.water-drop:nth-child(2){animation-delay:0.5s;}
+.water-drop:nth-child(3){animation-delay:1s;}
+.water-drop:nth-child(4){animation-delay:1.5s;}
+.water-stream{stroke:var(--teal);stroke-width:2;opacity:0;stroke-dasharray:4 8;animation:stream 2.4s ease-in infinite;}
+.water-stream:nth-child(5){animation-delay:0.2s;}
+.water-stream:nth-child(6){animation-delay:0.7s;}
+@keyframes fall{
+  0%{opacity:0;transform:translateY(0);}
+  15%{opacity:0.85;}
+  85%{opacity:0.85;}
+  100%{opacity:0;transform:translateY(90px);}
+}
+@keyframes stream{
+  0%{opacity:0;stroke-dashoffset:40;}
+  20%{opacity:0.7;}
+  80%{opacity:0.7;}
+  100%{opacity:0;stroke-dashoffset:0;}
+}
+.scroll-cue{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-lo);font-size:12px;font-family:'JetBrains Mono',monospace;
+  letter-spacing:0.1em;
+}
+.scroll-cue .bar{width:1px;height:36px;background:linear-gradient(180deg,var(--accent),transparent);animation:pulseDown 1.8s ease-in-out infinite;}
+@keyframes pulseDown{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+.anatomy-grid{
+  display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;
+}
+.anatomy-svg-wrap{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:24px;
+}
+.anatomy-svg-wrap svg{width:100%;height:auto;display:block;}
+.part{cursor:pointer;transition:opacity .25s ease;}
+.part-fill{fill:var(--steel);stroke:var(--steel-light);stroke-width:1;transition:fill .25s ease;}
+.part.active .part-fill{fill:var(--accent-dim);stroke:var(--accent);}
+.anatomy-list{display:flex;flex-direction:column;gap:2px;}
+.anatomy-item{
+  padding:16px 18px;border-radius:4px;cursor:pointer;
+  border:1px solid transparent;
+  transition:background .2s ease,border-color .2s ease;
+}
+.anatomy-item:hover,.anatomy-item.active{
+  background:var(--bg-panel);border-color:var(--line);
+}
+.anatomy-item .num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px;margin-right:10px;}
+.anatomy-item h3{font-size:16px;display:inline;font-weight:600;}
+.anatomy-item p{color:var(--text-lo);font-size:14px;margin-top:6px;}
+
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{
+  display:grid;grid-template-columns:96px 1fr;gap:28px;
+  padding:36px 0;border-top:1px solid var(--line);
+}
+.step:last-child{border-bottom:1px solid var(--line);}
+.step-num{
+  font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;
+  color:var(--line);
+}
+.step.s1 .step-num{color:var(--accent);}
+.step.s2 .step-num{color:#7fd8cf;}
+.step.s3 .step-num{color:#c9b06e;}
+.step.s4 .step-num{color:var(--amber);}
+.step h3{font-size:20px;margin-bottom:8px;}
+.step .stat{
+  display:inline-block;margin-top:14px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--text-lo);background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:3px;padding:6px 12px;
+}
+.step p.desc{color:var(--text-lo);font-size:15px;max-width:620px;}
+
+.transmission{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:40px 24px;
+  overflow-x:auto;
+}
+.transmission svg{display:block;margin:0 auto;min-width:900px;width:100%;height:auto;}
+.transmission h3{font-size:16px;margin-bottom:20px;color:var(--text-hi);}
+.tflow{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.mflow{stroke:var(--teal);stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+.wflow{stroke:#4A9FD4;stroke-width:2;fill:none;stroke-dasharray:4 8;animation:dash 1.4s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-24;}}
+.leg{
+  display:flex;flex-wrap:wrap;gap:20px 32px;margin-top:28px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-lo);
+}
+.leg span{display:inline-flex;align-items:center;gap:8px;}
+.leg i{width:10px;height:10px;border-radius:2px;display:inline-block;background:var(--steel);}
+
+.gen-panel{
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:44px 36px;
+  margin-top:72px;
+}
+.gen-grid{
+  display:grid;grid-template-columns:minmax(260px,400px) 1fr;
+  gap:48px;align-items:center;
+}
+.gen-grid svg{width:100%;height:auto;display:block;}
+.runner-group{transform-origin:200px 280px;animation:spin 5s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.head-bar{animation:headPulse 2s ease-in-out infinite;}
+.head-bar.h2{animation-delay:.4s;}
+@keyframes headPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+.flow-line{animation:flowPulse 1.8s ease-in-out infinite;}
+.flow-line.f2{animation-delay:.3s;}
+.flow-line.f3{animation-delay:.6s;}
+@keyframes flowPulse{0%,100%{opacity:.35;}50%{opacity:1;}}
+.gen-facts{display:flex;flex-direction:column;gap:20px;}
+.gen-facts h3{font-size:20px;}
+.gen-fact{padding-left:16px;border-left:2px solid var(--accent-dim);}
+.gen-fact p{color:var(--text-lo);font-size:15px;}
+.gen-fact strong{color:var(--text-hi);}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.faq-card{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:4px;padding:28px 26px;
+}
+.faq-card h3{font-size:17px;margin-bottom:10px;}
+.faq-card h3::before{
+  content:'Q';font-family:'JetBrains Mono',monospace;
+  color:var(--accent);margin-right:10px;font-size:14px;
+}
+.faq-card p{color:var(--text-lo);font-size:14.5px;}
+
+
+.history-extend{
+  margin-top:72px;
+  background:var(--bg-panel-2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:36px 28px;
+}
+.history-extend > .eyebrow{margin-bottom:12px;}
+.history-extend > h3{font-size:22px;margin-bottom:8px;}
+.history-extend > .sub{color:var(--text-lo);font-size:14.5px;margin-bottom:28px;}
+.history-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.history-col{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:22px 22px;
+}
+.history-col > h4{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;
+  color:var(--accent);margin-bottom:16px;font-weight:500;
+}
+.history-item{margin-bottom:16px;}
+.history-item:last-child{margin-bottom:0;}
+.history-item .yr{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--accent);margin-bottom:4px;letter-spacing:0.04em;
+}
+.history-item p{color:var(--text-lo);font-size:13.5px;}
+.history-item strong{color:var(--text-hi);font-weight:500;}
+
+.closing{
+  text-align:center;padding:140px 0 100px;
+}
+.closing h2{max-width:600px;margin:0 auto 20px;}
+.closing p{color:var(--text-lo);max-width:520px;margin:0 auto;}
+footer{
+  text-align:center;padding:40px 24px 60px;
+  color:var(--text-lo);font-size:13px;font-family:'JetBrains Mono',monospace;
+  border-top:1px solid var(--line);
+}
+
+@media (max-width:820px){
+  .anatomy-grid{grid-template-columns:1fr;}
+  .wrap{padding:0 20px;}
+  section{padding:80px 0;}
+  .spine{display:none;}
+  .step{grid-template-columns:56px 1fr;gap:18px;}
+  .step-num{font-size:28px;}
+  .gen-panel{padding:28px 20px;}
+  .gen-grid{grid-template-columns:1fr;gap:32px;}
+  .faq-grid{grid-template-columns:1fr;}
+  .history-cols{grid-template-columns:1fr;}
+  .transmission{padding:28px 16px;}
+}
+
+.kb-home{
+  position:fixed;top:20px;left:20px;z-index:30;
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;background:rgba(11,24,38,0.72);backdrop-filter:blur(8px);
+  transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.kb-home:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 12%, rgba(11,24,38,0.85));
+}
+.page-nav{margin-top:32px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;}
+.page-nav a{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+  color:var(--text-lo);border:1px solid var(--line);border-radius:3px;
+  padding:8px 14px;transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.page-nav a:hover{
+  color:var(--accent);border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+
+.sec-nav{
+  position:fixed;left:10px;top:50%;transform:translateY(-50%);
+  z-index:28;display:flex;flex-direction:column;gap:8px;
+  padding:10px 6px;
+}
+.sec-nav a{
+  display:block;width:3px;height:26px;border-radius:2px;
+  background:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0.32;position:relative;
+  transition:opacity .2s ease, height .2s ease, transform .2s ease;
+}
+.sec-nav a:hover,.sec-nav a.active{opacity:1;}
+.sec-nav a.active{height:34px;}
+.sec-nav a::after{
+  content:attr(data-label);
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em;
+  color:var(--nav-accent, var(--accent, var(--teal)));
+  opacity:0;pointer-events:none;
+  transition:opacity .18s ease;
+}
+.sec-nav a:hover::after{opacity:1;}
+@media (max-width:900px){.sec-nav{display:none;}}
+
+
+/* content protection (deterrent only) */
+body{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+footer .copyright{
+  margin-top:12px;
+  font-size:12px;
+  opacity:0.85;
+  letter-spacing:0.02em;
+}
+
+</style>
+</head>
+<body>
+
+<a class="kb-home" href="index.html">← 回到主页</a>
+
+<nav class="sec-nav" style="--nav-accent:var(--accent)" aria-label="章节导航">
+  <a href="#top" data-label="顶栏 · 概览"></a>
+  <a href="#anatomy" data-label="01 · 构造"></a>
+  <a href="#steps" data-label="02 · 转换"></a>
+  <a href="#grid" data-label="03 · 输送"></a>
+  <a href="#faq" data-label="04 · 快问快答"></a>
+  <a href="#history-extend" data-label="历史延伸"></a>
+  <a href="#closing" data-label="小结"></a>
+</nav>
+
+<div class="spine" aria-hidden="true"></div>
+
+<section class="hero" id="top">
+  <div class="eyebrow">POTENTIAL → KINETIC → MECHANICAL → ELECTRICAL</div>
+  <h1>水从水库到灯泡<br><span class="hl">一座水电站怎么把落差<span class="nb">变成电</span></span></h1>
+  <p>从高处的水库蓄水，到电流流进电网 —— 中间经过了哪些装置、哪几次能量转换？往下滚动，一步步看清楚。</p>
+
+  <div class="hydro-stage">
+    <svg viewBox="0 0 560 420" fill="none">
+      <!-- 山体背景 -->
+      <polygon points="0,380 80,120 200,80 560,60 560,420 0,420" fill="#0E1D2F" opacity="0.6"/>
+      <!-- 水库水面 -->
+      <rect x="0" y="130" width="340" height="90" fill="#1B3A50" opacity="0.5"/>
+      <line x1="0" y1="130" x2="340" y2="130" stroke="#4A9FD4" stroke-width="2" opacity="0.6"/>
+      <!-- 大坝 -->
+      <polygon points="340,220 400,220 400,130 340,130" fill="#3A5068" stroke="#5A7592" stroke-width="1"/>
+      <polygon points="340,130 400,130 380,100 340,100" fill="#5A7592"/>
+      <!-- 溢洪道 -->
+      <path d="M380 100 L400 100 L400 130" fill="none" stroke="#5A7592" stroke-width="1"/>
+      <!-- 进水口 -->
+      <rect x="350" y="155" width="16" height="20" rx="2" fill="#2C7A75"/>
+      <!-- 压力钢管 -->
+      <rect x="356" y="175" width="8" height="80" fill="#3A5068"/>
+      <!-- 厂房 -->
+      <rect x="320" y="255" width="80" height="50" rx="4" fill="#22374D" stroke="#5A7592"/>
+      <rect x="340" y="240" width="40" height="18" rx="3" fill="#4A6280" stroke="#5A7592"/>
+      <!-- 下游河道 -->
+      <rect x="0" y="380" width="560" height="40" fill="#1B3A50" opacity="0.4"/>
+      <line x1="0" y1="380" x2="560" y2="380" stroke="#1F3247" stroke-width="1"/>
+      <!-- 下落水滴动画 -->
+      <circle class="water-drop" cx="360" cy="140" r="4"/>
+      <circle class="water-drop" cx="364" cy="145" r="3"/>
+      <circle class="water-drop" cx="358" cy="148" r="3.5"/>
+      <circle class="water-drop" cx="362" cy="142" r="2.5"/>
+      <!-- 水流线 -->
+      <path class="water-stream" d="M360 175 V255"/>
+      <path class="water-stream" d="M364 175 V255"/>
+    </svg>
+  </div>
+
+  <div class="scroll-cue"><span>SCROLL</span><span class="bar"></span></div>
+</section>
+
+<section id="anatomy">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">01 · 构造</div>
+      <h2>先认识一座水电站</h2>
+      <p class="lede">一座常规坝式水电站，核心就是"拦水蓄能、引水落体、推动转轮、带动发电"。点一点右边的部件名称，看看它在图上的位置。</p>
+    </div>
+
+    <div class="anatomy-grid reveal">
+      <div class="anatomy-svg-wrap">
+        <svg viewBox="0 0 320 420" fill="none">
+          <!-- 山体 -->
+          <polygon points="0,400 60,140 140,100 320,80 320,400" fill="#0E1D2F" opacity="0.5"/>
+          <!-- 水库 -->
+          <g class="part" data-id="reservoir">
+            <rect class="part-fill" x="0" y="120" width="180" height="70" opacity="0.7"/>
+            <line x1="0" y1="120" x2="180" y2="120" stroke="#4A9FD4" stroke-width="1.5"/>
+            <text x="70" y="160" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">水库</text>
+          </g>
+          <!-- 大坝（含溢洪道） -->
+          <g class="part" data-id="dam">
+            <polygon class="part-fill" points="180,190 230,190 230,120 180,120"/>
+            <polygon class="part-fill" points="180,120 230,120 215,95 180,95"/>
+            <path class="part-fill" d="M215 95 L230 95 L230 120 L220 120 L215 110 Z"/>
+            <text x="205" y="155" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">大坝</text>
+            <text x="222" y="88" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">溢洪</text>
+          </g>
+          <!-- 引水隧洞/压力钢管 -->
+          <g class="part" data-id="penstock">
+            <rect class="part-fill" x="188" y="155" width="10" height="120" rx="2"/>
+            <ellipse class="part-fill" cx="193" cy="155" rx="8" ry="4"/>
+            <text x="210" y="220" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace">压力钢管</text>
+          </g>
+          <!-- 厂房 -->
+          <rect x="160" y="275" width="70" height="40" rx="3" fill="#16283E" stroke="#3A5068"/>
+          <!-- 水轮机 -->
+          <g class="part" data-id="turbine">
+            <circle class="part-fill" cx="195" cy="295" r="18"/>
+            <line x1="195" y1="277" x2="195" y2="313" stroke="#5A7592" stroke-width="2"/>
+            <line x1="177" y1="295" x2="213" y2="295" stroke="#5A7592" stroke-width="2"/>
+            <text x="230" y="300" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace">水轮机</text>
+          </g>
+          <!-- 发电机 -->
+          <g class="part" data-id="generator">
+            <rect class="part-fill" x="175" y="248" width="40" height="22" rx="4"/>
+            <text x="195" y="263" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+            <text x="230" y="262" fill="#8CA3B8" font-size="9" font-family="JetBrains Mono, monospace">发电机</text>
+          </g>
+          <!-- 尾水管 -->
+          <g class="part" data-id="tailrace">
+            <path class="part-fill" d="M195 313 L195 340 Q195 360 240 370 L280 380 L280 400 L0 400 L0 380 L160 380 Q180 370 195 340 Z" opacity="0.6"/>
+            <text x="240" y="395" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">尾水</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="anatomy-list">
+        <div class="anatomy-item" data-target="dam">
+          <span class="num">01</span><h3>大坝</h3>
+          <p>拦河筑坝，把水位抬高，形成上下游落差。坝顶一侧常设溢洪道，洪水期泄洪，防止库水位过高危及大坝。</p>
+        </div>
+        <div class="anatomy-item" data-target="reservoir">
+          <span class="num">02</span><h3>水库</h3>
+          <p>大坝后方蓄积的大片水体，相当于一座"重力势能仓库"。丰水期蓄水、枯水期放水，还能防洪、灌溉、改善航运。</p>
+        </div>
+        <div class="anatomy-item" data-target="penstock">
+          <span class="num">03</span><h3>引水隧洞 / 压力钢管</h3>
+          <p>把水库里的水引到厂房。前半段多为隧洞，接近厂房转为封闭的钢管，承受巨大水压，引导水流高速冲向水轮机。</p>
+        </div>
+        <div class="anatomy-item" data-target="turbine">
+          <span class="num">04</span><h3>水轮机</h3>
+          <p>水流的动能推动转轮旋转，把水的能量变成机械能。混流式 Francis、轴流式 Kaplan、冲击式 Pelton 等类型适应不同水头与流量。</p>
+        </div>
+        <div class="anatomy-item" data-target="generator">
+          <span class="num">05</span><h3>发电机</h3>
+          <p>与水轮机同轴连接，转轮一转，转子磁场扫过定子线圈，感应出交流电 —— 和火电厂、风电场用的是同一套电磁感应原理。</p>
+        </div>
+        <div class="anatomy-item" data-target="tailrace">
+          <span class="num">06</span><h3>尾水管</h3>
+          <p>把水轮机做过功的尾水排回下游河道，并帮助回收一部分动能，减少能量损失。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="steps">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">02 · 转换</div>
+      <h2>势能变成电能，一共四步</h2>
+      <p class="lede">整个过程是一连串的能量"接力"：重力势能 → 动能 → 机械能 → 电能。大致功率公式 P ≈ ρgQH —— 水头 H 越高、流量 Q 越大，发出的电就越多。先看一眼剖面，再逐步拆解。</p>
+    </div>
+
+    <div class="transmission reveal" style="margin-bottom:72px;">
+      <h3>厂房剖面 · 能量的流水线（立式布置示意）</h3>
+      <svg viewBox="0 0 960 380" fill="none">
+        <!-- 水库 -->
+        <rect x="40" y="40" width="280" height="100" fill="#1B3A50" opacity="0.5"/>
+        <line x1="40" y1="40" x2="320" y2="40" stroke="#4A9FD4" stroke-width="2"/>
+        <text x="180" y="28" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">水库 · 高水位</text>
+        <!-- 大坝 -->
+        <polygon points="320,140 380,140 380,40 320,40" fill="#3A5068" stroke="#5A7592"/>
+        <!-- 进水口 -->
+        <rect x="330" y="70" width="20" height="24" rx="2" fill="#2C7A75"/>
+        <text x="340" y="62" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">进水口</text>
+        <!-- 压力钢管 -->
+        <rect x="336" y="94" width="12" height="140" fill="#3A5068" stroke="#5A7592"/>
+        <text x="370" y="170" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace">压力钢管</text>
+        <!-- 蜗壳 -->
+        <path d="M330 234 Q330 260 360 270 Q390 280 420 270 L440 260" fill="#22374D" stroke="#5A7592"/>
+        <text x="380" y="296" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">蜗壳</text>
+        <!-- 水轮机转轮 -->
+        <circle cx="420" cy="250" r="32" fill="#22374D" stroke="#5A7592" stroke-width="2"/>
+        <line x1="420" y1="218" x2="420" y2="282" stroke="#8CA3B8" stroke-width="2"/>
+        <line x1="388" y1="250" x2="452" y2="250" stroke="#8CA3B8" stroke-width="2"/>
+        <text x="420" y="310" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">水轮机转轮</text>
+        <!-- 尾水管 -->
+        <path d="M420 282 Q420 320 500 340 L620 360" fill="none" stroke="#3A5068" stroke-width="16" stroke-linecap="round"/>
+        <text x="560" y="350" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">尾水管 → 下游</text>
+        <!-- 发电机（立式，在水轮机上方） -->
+        <rect x="390" y="140" width="60" height="70" rx="8" fill="#22374D" stroke="#5A7592"/>
+        <line x1="405" y1="155" x2="405" y2="195" stroke="#3A5068" stroke-width="2"/>
+        <line x1="420" y1="155" x2="420" y2="195" stroke="#3A5068" stroke-width="2"/>
+        <line x1="435" y1="155" x2="435" y2="195" stroke="#3A5068" stroke-width="2"/>
+        <text x="420" y="178" fill="#8CA3B8" font-size="14" font-family="JetBrains Mono, monospace" text-anchor="middle">G</text>
+        <text x="420" y="128" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">发电机</text>
+        <!-- 主轴 -->
+        <rect x="416" y="210" width="8" height="40" fill="#5A7592"/>
+        <!-- 调速器 -->
+        <rect x="480" y="150" width="50" height="36" rx="4" fill="#1B2F44" stroke="#5A7592"/>
+        <text x="505" y="172" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">调速器</text>
+        <!-- 能量流 -->
+        <path class="wflow" d="M340 70 V94"/>
+        <path class="wflow" d="M342 140 V234"/>
+        <path class="mflow" d="M420 250 V210"/>
+        <path class="tflow" d="M450 175 H540"/>
+        <path class="tflow" d="M540 175 V360"/>
+        <!-- 标注线 -->
+        <g stroke="#5A7592" stroke-width="1" stroke-dasharray="2 4" opacity="0.6">
+          <line x1="180" y1="160" x2="180" y2="200"/>
+          <line x1="346" y1="160" x2="346" y2="200"/>
+          <line x1="505" y1="190" x2="505" y2="230"/>
+        </g>
+        <g fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">
+          <text x="180" y="218">重力势能储存区</text>
+          <text x="346" y="218">势能 → 动能</text>
+          <text x="505" y="248">负荷调节</text>
+          <text x="720" y="368">低水位 · 下游河道</text>
+        </g>
+        <!-- 下游水面 -->
+        <line x1="620" y1="360" x2="920" y2="360" stroke="#1F3247" stroke-width="1"/>
+      </svg>
+      <div class="leg">
+        <span><i style="background:#4A9FD4"></i>蓝色虚线 = 水流（势能→动能）</span>
+        <span><i style="background:var(--teal)"></i>青色虚线 = 旋转的机械能</span>
+        <span><i style="background:var(--amber)"></i>琥珀虚线 = 电能</span>
+      </div>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step s1">
+        <div class="step-num mono">01</div>
+        <div>
+          <h3>水库蓄高水位，储存重力势能</h3>
+          <p class="desc">大坝把河水拦住，水位被抬升到远高于下游。每一立方米的水，因为"站得高"而携带重力势能 —— 水位越高，单位水量的能量越大。丰水期多蓄水，相当于把多余来水"存"起来，等需要时再放出。</p>
+          <span class="stat">典型水头 30–300 m ｜ 大型水库库容可达数十亿 m³</span>
+        </div>
+      </div>
+
+      <div class="step s2">
+        <div class="step-num mono">02</div>
+        <div>
+          <h3>水沿压力钢管高速下落，势能转动能</h3>
+          <p class="desc">进水口闸门打开，水在巨大落差驱动下涌入压力钢管，越往下速度越快。封闭钢管中的水压可达几十甚至上百个大气压 —— 高处静止的水，到这里已经变成高速流动的水流，动能ready 去推动转轮。</p>
+          <span class="stat">钢管内流速 可达 10–30 m/s ｜ 管径 3–10 m</span>
+        </div>
+      </div>
+
+      <div class="step s3">
+        <div class="step-num mono">03</div>
+        <div>
+          <h3>水流冲击水轮机叶片使其旋转</h3>
+          <p class="desc">高速水流经蜗壳均匀包围转轮，从四周冲向叶片（混流式 Francis 水轮机最常见）。水流把动能交给转轮，自身减速，转轮则开始高速旋转 —— 水的动能变成了转轮轴上的机械能。</p>
+          <span class="stat">转轮转速 约 75–200 转/分 ｜ 单机容量 100–1000 MW</span>
+        </div>
+      </div>
+
+      <div class="step s4">
+        <div class="step-num mono">04</div>
+        <div>
+          <h3>水轮机带动发电机发电，尾水排出</h3>
+          <p class="desc">转轮与发电机同轴，机械能通过主轴传递，发电机转子旋转切割磁感线，感应出交流电。做过功的尾水经尾水管排回下游，水位差依然存在，可以继续发电。调速器则根据电网负荷调节进水流量，保持转速稳定。</p>
+          <span class="stat">发电机输出 约 10–20 kV ｜ 频率 50 Hz 同步</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-panel reveal">
+      <div class="gen-grid">
+        <svg viewBox="0 0 460 400" fill="none">
+          <!-- 左侧：水头示意 -->
+          <text x="100" y="24" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">水头 H（落差）</text>
+          <rect x="60" y="40" width="80" height="160" fill="#1B3A50" opacity="0.5" stroke="#4A9FD4" stroke-width="1"/>
+          <line x1="60" y1="40" x2="140" y2="40" stroke="#4A9FD4" stroke-width="2"/>
+          <line x1="60" y1="200" x2="140" y2="200" stroke="#1F3247" stroke-width="1"/>
+          <rect class="head-bar" x="148" y="40" width="6" height="160" fill="#5CE1D8" opacity="0.7"/>
+          <text x="168" y="124" fill="#5CE1D8" font-size="13" font-family="JetBrains Mono, monospace">H</text>
+          <text x="100" y="224" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">高水位</text>
+          <text x="100" y="240" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">↓ 低水位</text>
+          <!-- 右侧：流量示意 -->
+          <text x="340" y="24" fill="#8CA3B8" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle">流量 Q（水量）</text>
+          <rect x="280" y="60" width="120" height="24" rx="4" fill="#3A5068"/>
+          <line class="flow-line" x1="300" y1="120" x2="300" y2="180" stroke="#4A9FD4" stroke-width="3" stroke-linecap="round"/>
+          <line class="flow-line f2" x1="340" y1="120" x2="340" y2="180" stroke="#4A9FD4" stroke-width="3" stroke-linecap="round"/>
+          <line class="flow-line f3" x1="380" y1="120" x2="380" y2="180" stroke="#4A9FD4" stroke-width="3" stroke-linecap="round"/>
+          <polygon points="290,180 350,180 320,200" fill="#4A9FD4" opacity="0.5"/>
+          <text x="340" y="224" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">单位时间流过多少水</text>
+          <!-- 对比示意 -->
+          <rect x="40" y="270" width="380" height="110" rx="6" fill="#16283E" stroke="#3A5068"/>
+          <text x="230" y="298" fill="#EAF2F8" font-size="13" font-family="Space Grotesk, sans-serif" text-anchor="middle" font-weight="600">P ≈ ρgQH</text>
+          <text x="120" y="330" fill="#5CE1D8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">高水头 + 小流量</text>
+          <text x="120" y="352" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">山区峡谷 · 冲击式</text>
+          <text x="340" y="330" fill="#FFB25C" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">低水头 + 大流量</text>
+          <text x="340" y="352" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">平原大河 · 轴流式</text>
+          <line x1="230" y1="310" x2="230" y2="365" stroke="#3A5068" stroke-width="1"/>
+        </svg>
+
+        <div class="gen-facts">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px;">图解 · 水头与流量</div>
+            <h3>为什么"落差"有时比"水多"更重要？</h3>
+          </div>
+          <div class="gen-fact">
+            <p><strong>水头 H</strong>：就是上下游的水位差，俗称"落差"。水头越高，同样多的水落下来，势能越大、管中水压越高、冲出速度越快 —— 功率公式里 H 与 Q 是相乘关系，但高水头电站往往用更小的流量就能发出可观的电。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>流量 Q</strong>：每秒钟流过水轮机的水的体积。河流水量充沛时 Q 大，枯水期 Q 小，发电量直接跟着掉 —— 所以水库的调节作用很关键，丰水期"存"，枯水期"放"。</p>
+          </div>
+          <div class="gen-fact">
+            <p><strong>打个比方</strong>：一桶水从 100 米高处落下，胜过十桶水从 10 米高处落下 —— 前者的总势能更大。这就是为什么山区峡谷里不高但极深的坝，也能建出世界级水电站；而平原大河虽然水量巨大，水头低，需要另一种设计思路。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grid">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">03 · 输送</div>
+      <h2>发出的电，去了哪里</h2>
+      <p class="lede">一座水电站的单机容量可达数百兆瓦，发出的电经厂内升压后并入电网，与火电、风电、光伏一起送往千家万户。抽水蓄能电站则是电网的"巨型电池" —— 用电低谷时抽水 uphill 储能，高峰时放水发电。</p>
+    </div>
+
+    <div class="transmission reveal">
+      <svg viewBox="0 0 1000 260" fill="none">
+        <!-- 水电站 -->
+        <polygon points="40,220 40,140 60,120 80,140 80,220" fill="#3A5068"/>
+        <rect x="50" y="100" width="20" height="24" rx="2" fill="#4A6280"/>
+        <text x="60" y="240" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">水电站</text>
+        <text x="60" y="254" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">10–20 kV</text>
+
+        <path class="tflow" d="M80 180 H180"/>
+
+        <rect x="180" y="165" width="50" height="36" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="205" y="218" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">厂内升压</text>
+        <text x="205" y="232" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">110/220 kV</text>
+
+        <path class="tflow" d="M230 183 H320"/>
+
+        <rect x="320" y="155" width="70" height="46" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="355" y="218" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">枢纽变电站</text>
+        <text x="355" y="232" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">500 kV 并网</text>
+
+        <path class="tflow" d="M390 178 H480"/>
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="500" y1="220" x2="500" y2="110"/>
+          <line x1="470" y1="130" x2="530" y2="130"/>
+          <line x1="478" y1="150" x2="522" y2="150"/>
+        </g>
+        <path class="tflow" d="M480 130 H620"/>
+        <g stroke="#5A7592" stroke-width="2">
+          <line x1="640" y1="220" x2="640" y2="110"/>
+          <line x1="610" y1="130" x2="670" y2="130"/>
+          <line x1="618" y1="150" x2="662" y2="150"/>
+        </g>
+        <text x="560" y="105" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">超高压输电线路</text>
+
+        <path class="tflow" d="M670 130 H750"/>
+        <rect x="750" y="105" width="56" height="42" rx="2" fill="#4A6280" stroke="#5A7592"/>
+        <text x="778" y="164" fill="#8CA3B8" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">区域变电站</text>
+        <text x="778" y="178" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">降压至 10 kV</text>
+
+        <path class="tflow" d="M806 126 H880"/>
+        <g>
+          <rect x="880" y="150" width="46" height="34" fill="#3A5068"/>
+          <polygon points="880,150 886,138 892,150" fill="#3A5068"/>
+          <text x="903" y="200" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">工厂</text>
+        </g>
+        <g>
+          <polygon points="950,150 970,132 990,150" fill="#3A5068"/>
+          <rect x="954" y="150" width="32" height="30" fill="#3A5068"/>
+          <text x="970" y="200" fill="#8CA3B8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">居民用户</text>
+        </g>
+        <path class="tflow" d="M880 165 H806"/>
+        <path class="tflow" d="M970 150 V126 H880"/>
+
+        <!-- 抽水蓄能标注 -->
+        <rect x="320" y="50" width="120" height="36" rx="4" fill="#1B2F44" stroke="#5CE1D8" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="380" y="72" fill="#5CE1D8" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">抽水蓄能 · 巨型电池</text>
+        <line x1="380" y1="86" x2="380" y2="155" stroke="#5CE1D8" stroke-width="1" stroke-dasharray="3 4" opacity="0.5"/>
+      </svg>
+
+      <div class="leg">
+        <span><i style="background:#5A7592"></i>水电站与线塔</span>
+        <span><i style="background:#4A6280"></i>变电站</span>
+        <span><i style="background:var(--amber)"></i>流动虚线 = 电流传输方向</span>
+        <span><i style="background:var(--teal)"></i>抽水蓄能 = 低谷充能 · 高峰放电</span>
+      </div>
+    </div>
+
+    <p class="lede reveal" style="margin-top:28px;margin-bottom:0;">
+      简单说：<strong>水轮机带动发电机（10–20 kV）→ 厂内升压（110/220 kV）→ 枢纽站升压（500 kV）→ 超高压线路远距离输送 → 区域变电站降压（10 kV）→ 配电网 → 工厂与居民用户。</strong>
+      水电出力稳定、可快速调节，是电网的"压舱石"；抽水蓄能则在用电低谷时用电抽水 uphill 存能，高峰时放水发电，相当于一座巨型电池。
+    </p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">04 · 快问快答</div>
+      <h2>几个常见的好奇</h2>
+      <p class="lede">看完全流程，你可能还有这些疑问。</p>
+    </div>
+
+    <div class="faq-grid reveal">
+      <div class="faq-card">
+        <h3>为什么有的大坝特别高？</h3>
+        <p>坝高直接决定水头 —— 上下游水位差越大，同样流量下发出的电越多。在峡谷地区，一座 200 米高的坝就能形成巨大的落差；高坝还意味着更大的库容，能更好地调节丰枯。当然，坝越高，工程难度、移民和造价也越高，需要综合权衡。</p>
+      </div>
+      <div class="faq-card">
+        <h3>枯水期为什么发电变少？</h3>
+        <p>发电功率 P ≈ ρgQH，流量 Q 是关键变量之一。枯水期河流来水减少，水库水位下降，可用流量和水头都变小，发电量自然下滑。有大型调节水库的电站可以"吃库存"撑一段时间，但没有水库的径流式电站则完全看天吃饭。</p>
+      </div>
+      <div class="faq-card">
+        <h3>抽水蓄能是怎么回事？</h3>
+        <p>它建两个高低水库：用电低谷时，把下游的水抽 uphill 到上游"存"起来；用电高峰时，再放水 downhill 发电。能量转换多了一步"电→机械→势能→动能→机械→电"，综合效率约 70–80%，但换来的是电网急需的调峰能力和"巨型电池"效果。</p>
+      </div>
+      <div class="faq-card">
+        <h3>水电会不会破坏生态？</h3>
+        <p>客观说，影响是存在的：大坝阻断河道，改变水温、流速和泥沙；库区淹没会迁移人口、淹没耕地和栖息地。现代水电站会建鱼道、升鱼机帮助洄游鱼类，下泄生态流量维持下游河道，并在规划阶段做环境影响评估。水电是清洁能源，但不是"零代价" —— 开发与保护需要平衡。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="history-extend">
+  <div class="wrap">
+
+    <div class="history-extend reveal">
+      <div class="eyebrow">历史延伸</div>
+      <h3>水电如何从瀑布旁的小厂走到巨型梯级</h3>
+      <p class="sub">从发明到落地，各摘几段关键节点。</p>
+      <div class="history-cols">
+        <div class="history-col">
+          <h4>世界</h4>
+          <div class="history-item"><div class="yr">1880s–90s</div><p><strong>商业水电起步</strong>：北美与欧洲在瀑布、急流旁建设早期水电站，证明落差可稳定供电。</p></div>
+          <div class="history-item"><div class="yr">20 世纪中</div><p><strong>大坝时代</strong>：胡佛大坝等工程把水电做成跨区域能源与水利综合枢纽。</p></div>
+          <div class="history-item"><div class="yr">近代</div><p><strong>抽水蓄能崛起</strong>：把水电从「靠天吃饭」扩展为电网的巨型电池，服务波动性新能源。</p></div>
+        </div>
+        <div class="history-col">
+          <h4>中国</h4>
+          <div class="history-item"><div class="yr">1910s–</div><p><strong>石龙坝等早期电站</strong>：云南石龙坝被视作中国第一座水电站之一，水电进入本国电力史。</p></div>
+          <div class="history-item"><div class="yr">1994–2000s</div><p><strong>三峡工程</strong>：世界级枢纽同时承担防洪、航运与发电，标志中国水电工程能力巅峰之一。</p></div>
+          <div class="history-item"><div class="yr">近年</div><p><strong>西南梯级 + 抽蓄高潮</strong>：金沙江等梯级开发与抽蓄电站密集规划，服务西电东送与新型电力系统。</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="closing" id="closing">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="justify-content:center;">SUMMARY</div>
+    <h2>一句话说完全过程</h2>
+    <p>高处的水库储存重力势能，水流沿压力钢管奔涌而下变成动能，推动水轮机旋转，再带动发电机把机械能转成电能，经升压、输送、降压，最终流进工厂和家里的插座。核心公式 P ≈ ρgQH 告诉你：水头和流量，一个都不能少。</p>
+    <div class="page-nav">
+      <a href="index.html">← 回到主页</a>
+      <a href="#top">↑ 回到顶部</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>HYDRO POWER PRINCIPLE · 图解仅用于科普，实际电站参数因地形、水头与机型不同而有差异</div>
+  <div class="copyright">© 2026 superj. All rights reserved. 未经许可，禁止转载与复制。</div>
+</footer>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+},{threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+
+const items = document.querySelectorAll('.anatomy-item');
+const parts = document.querySelectorAll('.part');
+function setActive(id){
+  parts.forEach(p=>p.classList.toggle('active', !!id && p.dataset.id===id));
+  items.forEach(it=>it.classList.toggle('active', !!id && it.dataset.target===id));
+}
+function clearActive(){ setActive(null); }
+items.forEach(it=>{
+  it.addEventListener('mouseenter',()=>setActive(it.dataset.target));
+  it.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(it.dataset.target); });
+});
+parts.forEach(p=>{
+  p.addEventListener('mouseenter',()=>setActive(p.dataset.id));
+  p.addEventListener('click',(e)=>{ e.stopPropagation(); setActive(p.dataset.id); });
+});
+document.addEventListener('click', (e)=>{
+  if(e.target.closest('.part') || e.target.closest('.anatomy-item')) return;
+  clearActive();
+});
+
+(function(){
+  const links=[...document.querySelectorAll('.sec-nav a[href^="#"]')];
+  if(!links.length) return;
+  const sections=links.map(a=>{
+    const id=a.getAttribute('href').slice(1);
+    const el=document.getElementById(id);
+    return el?{a,el,id}:null;
+  }).filter(Boolean);
+  function sectionTop(el){
+    if(el===document.body || el===document.documentElement) return 0;
+    return el.getBoundingClientRect().top + window.scrollY;
+  }
+  function update(){
+    const maxScroll=Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    if(window.scrollY < 120){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===0));
+      return;
+    }
+    // 滚到页尾时，末段往往够不着中线判定，强制高亮最后一条
+    if(maxScroll > 0 && window.scrollY >= maxScroll - 24){
+      sections.forEach((s,i)=>s.a.classList.toggle('active', i===sections.length-1));
+      return;
+    }
+    const mark=window.scrollY + window.innerHeight*0.28;
+    let current=sections[0];
+    for(const s of sections){
+      if(sectionTop(s.el) <= mark) current=s;
+    }
+    sections.forEach(s=>s.a.classList.toggle('active', s===current));
+  }
+  update();
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+})();
+
+
+(function(){
+  // 轻度防护：挡普通复制/右键，无法阻止查看源码或直接下载页面
+  const block = (e) => e.preventDefault();
+  document.addEventListener('contextmenu', block);
+  document.addEventListener('selectstart', block);
+  document.addEventListener('copy', block);
+  document.addEventListener('cut', block);
+  document.addEventListener('dragstart', block);
+})();
+
+</script>
+
+</body>
+</html>
