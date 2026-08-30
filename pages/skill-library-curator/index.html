@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill 收藏整理器 —— 把一堆来路不明的 skill 整理成一份清单</title>
+<meta name="description" content="批量解压、评分、分类、去重、编号，生成一份看得懂的 Skill 分析报告。第二次运行只处理新增的。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0B1420;
+  --bg-panel:#122032;
+  --bg-panel-2:#0E1A29;
+  --line:#22344B;
+  --steel:#3A5068;
+  --text:#DCE6F2;
+  --text-dim:#93A7BF;
+  --text-mute:#6B7F97;
+  --accent:#E8A33D;
+  --accent-dim:#A8712A;
+  --green:#5BC48A;
+  --red:#E06B6B;
+  --font-head:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-body:'IBM Plex Sans','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg-deep);color:var(--text);
+  font-family:var(--font-body);line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px}
+
+/* hero */
+header{
+  padding:72px 0 56px;text-align:center;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(232,163,61,.10),transparent 70%);
+  border-bottom:1px solid var(--line);
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.18em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:18px;
+}
+h1{
+  font-family:var(--font-head);font-size:clamp(30px,5.5vw,46px);
+  font-weight:700;line-height:1.2;letter-spacing:-.01em;margin-bottom:18px;
+}
+.sub{font-size:clamp(15px,2.4vw,18px);color:var(--text-dim);max-width:600px;margin:0 auto}
+.sub b{color:var(--text);font-weight:600}
+
+/* buttons */
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 26px;border-radius:8px;font-size:15px;font-weight:600;
+  text-decoration:none;transition:.18s;border:1px solid transparent;cursor:pointer;
+  font-family:var(--font-body);
+}
+.btn-primary{background:var(--accent);color:#1A1206}
+.btn-primary:hover{background:#F0B155;transform:translateY(-1px)}
+.btn-ghost{border-color:var(--steel);color:var(--text-dim);background:transparent}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* sections */
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+h2{
+  font-family:var(--font-head);font-size:24px;font-weight:600;
+  margin-bottom:10px;display:flex;align-items:center;gap:11px;
+}
+h2::before{content:'';width:3px;height:20px;background:var(--accent);border-radius:2px}
+.lead{color:var(--text-dim);margin-bottom:28px;font-size:15px}
+
+/* pain points */
+.pain{display:grid;gap:12px}
+.pain-item{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:16px 20px;
+}
+.pain-item b{display:block;color:var(--text);font-weight:600;margin-bottom:4px;font-size:15px}
+.pain-item span{color:var(--text-mute);font-size:14px}
+
+/* steps */
+.steps{counter-reset:s;display:grid;gap:11px}
+.step{
+  counter-increment:s;background:var(--bg-panel-2);border:1px solid var(--line);
+  border-radius:8px;padding:15px 18px 15px 54px;position:relative;font-size:14.5px;
+}
+.step::before{
+  content:counter(s);position:absolute;left:16px;top:14px;
+  width:24px;height:24px;border-radius:6px;background:var(--accent-dim);color:#fff;
+  font-family:var(--font-mono);font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+.step b{color:var(--text);font-weight:600}
+.step span{color:var(--text-mute)}
+
+/* boundary table */
+.bnd{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.bnd{grid-template-columns:1fr}}
+.bnd-col{background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.bnd-head{
+  padding:14px 18px;font-family:var(--font-head);font-weight:600;font-size:15px;
+  display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--line);
+}
+.bnd-head.ok{background:rgba(91,196,138,.10);color:var(--green)}
+.bnd-head.no{background:rgba(224,107,107,.09);color:var(--red)}
+.bnd-body{padding:16px 18px}
+.bnd-body li{list-style:none;padding:6px 0 6px 20px;position:relative;font-size:14px;color:var(--text-dim)}
+.bnd-body li::before{position:absolute;left:0;font-family:var(--font-mono);font-size:13px}
+.bnd-body.ok li::before{content:'+';color:var(--green)}
+.bnd-body.no li::before{content:'–';color:var(--red)}
+
+/* code block */
+.codewrap{position:relative;margin-top:16px}
+pre{
+  background:#08111C;border:1px solid var(--line);border-radius:10px;
+  padding:20px;padding-right:96px;overflow-x:auto;
+  font-family:var(--font-mono);font-size:13px;line-height:1.85;color:#C5D5E8;
+  white-space:pre-wrap;word-break:break-word;
+}
+.copy{
+  position:absolute;top:12px;right:12px;padding:7px 14px;
+  background:var(--bg-panel);border:1px solid var(--steel);border-radius:6px;
+  color:var(--text-dim);font-size:12px;font-family:var(--font-mono);cursor:pointer;transition:.18s;
+}
+.copy:hover{border-color:var(--accent);color:var(--accent)}
+.copy.done{border-color:var(--green);color:var(--green)}
+
+/* misc */
+.note{
+  background:rgba(232,163,61,.07);border:1px solid rgba(232,163,61,.22);
+  border-radius:8px;padding:15px 18px;font-size:14px;color:var(--text-dim);margin-top:20px;
+}
+.note b{color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+@media(max-width:620px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.card b{display:block;font-size:14.5px;margin-bottom:5px;color:var(--text)}
+.card span{font-size:13.5px;color:var(--text-mute)}
+code{
+  font-family:var(--font-mono);font-size:.9em;background:rgba(255,255,255,.06);
+  padding:2px 6px;border-radius:4px;color:var(--accent);
+}
+footer{padding:40px 0 56px;text-align:center;color:var(--text-mute);font-size:13.5px}
+footer a{color:var(--text-dim);text-decoration:none;border-bottom:1px solid var(--steel)}
+footer a:hover{color:var(--accent);border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Agent Skill</div>
+    <h1>Skill 收藏整理器</h1>
+    <p class="sub">收藏夹里躺着几十上百个 skill，压缩包、PDF、没名字的文件混成一团。<br>
+    这个 skill 把它们整理成<b>分好类、编好号、评过分、去过重</b>的一份清单。</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="skill-library-curator.zip" download>下载 skill（40 KB）</a>
+      <a class="btn btn-ghost" href="#install">怎么安装</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>它解决什么</h2>
+    <p class="lead">如果你也在到处收 skill，这几件事应该很熟悉。</p>
+    <div class="pain">
+      <div class="pain-item">
+        <b>名字全是 SKILL.md，不点开根本不知道是什么</b>
+        <span>一堆 <code>SKILL.md</code>、<code>SKILL-2.docx</code>、<code>技能设计方案_v5.md</code>，找一个要挨个打开。</span>
+      </div>
+      <div class="pain-item">
+        <b>同一个 skill 收了三遍，v1、v3、还有 PDF 导出版</b>
+        <span>不敢删，怕删错。但留着又占地方，安装时也不知道该装哪个。</span>
+      </div>
+      <div class="pain-item">
+        <b>混进来一堆压根不是 skill 的东西</b>
+        <span>作业展示、设计稿、别人生成的报告，跟真 skill 混在一起，清单被稀释。</span>
+      </div>
+      <div class="pain-item">
+        <b>不知道哪个值得装</b>
+        <span>有的写得很完整，有的只有半页大纲。没个标准很难挑。</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>它怎么做</h2>
+    <p class="lead">你给一个文件夹路径，它在这个文件夹里就地整理，只移动和改名，不改任何文件的内容。</p>
+    <div class="steps">
+      <div class="step"><b>清点与提取</b><span> —— zip / rar / 7z / PDF / docx / pptx，连没有扩展名的文本文件都能认出来</span></div>
+      <div class="step"><b>先分类型再打分</b><span> —— 不是 skill 的（作业、设计稿、别人的输出产物）单独放，不占编号也不参与排序</span></div>
+      <div class="step"><b>五维评分</b><span> —— 完整度、结构化、实用度、原创性、交付物，每条都给出具体依据而不是一句「质量不错」</span></div>
+      <div class="step"><b>去重仲裁</b><span> —— 只有同一 skill 的不同版本才算重复；不同作者的同主题 skill 一律保留，重复的移入归档而不删除</span></div>
+      <div class="step"><b>分类编号落盘</b><span> —— 执行前先给你看完整的移动计划，确认了才动手</span></div>
+      <div class="step"><b>出报告 + 留账本</b><span> —— 一份《Skill分析报告》，加一份账本文件，下次只处理新增的</span></div>
+    </div>
+    <div class="note">
+      <b>第二次跑只看新增。</b> 整理过一次后，你往文件夹里丢新东西、或者新建一个「待整理」子目录，
+      再让它整理一次，它只处理变动的部分，已有条目的编号一个都不会变。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>能做什么，不能做什么</h2>
+    <p class="lead">边界写在前面，省得装完发现不是你要的。</p>
+    <div class="bnd">
+      <div class="bnd-col">
+        <div class="bnd-head ok">✓ 它负责</div>
+        <ul class="bnd-body ok">
+          <li>批量解压与文本提取</li>
+          <li>判断哪些是 skill、哪些只是资料</li>
+          <li>打分、分类、编号、去重</li>
+          <li>就地移动改名，出报告</li>
+          <li>增量整理，不推倒重来</li>
+        </ul>
+      </div>
+      <div class="bnd-col">
+        <div class="bnd-head no">✗ 它不负责</div>
+        <ul class="bnd-body no">
+          <li>把 skill 安装到你的 AI 客户端</li>
+          <li>修改任何 skill 的内容</li>
+          <li>帮你写新的 skill</li>
+          <li>扫描你指定目录以外的地方</li>
+          <li>删除文件（重复的只归档）</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:22px">
+      <div class="card">
+        <b>电脑端：完整可用</b>
+        <span>能读写本地文件夹就能跑完整流程。装了 Python 会快很多，没装也能走，只是慢一些，会分批做并支持中断续跑。</span>
+      </div>
+      <div class="card">
+        <b>手机端：只出分析报告</b>
+        <span>手机上的智能体通常动不了本地文件。这时它会主动降级，第一句就告诉你「只出报告、不动文件」，然后把该怎么整理列成一份清单给你。</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>怎么安装</h2>
+    <p class="lead">先下载上面的 zip，然后把下面这段话整个复制给你的 AI。各家客户端放 skill 的位置不一样，让它自己判断就行。</p>
+    <div class="codewrap">
+      <button class="copy" onclick="copyPrompt(this)">复制</button>
+      <pre id="prompt">我下载了一个叫 skill-library-curator 的 AI skill，压缩包在我的下载目录里。
+
+请帮我：
+1. 判断我现在用的这个 AI 客户端把 skill 放在哪个目录
+2. 把压缩包解压过去，保持 skill-library-curator 这个文件夹名不变
+3. 装好后告诉我怎么触发它
+
+这个 skill 的作用：整理一个装满 skill 收藏的文件夹，自动解压、
+评分、分类、去重、编号，生成一份《Skill分析报告》，
+第二次运行只处理新增的条目。</pre>
+    </div>
+    <div class="note" style="margin-top:22px">
+      <b>装好之后怎么用：</b> 跟你的 AI 说一句「帮我整理这个文件夹里的 skill」，
+      再把文件夹路径给它，或者直接把文件夹拖进对话框。
+      它会先告诉你有多少条目、大概要多久、会在哪两处停下来问你，然后才开始。
+      <br><br>
+      <b>动手前它会自动备份。</b> 备份是一份完整副本，放在你那个文件夹的旁边，
+      整理完会告诉你在哪，删不删由你决定。
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    这个 skill 是在一次真实整理中打磨出来的 —— 判据里的每一条反例，都是先踩过才写下的。
+    <br><br>
+    <a href="https://realsuperj.github.io">← 回到博客</a>
+  </div>
+</footer>
+
+<script>
+function copyPrompt(btn){
+  var t = document.getElementById('prompt').innerText;
+  var done = function(){
+    btn.textContent = '已复制';
+    btn.classList.add('done');
+    setTimeout(function(){ btn.textContent='复制'; btn.classList.remove('done'); }, 2000);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(t).then(done).catch(function(){ fallback(t, done); });
+  } else {
+    fallback(t, done);
+  }
+}
+function fallback(text, cb){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); cb(); } catch(e) { alert('复制失败，请手动选中文字复制'); }
+  document.body.removeChild(ta);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Skill 收藏整理器</title>
+<style>
+:root{
+  --bg:#0B1420;
+  --panel:#122032;
+  --panel2:#0E1A29;
+  --line:#22344B;
+  --steel:#3A5068;
+  --text:#E4EDF7;
+  --dim:#9DB0C6;
+  --mute:#6B7F97;
+  --accent:#E8A33D;
+  --accent2:#A8712A;
+  --green:#5BC48A;
+  --red:#E06B6B;
+  --f:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',-apple-system,sans-serif;
+  --m:'SF Mono','Menlo',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  width:1080px;height:1620px;background:var(--bg);color:var(--text);
+  font-family:var(--f);overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.poster{
+  width:1080px;height:1620px;padding:50px 60px 42px;
+  display:flex;flex-direction:column;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0%,rgba(232,163,61,.13),transparent 68%),
+    radial-gradient(ellipse 60% 35% at 50% 100%,rgba(232,163,61,.07),transparent 70%),
+    var(--bg);
+}
+
+/* header */
+.eyebrow{
+  font-family:var(--m);font-size:17px;letter-spacing:.26em;color:var(--accent);
+  margin-bottom:20px;font-weight:500;
+}
+h1{
+  font-size:72px;font-weight:800;line-height:1.06;letter-spacing:-.02em;
+  margin-bottom:22px;
+}
+h1 em{font-style:normal;color:var(--accent)}
+.tag{
+  font-size:24.5px;color:var(--dim);line-height:1.6;font-weight:400;
+}
+.tag b{color:var(--text);font-weight:600}
+.rule{height:2px;background:linear-gradient(90deg,var(--accent),rgba(232,163,61,0));margin:25px 0 0}
+
+/* section title */
+.st{
+  font-size:22px;font-weight:700;color:var(--accent);letter-spacing:.06em;
+  margin:25px 0 12px;display:flex;align-items:center;gap:12px;
+}
+.st::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* pains */
+.pains{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.pain{
+  background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--red);
+  border-radius:0 10px 10px 0;padding:14px 19px;
+}
+.pain b{display:block;font-size:20px;font-weight:600;margin-bottom:5px;line-height:1.35}
+.pain span{font-size:16.5px;color:var(--mute);line-height:1.5}
+
+/* steps */
+.steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.step{
+  background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:13px 16px;position:relative;
+}
+.step i{
+  font-style:normal;font-family:var(--m);font-size:14px;font-weight:600;
+  color:var(--accent);display:block;margin-bottom:7px;letter-spacing:.05em;
+}
+.step b{display:block;font-size:20px;font-weight:600;margin-bottom:5px}
+.step span{font-size:16px;color:var(--mute);line-height:1.5}
+
+/* boundary */
+.bnd{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bcol{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.bhead{
+  padding:12px 20px;font-size:21px;font-weight:700;
+  display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);
+}
+.bhead.ok{background:rgba(91,196,138,.11);color:var(--green)}
+.bhead.no{background:rgba(224,107,107,.10);color:var(--red)}
+.bbody{padding:12px 20px 14px}
+.bbody div{
+  font-size:17px;color:var(--dim);padding:4.5px 0 4.5px 22px;position:relative;line-height:1.45;
+}
+.bbody div::before{position:absolute;left:0;font-family:var(--m);font-weight:600;font-size:17px}
+.bbody.ok div::before{content:'+';color:var(--green)}
+.bbody.no div::before{content:'\2013';color:var(--red)}
+
+/* platform */
+.plat{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:11px}
+.pc{
+  border-radius:12px;padding:14px 19px;border:1px solid var(--line);
+  background:var(--panel2);
+}
+.pc.hl{border-color:rgba(232,163,61,.4);background:rgba(232,163,61,.06)}
+.pc b{display:block;font-size:20px;font-weight:700;margin-bottom:6px}
+.pc.hl b{color:var(--accent)}
+.pc span{font-size:16.5px;color:var(--mute);line-height:1.5}
+
+/* footer / qr */
+.foot{
+  margin-top:auto;padding-top:24px;border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:32px;
+}
+.qr{
+  width:196px;height:196px;background:#fff;border-radius:14px;padding:11px;flex-shrink:0;
+}
+.qr img{width:100%;height:100%;display:block}
+.fmeta{flex:1}
+.fmeta .big{font-size:29px;font-weight:700;margin-bottom:11px;line-height:1.3}
+.fmeta .big em{font-style:normal;color:var(--accent)}
+.fmeta .url{
+  font-family:var(--m);font-size:17px;color:var(--dim);
+  background:var(--panel);border:1px solid var(--line);border-radius:7px;
+  padding:9px 14px;display:inline-block;margin-bottom:12px;
+}
+.fmeta .desc{font-size:17px;color:var(--mute);line-height:1.6}
+.fmeta .desc b{color:var(--dim);font-weight:600}
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <div class="eyebrow">AGENT SKILL</div>
+  <h1>Skill 收藏<em>整理器</em></h1>
+  <p class="tag">收藏夹里躺着几十上百个 skill，压缩包、PDF、没名字的文件混成一团。<br>
+  它把这些整理成<b>分好类、编好号、评过分、去过重</b>的一份清单。</p>
+  <div class="rule"></div>
+
+  <div class="st">你是不是也这样</div>
+  <div class="pains">
+    <div class="pain"><b>名字全是 SKILL.md</b><span>不点开根本不知道是什么，找一个要挨个试</span></div>
+    <div class="pain"><b>同一个收了三遍</b><span>v1、v3、还有 PDF 导出版，不敢删也不敢装</span></div>
+    <div class="pain"><b>混进来一堆不是 skill 的</b><span>作业、设计稿、别人生成的报告，清单被稀释</span></div>
+    <div class="pain"><b>不知道哪个值得装</b><span>有的很完整，有的只有半页大纲，没标准难挑</span></div>
+  </div>
+
+  <div class="st">它怎么做</div>
+  <div class="steps">
+    <div class="step"><i>01</i><b>清点提取</b><span>zip / rar / 7z / PDF / docx，没扩展名的也能认</span></div>
+    <div class="step"><i>02</i><b>先分类型</b><span>不是 skill 的单独放，不占编号不参与排序</span></div>
+    <div class="step"><i>03</i><b>五维评分</b><span>每条都给具体依据，不是一句「质量不错」</span></div>
+    <div class="step"><i>04</i><b>去重仲裁</b><span>只有同一 skill 的不同版本才算重复</span></div>
+    <div class="step"><i>05</i><b>编号落盘</b><span>先给你看完整移动计划，确认了才动手</span></div>
+    <div class="step"><i>06</i><b>出报告</b><span>附带账本，下次只处理新增的条目</span></div>
+  </div>
+
+  <div class="st">边界写在前面</div>
+  <div class="bnd">
+    <div class="bcol">
+      <div class="bhead ok">✓ 它负责</div>
+      <div class="bbody ok">
+        <div>批量解压与文本提取</div>
+        <div>判断哪些是 skill、哪些只是资料</div>
+        <div>打分、分类、编号、去重</div>
+        <div>就地移动改名，动手前先备份</div>
+        <div>增量整理，编号不重排</div>
+      </div>
+    </div>
+    <div class="bcol">
+      <div class="bhead no">✗ 它不负责</div>
+      <div class="bbody no">
+        <div>把 skill 安装到 AI 客户端</div>
+        <div>修改任何 skill 的内容</div>
+        <div>帮你写新的 skill</div>
+        <div>扫描你指定目录以外的地方</div>
+        <div>删除文件，重复的只归档</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="plat">
+    <div class="pc hl"><b>电脑端 · 完整可用</b><span>能读写本地文件夹就能跑完整流程。有 Python 更快，没有也能走，分批做且支持中断续跑。</span></div>
+    <div class="pc"><b>手机端 · 只出报告</b><span>手机智能体动不了本地文件，它会主动降级，第一句就说明「不动文件」，把该怎么整理列成清单。</span></div>
+  </div>
+
+  <div class="foot">
+    <div class="qr"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NTAiIGhlaWdodD0iNDUwIiBjbGFzcz0ic2Vnbm8iPjxnIHRyYW5zZm9ybT0ic2NhbGUoMTApIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMCAwaDQ1djQ1aC00NXoiLz48cGF0aCBjbGFzcz0icXJsaW5lIiBzdHJva2U9IiMwYjE0MjAiIGQ9Ik0yIDIuNWg3bTEgMGgzbTEgMGgxbTIgMGgzbTEgMGgxbTMgMGgxbTEgMGgybTIgMGgybTMgMGg3bS00MSAxaDFtNSAwaDFtMiAwaDFtNiAwaDNtMyAwaDFtMSAwaDFtMyAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtNSAwaDFtLTQxIDFoMW0xIDBoM20xIDBoMW0xIDBoN201IDBoMW02IDBoMW02IDBoMW0xIDBoM20xIDBoMW0tNDEgMWgxbTEgMGgzbTEgMGgxbTIgMGgxbTEgMGgxbTEgMGg0bTIgMGgxbTIgMGgzbTEgMGg0bTEgMGgxbTIgMGgxbTEgMGgzbTEgMGgxbS00MSAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtMiAwaDFtMSAwaDFtMyAwaDFtMiAwaDNtMSAwaDJtNSAwaDJtMSAwaDFtMSAwaDNtMSAwaDFtLTQxIDFoMW01IDBoMW0zIDBoNW01IDBoMW0zIDBoMm0yIDBoM20zIDBoMW01IDBoMW0tNDEgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0zMyAxaDJtMiAwaDFtMyAwaDFtMyAwaDFtMSAwaDJtMSAwaDRtMSAwaDFtLTI2IDFoMm0yIDBoMm0yIDBoM20yIDBoMW0xIDBoMW0xIDBoMW0yIDBoMW0yIDBoMm0xIDBoMm0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0tNDAgMWgybTEgMGgxbTUgMGgxbTQgMGgxbTIgMGgxbTEgMGgybTEgMGgxbTMgMGgxbTIgMGgybTQgMGgxbS0zNyAxaDFtMSAwaDJtMSAwaDJtMSAwaDFtNSAwaDNtMSAwaDFtMiAwaDRtMiAwaDJtMyAwaDFtMSAwaDJtLTM2IDFoMW0yIDBoMm01IDBoMm0xIDBoMW0yIDBoMW0yIDBoNm0xIDBoMm0zIDBoM20yIDBoMm0yIDBoMW0tNDEgMWgxbTIgMGgxbTEgMGgzbTEgMGgybTIgMGgybTIgMGgxbTEgMGgxbTEgMGgxbTEgMGgzbTEgMGgybTMgMGgxbTEgMGgybTMgMGgybS00MSAxaDJtNSAwaDFtOCAwaDJtNyAwaDJtMiAwaDRtMSAwaDRtMiAwaDFtLTQxIDFoMW0xIDBoMm0yIDBoMW0yIDBoMW0yIDBoMW0xIDBoMW0zIDBoMW0yIDBoNG0xIDBoM200IDBoMW0zIDBoMW0tMzggMWgxbTEgMGgxbTEgMGgxbTIgMGgxbTIgMGgxbTEgMGgybTEgMGgybTMgMGg1bTIgMGgxbTIgMGg0bTEgMGgxbTEgMGgybTEgMGgxbS00MCAxaDFtMSAwaDJtMSAwaDFtMSAwaDRtMyAwaDFtMSAwaDRtMyAwaDFtNCAwaDFtMyAwaDFtMSAwaDFtMSAwaDNtLTQwIDFoMm02IDBoMm0xIDBoMW0xIDBoMm00IDBoMW0xIDBoMm00IDBoMm0xIDBoN20zIDBoMW0tNDEgMWgybTIgMGg2bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgybTIgMGgxbTEgMGgybTIgMGgzbTEgMGgxbTIgMGgzbTEgMGgxbTEgMGgxbS00MCAxaDJtMiAwaDFtMiAwaDJtMSAwaDFtMiAwaDFtMSAwaDFtMyAwaDFtMiAwaDFtMSAwaDJtMSAwaDFtMSAwaDJtMSAwaDJtMSAwaDJtLTM4IDFoMW0xIDBoMW0zIDBoMW00IDBoMm0yIDBoMW0xIDBoMW0xIDBoM20yIDBoM20yIDBoMW0xIDBoMW02IDBoMm0tMzggMWgxbTEgMGgybTEgMGgxbTIgMGgybTMgMGgxbTMgMGgxbTIgMGgxbTMgMGgybTIgMGgybTQgMGgxbTEgMGgxbS0zOSAxaDFtMiAwaDFtMiAwaDFtMSAwaDJtMSAwaDFtMSAwaDZtMSAwaDFtMSAwaDNtMiAwaDJtNSAwaDRtLTM4IDFoMm0xIDBoM20xIDBoNW0zIDBoMm0xIDBoMm00IDBoMW03IDBoM20yIDBoMW0xIDBoMW0tMzggMWgybTEgMGgzbTIgMGgxbTMgMGgxbTIgMGgybTEgMGgxbTEgMGgxbTEgMGgxbTYgMGgybTEgMGgxbTQgMGgxbS00MCAxaDJtMSAwaDNtMiAwaDFtMiAwaDJtMiAwaDFtMyAwaDRtMiAwaDFtMSAwaDJtMSAwaDJtMSAwaDVtMSAwaDJtLTM3IDFoMW0xIDBoM20yIDBoMW01IDBoMm0xIDBoMW0zIDBoMm0xIDBoMW0xIDBoMm0xIDBoMm0xIDBoMm0tMzcgMWgxbTQgMGgxbTEgMGgzbTIgMGgybTMgMGg0bTEgMGgybTYgMGgybTEgMGgxbTEgMGg0bS0zMyAxaDFtMyAwaDZtMSAwaDNtMSAwaDNtMSAwaDJtMiAwaDRtNCAwaDNtLTQwIDFoMW00IDBoMW0xIDBoM20xIDBoMm0yIDBoMm0xIDBoN20yIDBoMW0xIDBoNm0xIDBoMW0yIDBoMm0tNDEgMWg0bTIgMGgybTEgMGgxbTEgMGg1bTQgMGgxbTIgMGgzbTEgMGgzbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTIgMGgxbS00MSAxaDFtMyAwaDFtMiAwaDFtMyAwaDJtMiAwaDRtMSAwaDVtMiAwaDFtMiAwaDFtMSAwaDFtMSAwaDFtMiAwaDFtMSAwaDJtLTQxIDFoMW0xIDBoMW0yIDBoMm0xIDBoMW0xIDBoMW0xIDBoNG0xIDBoM20zIDBoMW0zIDBoMW0xIDBoMm0xIDBoNW0xIDBoMW0xIDBoMW0tMzMgMWgxbTIgMGgybTEgMGgxbTMgMGgzbTQgMGgzbTEgMGgybTEgMGgxbTMgMGg0bS00MCAxaDdtMiAwaDJtNiAwaDFtMiAwaDFtMSAwaDJtMSAwaDFtMSAwaDNtMSAwaDJtMSAwaDFtMSAwaDNtLTM5IDFoMW01IDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMm0xIDBoMm0xIDBoNG0xIDBoMW0yIDBoMW0yIDBoMm0zIDBoMm0xIDBoMW0tNDAgMWgxbTEgMGgzbTEgMGgxbTIgMGgybTEgMGgzbTEgMGgxbTEgMGgybTIgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTIgMGg3bTIgMGgxbS00MSAxaDFtMSAwaDNtMSAwaDFtMiAwaDFtMiAwaDFtMSAwaDFtMSAwaDJtMSAwaDNtMSAwaDNtMSAwaDJtMiAwaDJtMiAwaDFtMyAwaDJtLTQxIDFoMW0xIDBoM20xIDBoMW0zIDBoMW0xIDBoMm01IDBoMW01IDBoM20yIDBoMW0yIDBoNG0xIDBoMm0tNDAgMWgxbTUgMGgxbTQgMGgxbTIgMGgzbTQgMGgybTEgMGg0bTMgMGgxbTQgMGgzbTEgMGgxbS00MSAxaDdtMyAwaDFtNSAwaDFtMiAwaDZtNCAwaDFtMSAwaDFtMyAwaDQiLz48L2c+PC9zdmc+Cg==" alt="扫码查看"></div>
+    <div class="fmeta">
+      <div class="big">扫码下载，<em>复制一段话就能装</em></div>
+      <div class="url">realsuperj.github.io/pages/skill-library-curator/</div>
+      <div class="desc">页面上有 zip 下载，和一段<b>可直接复制的安装提示词</b> —— 
+      粘贴给你的 AI，它会自己判断该装到哪个目录。</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
