@@ -21,9 +21,13 @@ order: 4
   transform:translateY(-2px);
   box-shadow:0 6px 20px rgba(0,0,0,.13);
 }
+/* 海报走背景图而不是 <img>：Chirpy 会自动给正文里的 img 套一层
+   <a class="img-link"> 做灯箱，套在卡片链接里就成了嵌套 <a>，
+   浏览器会把外层链接提前闭合，属性直接漏成页面上的文字。 */
 .skill-poster{
-  flex:0 0 128px;width:128px;display:block;border-radius:8px;
-  border:1px solid var(--main-border-color,#e9ecef);
+  flex:0 0 128px;width:128px;aspect-ratio:2/3;
+  background-size:cover;background-position:center top;
+  border-radius:8px;border:1px solid var(--main-border-color,#e9ecef);
 }
 .skill-body{flex:1;min-width:0}
 .skill-body h3{margin:0 0 8px;font-size:1.18rem;line-height:1.35;transition:color .18s}
@@ -40,8 +44,8 @@ order: 4
 }
 .skill-card:hover .skill-arrow{opacity:1;transform:translateX(4px);color:var(--link-color)}
 @media(max-width:640px){
-  .skill-card{flex-direction:column;align-items:flex-start;gap:16px;padding:18px}
-  .skill-poster{flex:none;width:100%;max-width:210px;align-self:center}
+  .skill-card{flex-direction:column;align-items:center;gap:16px;padding:18px}
+  .skill-poster{flex:none;width:200px}
   .skill-arrow{display:none}
 }
 </style>
@@ -56,7 +60,7 @@ order: 4
 
 <!-- entries -->
 <a class="skill-card" href="/pages/skill-library-curator/">
-  <img class="skill-poster" src="/pages/skill-library-curator/poster.png" alt="">
+  <span class="skill-poster" style="background-image:url('/pages/skill-library-curator/poster.png')"></span>
   <div class="skill-body">
     <h3>Skill 收藏整理器</h3>
     <p>把一整个文件夹的 skill 收藏，整理成分好类、编好号、评过分、去过重的一份清单。</p>
