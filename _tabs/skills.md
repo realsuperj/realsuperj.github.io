@@ -5,31 +5,44 @@ order: 4
 ---
 
 <style>
+/* 整张卡片是唯一入口。卡内不再放任何独立链接 —— 图、标题、按钮三个入口
+   指向同一个地方，读者要先判断点哪个，反而是负担。 */
 .skill-card{
-  display:flex;gap:20px;align-items:flex-start;
-  padding:20px;margin:22px 0;
-  border:1px solid var(--main-border-color,#e9ecef);border-radius:10px;
-  transition:.2s;
+  display:flex;gap:22px;align-items:center;
+  padding:18px 22px;margin:20px 0;
+  border:1px solid var(--main-border-color,#e9ecef) !important;
+  border-radius:12px;
+  text-decoration:none !important;
+  color:inherit !important;
+  transition:border-color .18s,transform .18s,box-shadow .18s;
 }
-.skill-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.08)}
-.skill-card > a{flex:0 0 150px}
-.skill-card img{
-  width:150px;border-radius:6px;display:block;
+.skill-card:hover{
+  border-color:var(--link-color) !important;
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(0,0,0,.13);
+}
+.skill-poster{
+  flex:0 0 128px;width:128px;display:block;border-radius:8px;
   border:1px solid var(--main-border-color,#e9ecef);
 }
-.skill-meta{flex:1;min-width:0}
-.skill-meta h3{margin:2px 0 8px;font-size:1.2rem}
-/* Chirpy 正文链接的下划线是 border-bottom 画的，不是 text-decoration，两个都要压 */
-.skill-card a,
-.skill-card a:hover{text-decoration:none !important;border-bottom:none !important}
-.skill-meta h3 a{color:var(--heading-color,inherit)}
-.skill-meta h3 a:hover{color:var(--link-color)}
-.skill-meta p{margin:0 0 14px;font-size:.92rem;line-height:1.7;color:var(--text-muted-color,#6c757d)}
-.skill-go{font-size:.88rem;font-weight:600}
-@media(max-width:600px){
-  .skill-card{flex-direction:column}
-  .skill-card > a{flex:none;align-self:center}
-  .skill-card img{width:200px}
+.skill-body{flex:1;min-width:0}
+.skill-body h3{margin:0 0 8px;font-size:1.18rem;line-height:1.35;transition:color .18s}
+.skill-card:hover .skill-body h3{color:var(--link-color)}
+.skill-body p{margin:0 0 10px;font-size:.92rem;line-height:1.7;color:var(--text-muted-color,#6c757d)}
+.skill-tag{
+  font-size:.76rem;letter-spacing:.02em;
+  color:var(--text-muted-color,#6c757d);opacity:.7;
+}
+.skill-arrow{
+  flex:0 0 auto;font-size:1.35rem;line-height:1;
+  color:var(--text-muted-color,#6c757d);opacity:.35;
+  transition:opacity .18s,transform .18s,color .18s;
+}
+.skill-card:hover .skill-arrow{opacity:1;transform:translateX(4px);color:var(--link-color)}
+@media(max-width:640px){
+  .skill-card{flex-direction:column;align-items:flex-start;gap:16px;padding:18px}
+  .skill-poster{flex:none;width:100%;max-width:210px;align-self:center}
+  .skill-arrow{display:none}
 }
 </style>
 
@@ -42,11 +55,12 @@ order: 4
 全部采用 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.zh) 授权：可自由传播和修改，请保留署名，勿用于商业用途。
 
 <!-- entries -->
-<div class="skill-card">
-  <a href="/pages/skill-library-curator/"><img src="/pages/skill-library-curator/poster.png" alt="Skill 收藏整理器 海报"></a>
-  <div class="skill-meta">
-    <h3><a href="/pages/skill-library-curator/">Skill 收藏整理器</a></h3>
+<a class="skill-card" href="/pages/skill-library-curator/">
+  <img class="skill-poster" src="/pages/skill-library-curator/poster.png" alt="">
+  <div class="skill-body">
+    <h3>Skill 收藏整理器</h3>
     <p>把一整个文件夹的 skill 收藏，整理成分好类、编好号、评过分、去过重的一份清单。</p>
-    <a class="skill-go" href="/pages/skill-library-curator/">介绍与下载 →</a>
+    <span class="skill-tag">CC BY-NC 4.0 · 36 KB</span>
   </div>
-</div>
+  <span class="skill-arrow">→</span>
+</a>
