@@ -65,7 +65,6 @@ order: 4
   <div class="skill-body">
     <h3>Skill 收藏整理器</h3>
     <p>把一整个文件夹的 skill 收藏，整理成分好类、编好号、评过分、去过重的一份清单。</p>
-    <span class="skill-tag">CC BY-NC 4.0 · 36 KB</span>
   </div>
   <span class="skill-arrow">→</span>
 </a>
