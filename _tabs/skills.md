@@ -18,10 +18,14 @@ order: 4
   border:1px solid var(--main-border-color,#e9ecef);
 }
 .skill-meta{flex:1;min-width:0}
-.skill-meta h3{margin:2px 0 8px;font-size:1.15rem}
-.skill-meta h3 a{text-decoration:none}
+.skill-meta h3{margin:2px 0 8px;font-size:1.2rem}
+/* Chirpy 的全局 a 样式优先级更高，这里必须提权才压得住下划线 */
+.skill-card a,
+.skill-card a:hover{text-decoration:none !important}
+.skill-meta h3 a{color:var(--heading-color,inherit)}
+.skill-meta h3 a:hover{color:var(--link-color)}
 .skill-meta p{margin:0 0 14px;font-size:.92rem;line-height:1.7;color:var(--text-muted-color,#6c757d)}
-.skill-go{font-size:.88rem;font-weight:600;text-decoration:none}
+.skill-go{font-size:.88rem;font-weight:600}
 @media(max-width:600px){
   .skill-card{flex-direction:column}
   .skill-card > a{flex:none;align-self:center}
