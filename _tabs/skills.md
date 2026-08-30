@@ -8,8 +8,8 @@ order: 4
 /* 整张卡片是唯一入口。卡内不再放任何独立链接 —— 图、标题、按钮三个入口
    指向同一个地方，读者要先判断点哪个，反而是负担。 */
 .skill-card{
-  display:flex;gap:22px;align-items:center;
-  padding:18px 22px;margin:20px 0;
+  display:flex;gap:20px;align-items:center;position:relative;
+  padding:18px 22px;margin:18px 0;
   border:1px solid var(--main-border-color,#e9ecef) !important;
   border-radius:12px;
   text-decoration:none !important;
@@ -21,21 +21,32 @@ order: 4
   transform:translateY(-2px);
   box-shadow:0 6px 20px rgba(0,0,0,.13);
 }
-/* 海报走背景图而不是 <img>：Chirpy 会自动给正文里的 img 套一层
-   <a class="img-link"> 做灯箱，套在卡片链接里就成了嵌套 <a>，
-   浏览器会把外层链接提前闭合，属性直接漏成页面上的文字。 */
-.skill-poster{
-  flex:0 0 128px;width:128px;aspect-ratio:2/3;
-  background-size:cover;background-position:center top;
-  border-radius:8px;border:1px solid var(--main-border-color,#e9ecef);
+/* 用图标而不是海报缩略图：128px 宽的海报根本看不清字，而且所有 skill
+   共用一套模板，缩略图彼此长得一样，连区分作用都起不到。海报的用武之地
+   是介绍页顶部和转发，不是这里。 */
+.skill-icon{
+  flex:0 0 56px;width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.45rem;color:#C0821E;
+  background:rgba(232,163,61,.10);border:1px solid rgba(232,163,61,.24);
 }
+html[data-mode="dark"] .skill-icon{color:#E8A33D}
 .skill-body{flex:1;min-width:0}
-.skill-body h3{margin:0 0 8px;font-size:1.18rem;line-height:1.35;transition:color .18s}
+.skill-body h3{margin:0 0 7px;font-size:1.16rem;line-height:1.35;transition:color .18s}
 .skill-card:hover .skill-body h3{color:var(--link-color)}
-.skill-body p{margin:0 0 10px;font-size:.92rem;line-height:1.7;color:var(--text-muted-color,#6c757d)}
+.skill-body p{margin:0;font-size:.91rem;line-height:1.7;color:var(--text-muted-color,#6c757d)}
+.skill-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
 .skill-tag{
-  font-size:.76rem;letter-spacing:.02em;
-  color:var(--text-muted-color,#6c757d);opacity:.7;
+  font-size:.72rem;padding:2.5px 9px;border-radius:20px;line-height:1.6;
+  color:var(--text-muted-color,#6c757d);
+  background:rgba(128,128,128,.10);
+  border:1px solid var(--main-border-color,#e9ecef);
+}
+/* 日期钉在右上角：跟在标签后面的话，标签数量一变位置就漂，
+   多张卡片并排会参差不齐。钉住之后自然对齐成一列。 */
+.skill-date{
+  position:absolute;top:14px;right:20px;
+  font-size:.72rem;color:var(--text-muted-color,#6c757d);opacity:.55;
 }
 .skill-arrow{
   flex:0 0 auto;font-size:1.35rem;line-height:1;
@@ -44,9 +55,9 @@ order: 4
 }
 .skill-card:hover .skill-arrow{opacity:1;transform:translateX(4px);color:var(--link-color)}
 @media(max-width:640px){
-  .skill-card{flex-direction:column;align-items:center;gap:16px;padding:18px}
-  .skill-poster{flex:none;width:200px}
+  .skill-card{flex-direction:column;align-items:flex-start;gap:14px;padding:18px}
   .skill-arrow{display:none}
+  .skill-date{position:static;order:3;opacity:.5}
 }
 </style>
 
@@ -61,10 +72,15 @@ order: 4
 <div class="skill-list">
 <!-- entries -->
 <a class="skill-card" href="/pages/skill-library-curator/">
-  <span class="skill-poster" style="background-image:url('/pages/skill-library-curator/poster.png')"></span>
+  <span class="skill-date">2026-08-31</span>
+  <span class="skill-icon"><i class="fas fa-folder-tree"></i></span>
   <div class="skill-body">
     <h3>Skill 收藏整理器</h3>
     <p>把一整个文件夹的 skill 收藏，整理成分好类、编好号、评过分、去过重的一份清单。</p>
+    <div class="skill-tags">
+      <span class="skill-tag">文件管理</span>
+      <span class="skill-tag">增量更新</span>
+    </div>
   </div>
   <span class="skill-arrow">→</span>
 </a>

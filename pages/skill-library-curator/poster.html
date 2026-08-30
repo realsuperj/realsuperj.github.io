@@ -36,9 +36,10 @@ body{
     var(--bg);
 }
 
+/* 强制大写，免得 content.json 里写成 Agent Skill 时海报跟着变小写混排 */
 .eyebrow{
   font-family:var(--m);font-size:17px;letter-spacing:.26em;color:var(--accent);
-  margin-bottom:18px;font-weight:500;
+  margin-bottom:18px;font-weight:500;text-transform:uppercase;
 }
 h1{
   font-size:72px;font-weight:800;line-height:1.06;letter-spacing:-.02em;
@@ -125,14 +126,14 @@ h1 em{font-style:normal;color:var(--accent)}
 <body>
 <div class="poster">
 
-  <div class="eyebrow">AGENT SKILL</div>
+  <div class="eyebrow">Agent Skill</div>
   <h1>Skill 收藏<em>整理器</em></h1>
   <p class="tag">收藏夹里躺着几十上百个 skill，压缩包、PDF、没名字的文件混成一团。<br>它把这些整理成<b>分好类、编好号、评过分、去过重</b>的一份清单。</p>
   <div class="rule"></div>
 
   <div class="st">你是不是也这样</div>
   <div class="pains"><div class="pain"><b>名字全是 SKILL.md</b><span>不点开根本不知道是什么，找一个要挨个试</span></div>
-<div class="pain"><b>同一个收了三遍</b><span>v1、v3、还有 PDF 导出版，不敢删也不敢装</span></div>
+<div class="pain"><b>同一个收了 N 遍</b><span>v1、v3、还有 PDF 导出版，不敢删也不敢装</span></div>
 <div class="pain"><b>混进来一堆不是 skill 的</b><span>作业、设计稿、别人生成的报告，清单被稀释</span></div>
 <div class="pain"><b>不知道哪个值得装</b><span>有的很完整，有的只有半页大纲，没标准难挑</span></div></div>
 
