@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skill 收藏整理器 —— 把一堆来路不明的 skill 整理成一份清单</title>
-<meta name="description" content="批量解压、评分、分类、去重、编号，生成一份看得懂的 Skill 分析报告。第二次运行只处理新增的。">
+<title>Skill 收藏整理器 —— 把一整个文件夹的 skill 收藏，整理成分好类、编好号、评过分、去过重的一份清单</title>
+<meta name="description" content="把一整个文件夹的 skill 收藏，整理成分好类、编好号、评过分、去过重的一份清单">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -18,6 +18,7 @@
   --text:#DCE6F2;
   --text-dim:#93A7BF;
   --text-mute:#6B7F97;
+  --text-faint:#4E6076;
   --accent:#E8A33D;
   --accent-dim:#A8712A;
   --green:#5BC48A;
@@ -34,7 +35,6 @@ body{
 }
 .wrap{max-width:860px;margin:0 auto;padding:0 24px}
 
-/* hero */
 header{
   padding:72px 0 56px;text-align:center;
   background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(232,163,61,.10),transparent 70%);
@@ -51,7 +51,6 @@ h1{
 .sub{font-size:clamp(15px,2.4vw,18px);color:var(--text-dim);max-width:600px;margin:0 auto}
 .sub b{color:var(--text);font-weight:600}
 
-/* buttons */
 .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px}
 .btn{
   display:inline-flex;align-items:center;gap:8px;
@@ -64,7 +63,6 @@ h1{
 .btn-ghost{border-color:var(--steel);color:var(--text-dim);background:transparent}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
 
-/* sections */
 section{padding:56px 0;border-bottom:1px solid var(--line)}
 h2{
   font-family:var(--font-head);font-size:24px;font-weight:600;
@@ -73,7 +71,6 @@ h2{
 h2::before{content:'';width:3px;height:20px;background:var(--accent);border-radius:2px}
 .lead{color:var(--text-dim);margin-bottom:28px;font-size:15px}
 
-/* pain points */
 .pain{display:grid;gap:12px}
 .pain-item{
   background:var(--bg-panel);border:1px solid var(--line);
@@ -82,7 +79,6 @@ h2::before{content:'';width:3px;height:20px;background:var(--accent);border-radi
 .pain-item b{display:block;color:var(--text);font-weight:600;margin-bottom:4px;font-size:15px}
 .pain-item span{color:var(--text-mute);font-size:14px}
 
-/* steps */
 .steps{counter-reset:s;display:grid;gap:11px}
 .step{
   counter-increment:s;background:var(--bg-panel-2);border:1px solid var(--line);
@@ -97,7 +93,6 @@ h2::before{content:'';width:3px;height:20px;background:var(--accent);border-radi
 .step b{color:var(--text);font-weight:600}
 .step span{color:var(--text-mute)}
 
-/* boundary table */
 .bnd{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:620px){.bnd{grid-template-columns:1fr}}
 .bnd-col{background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -113,7 +108,6 @@ h2::before{content:'';width:3px;height:20px;background:var(--accent);border-radi
 .bnd-body.ok li::before{content:'+';color:var(--green)}
 .bnd-body.no li::before{content:'–';color:var(--red)}
 
-/* code block */
 .codewrap{position:relative;margin-top:16px}
 pre{
   background:#08111C;border:1px solid var(--line);border-radius:10px;
@@ -129,7 +123,6 @@ pre{
 .copy:hover{border-color:var(--accent);color:var(--accent)}
 .copy.done{border-color:var(--green);color:var(--green)}
 
-/* misc */
 .note{
   background:rgba(232,163,61,.07);border:1px solid rgba(232,163,61,.22);
   border-radius:8px;padding:15px 18px;font-size:14px;color:var(--text-dim);margin-top:20px;
@@ -147,18 +140,19 @@ code{
 footer{padding:40px 0 56px;text-align:center;color:var(--text-mute);font-size:13.5px}
 footer a{color:var(--text-dim);text-decoration:none;border-bottom:1px solid var(--steel)}
 footer a:hover{color:var(--accent);border-color:var(--accent)}
+.license{margin-top:18px;font-size:12.5px;color:var(--text-faint)}
+.license a{color:var(--text-faint);border-bottom-color:var(--line)}
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap">
-    <div class="eyebrow">Agent Skill</div>
+    <div class="eyebrow">AGENT SKILL</div>
     <h1>Skill 收藏整理器</h1>
-    <p class="sub">收藏夹里躺着几十上百个 skill，压缩包、PDF、没名字的文件混成一团。<br>
-    这个 skill 把它们整理成<b>分好类、编好号、评过分、去过重</b>的一份清单。</p>
+    <p class="sub">收藏夹里躺着几十上百个 skill，压缩包、PDF、没名字的文件混成一团。<br>它把这些整理成<b>分好类、编好号、评过分、去过重</b>的一份清单。</p>
     <div class="cta">
-      <a class="btn btn-primary" href="skill-library-curator.zip" download>下载 skill（40 KB）</a>
+      <a class="btn btn-primary" href="skill-library-curator.zip" download>下载 skill（36 KB）</a>
       <a class="btn btn-ghost" href="#install">怎么安装</a>
     </div>
   </div>
@@ -168,24 +162,10 @@ footer a:hover{color:var(--accent);border-color:var(--accent)}
   <div class="wrap">
     <h2>它解决什么</h2>
     <p class="lead">如果你也在到处收 skill，这几件事应该很熟悉。</p>
-    <div class="pain">
-      <div class="pain-item">
-        <b>名字全是 SKILL.md，不点开根本不知道是什么</b>
-        <span>一堆 <code>SKILL.md</code>、<code>SKILL-2.docx</code>、<code>技能设计方案_v5.md</code>，找一个要挨个打开。</span>
-      </div>
-      <div class="pain-item">
-        <b>同一个 skill 收了三遍，v1、v3、还有 PDF 导出版</b>
-        <span>不敢删，怕删错。但留着又占地方，安装时也不知道该装哪个。</span>
-      </div>
-      <div class="pain-item">
-        <b>混进来一堆压根不是 skill 的东西</b>
-        <span>作业展示、设计稿、别人生成的报告，跟真 skill 混在一起，清单被稀释。</span>
-      </div>
-      <div class="pain-item">
-        <b>不知道哪个值得装</b>
-        <span>有的写得很完整，有的只有半页大纲。没个标准很难挑。</span>
-      </div>
-    </div>
+    <div class="pain"><div class="pain-item"><b>名字全是 SKILL.md</b><span>一堆 <code>SKILL.md</code>、<code>SKILL-2.docx</code>、<code>技能设计方案_v5.md</code>，找一个要挨个打开。</span></div>
+<div class="pain-item"><b>同一个收了三遍</b><span>不敢删，怕删错。但留着又占地方，安装时也不知道该装哪个。</span></div>
+<div class="pain-item"><b>混进来一堆不是 skill 的</b><span>作业展示、设计稿、别人生成的报告，跟真 skill 混在一起，清单被稀释。</span></div>
+<div class="pain-item"><b>不知道哪个值得装</b><span>有的写得很完整，有的只有半页大纲。没个标准很难挑。</span></div></div>
   </div>
 </section>
 
@@ -193,18 +173,13 @@ footer a:hover{color:var(--accent);border-color:var(--accent)}
   <div class="wrap">
     <h2>它怎么做</h2>
     <p class="lead">你给一个文件夹路径，它在这个文件夹里就地整理，只移动和改名，不改任何文件的内容。</p>
-    <div class="steps">
-      <div class="step"><b>清点与提取</b><span> —— zip / rar / 7z / PDF / docx / pptx，连没有扩展名的文本文件都能认出来</span></div>
-      <div class="step"><b>先分类型再打分</b><span> —— 不是 skill 的（作业、设计稿、别人的输出产物）单独放，不占编号也不参与排序</span></div>
-      <div class="step"><b>五维评分</b><span> —— 完整度、结构化、实用度、原创性、交付物，每条都给出具体依据而不是一句「质量不错」</span></div>
-      <div class="step"><b>去重仲裁</b><span> —— 只有同一 skill 的不同版本才算重复；不同作者的同主题 skill 一律保留，重复的移入归档而不删除</span></div>
-      <div class="step"><b>分类编号落盘</b><span> —— 执行前先给你看完整的移动计划，确认了才动手</span></div>
-      <div class="step"><b>出报告 + 留账本</b><span> —— 一份《Skill分析报告》，加一份账本文件，下次只处理新增的</span></div>
-    </div>
-    <div class="note">
-      <b>第二次跑只看新增。</b> 整理过一次后，你往文件夹里丢新东西、或者新建一个「待整理」子目录，
-      再让它整理一次，它只处理变动的部分，已有条目的编号一个都不会变。
-    </div>
+    <div class="steps"><div class="step"><b>清点提取</b><span> —— zip / rar / 7z / PDF / docx / pptx，连没有扩展名的文本文件都能认出来</span></div>
+<div class="step"><b>先分类型</b><span> —— 不是 skill 的（作业、设计稿、别人的输出产物）单独放，不占编号也不参与排序</span></div>
+<div class="step"><b>五维评分</b><span> —— 完整度、结构化、实用度、原创性、交付物，每条都给出具体依据而不是一句「质量不错」</span></div>
+<div class="step"><b>去重仲裁</b><span> —— 只有同一 skill 的不同版本才算重复；不同作者的同主题 skill 一律保留，重复的移入归档而不删除</span></div>
+<div class="step"><b>编号落盘</b><span> —— 执行前先给你看完整的移动计划，确认了才动手</span></div>
+<div class="step"><b>出报告</b><span> —— 一份《Skill分析报告》，加一份账本文件，下次只处理新增的</span></div></div>
+    <div class="note"><b>第二次跑只看新增。</b> 整理过一次后，你往文件夹里丢新东西、或者新建一个「待整理」子目录，再让它整理一次，它只处理变动的部分，已有条目的编号一个都不会变。</div>
   </div>
 </section>
 
@@ -215,35 +190,23 @@ footer a:hover{color:var(--accent);border-color:var(--accent)}
     <div class="bnd">
       <div class="bnd-col">
         <div class="bnd-head ok">✓ 它负责</div>
-        <ul class="bnd-body ok">
-          <li>批量解压与文本提取</li>
-          <li>判断哪些是 skill、哪些只是资料</li>
-          <li>打分、分类、编号、去重</li>
-          <li>就地移动改名，出报告</li>
-          <li>增量整理，不推倒重来</li>
-        </ul>
+        <ul class="bnd-body ok"><li>批量解压与文本提取</li>
+<li>判断哪些是 skill、哪些只是资料</li>
+<li>打分、分类、编号、去重</li>
+<li>就地移动改名，动手前先备份</li>
+<li>增量整理，编号不重排</li></ul>
       </div>
       <div class="bnd-col">
         <div class="bnd-head no">✗ 它不负责</div>
-        <ul class="bnd-body no">
-          <li>把 skill 安装到你的 AI 客户端</li>
-          <li>修改任何 skill 的内容</li>
-          <li>帮你写新的 skill</li>
-          <li>扫描你指定目录以外的地方</li>
-          <li>删除文件（重复的只归档）</li>
-        </ul>
+        <ul class="bnd-body no"><li>把 skill 安装到 AI 客户端</li>
+<li>修改任何 skill 的内容</li>
+<li>帮你写新的 skill</li>
+<li>扫描你指定目录以外的地方</li>
+<li>删除文件，重复的只归档</li></ul>
       </div>
     </div>
-    <div class="grid2" style="margin-top:22px">
-      <div class="card">
-        <b>电脑端：完整可用</b>
-        <span>能读写本地文件夹就能跑完整流程。装了 Python 会快很多，没装也能走，只是慢一些，会分批做并支持中断续跑。</span>
-      </div>
-      <div class="card">
-        <b>手机端：只出分析报告</b>
-        <span>手机上的智能体通常动不了本地文件。这时它会主动降级，第一句就告诉你「只出报告、不动文件」，然后把该怎么整理列成一份清单给你。</span>
-      </div>
-    </div>
+    <div class="grid2" style="margin-top:22px"><div class="card"><b>电脑端 · 完整可用</b><span>能读写本地文件夹就能跑完整流程。装了 Python 会快很多，没装也能走，只是慢一些，会分批做并支持中断续跑。</span></div>
+<div class="card"><b>手机端 · 只出报告</b><span>手机上的智能体通常动不了本地文件。这时它会主动降级，第一句就告诉你「只出报告、不动文件」，然后把该怎么整理列成一份清单给你。</span></div></div>
   </div>
 </section>
 
@@ -264,14 +227,7 @@ footer a:hover{color:var(--accent);border-color:var(--accent)}
 评分、分类、去重、编号，生成一份《Skill分析报告》，
 第二次运行只处理新增的条目。</pre>
     </div>
-    <div class="note" style="margin-top:22px">
-      <b>装好之后怎么用：</b> 跟你的 AI 说一句「帮我整理这个文件夹里的 skill」，
-      再把文件夹路径给它，或者直接把文件夹拖进对话框。
-      它会先告诉你有多少条目、大概要多久、会在哪两处停下来问你，然后才开始。
-      <br><br>
-      <b>动手前它会自动备份。</b> 备份是一份完整副本，放在你那个文件夹的旁边，
-      整理完会告诉你在哪，删不删由你决定。
-    </div>
+    <div class="note" style="margin-top:22px"><b>装好之后怎么用：</b> 跟你的 AI 说一句「帮我整理这个文件夹里的 skill」，再把文件夹路径给它，或者直接把文件夹拖进对话框。它会先告诉你有多少条目、大概要多久、会在哪两处停下来问你，然后才开始。<br><br><b>动手前它会自动备份。</b> 备份是一份完整副本，放在你那个文件夹的旁边，整理完会告诉你在哪，删不删由你决定。</div>
   </div>
 </section>
 
@@ -279,7 +235,8 @@ footer a:hover{color:var(--accent);border-color:var(--accent)}
   <div class="wrap">
     这个 skill 是在一次真实整理中打磨出来的 —— 判据里的每一条反例，都是先踩过才写下的。
     <br><br>
-    <a href="https://realsuperj.github.io">← 回到博客</a>
+    <a href="https://realsuperj.github.io">← 回到博客</a> &nbsp;·&nbsp; <a href="https://realsuperj.github.io/skills/">全部 skill</a>
+    <div class="license">© 2026 进击的姜饼人 · 本作品采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh" target="_blank" rel="noopener">CC BY-NC 4.0</a> 授权 · 可自由传播，请勿商用</div>
   </div>
 </footer>
 
