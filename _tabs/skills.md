@@ -58,6 +58,7 @@ order: 4
 
 全部采用 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.zh) 授权：可自由传播和修改，请保留署名，勿用于商业用途。
 
+<div class="skill-list">
 <!-- entries -->
 <a class="skill-card" href="/pages/skill-library-curator/">
   <span class="skill-poster" style="background-image:url('/pages/skill-library-curator/poster.png')"></span>
@@ -68,3 +69,4 @@ order: 4
   </div>
   <span class="skill-arrow">→</span>
 </a>
+</div>
