@@ -1,6 +1,10 @@
 ---
 ---
 
+@use 'abstracts/variables' with (
+  $theme: '{{ site.theme_mode }}'
+);
+
 /* prettier-ignore */
 @use 'main
 {%- if jekyll.environment == 'production' -%}
@@ -9,3 +13,9 @@
 ';
 
 /* append your custom style below */
+
+/* 站点名是中文且偏长，主题默认的 1.75rem/900 会撑到换行 */
+#sidebar .site-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+}

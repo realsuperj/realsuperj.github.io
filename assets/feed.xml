@@ -2,9 +2,14 @@
 layout: compress
 permalink: /feed.xml
 # Atom Feed, reference: https://validator.w3.org/feed/docs/atom.html
+#
+# 这是对主题文件的覆盖，基线 jekyll-theme-chirpy 7.6.0，改动只有一行：
+# 加上 xml-stylesheet 指令，让浏览器直接打开时渲染成正常网页而不是一屏源码。
+# 样式表在 assets/feed.xsl。升级主题后若 feed 结构有变，记得同步这个文件。
 ---
 
 {% capture source %}
+<?xml-stylesheet type="text/xsl" href="{{ '/assets/feed.xsl' | relative_url }}"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>{{ "/" | absolute_url }}</id>
   <title>{{ site.title }}</title>

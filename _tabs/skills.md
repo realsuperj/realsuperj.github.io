@@ -30,7 +30,8 @@ order: 4
   font-size:1.45rem;color:#C0821E;
   background:rgba(232,163,61,.10);border:1px solid rgba(232,163,61,.24);
 }
-html[data-mode="dark"] .skill-icon{color:#E8A33D}
+/* Chirpy 7.6 起用 Bootstrap 的 data-bs-theme 记录主题，不再是 data-mode */
+html[data-bs-theme="dark"] .skill-icon{color:#E8A33D}
 .skill-body{flex:1;min-width:0}
 .skill-body h3{margin:0 0 7px;font-size:1.16rem;line-height:1.35;transition:color .18s}
 .skill-card:hover .skill-body h3{color:var(--link-color)}
@@ -46,7 +47,8 @@ html[data-mode="dark"] .skill-icon{color:#E8A33D}
    多张卡片并排会参差不齐。钉住之后自然对齐成一列。 */
 .skill-date{
   position:absolute;top:14px;right:20px;
-  font-size:.72rem;color:var(--text-muted-color,#6c757d);opacity:.55;
+  font-size:.8rem;color:var(--text-muted-color,#6c757d);opacity:.75;
+  font-variant-numeric:tabular-nums;letter-spacing:.02em;
 }
 .skill-arrow{
   flex:0 0 auto;font-size:1.35rem;line-height:1;

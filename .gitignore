@@ -1,7 +1,10 @@
 # Bundler cache
 .bundle
 vendor
-Gemfile.lock
+
+# Gemfile.lock 要提交。不提交的话 CI 每次都按 "~> 7.4" 装最新的 Chirpy，
+# 而仓库里覆盖的主题文件停在旧版，两边结构一错位整站 JS 就崩。
+# 升级主题走 bundle update，改动能在 diff 里看见。
 
 # Jekyll cache
 .jekyll-cache
