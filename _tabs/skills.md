@@ -19,9 +19,9 @@ order: 4
 }
 .skill-meta{flex:1;min-width:0}
 .skill-meta h3{margin:2px 0 8px;font-size:1.2rem}
-/* Chirpy 的全局 a 样式优先级更高，这里必须提权才压得住下划线 */
+/* Chirpy 正文链接的下划线是 border-bottom 画的，不是 text-decoration，两个都要压 */
 .skill-card a,
-.skill-card a:hover{text-decoration:none !important}
+.skill-card a:hover{text-decoration:none !important;border-bottom:none !important}
 .skill-meta h3 a{color:var(--heading-color,inherit)}
 .skill-meta h3 a:hover{color:var(--link-color)}
 .skill-meta p{margin:0 0 14px;font-size:.92rem;line-height:1.7;color:var(--text-muted-color,#6c757d)}
