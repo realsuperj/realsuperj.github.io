@@ -73,6 +73,20 @@ html[data-bs-theme="dark"] .skill-icon{color:#E8A33D}
 
 <div class="skill-list">
 <!-- entries -->
+<a class="skill-card" href="/pages/periodic-report-assistant/">
+  <span class="skill-date">2026-09-13</span>
+  <span class="skill-icon"><i class="fas fa-calendar-week"></i></span>
+  <div class="skill-body">
+    <h3>周期汇报助手</h3>
+    <p>把零散材料按天记下，到点生成可直接复制的周报、月报和阶段汇报。</p>
+    <div class="skill-tags">
+      <span class="skill-tag">周期汇报</span>
+      <span class="skill-tag">可追溯</span>
+    </div>
+  </div>
+  <span class="skill-arrow">→</span>
+</a>
+
 <a class="skill-card" href="/pages/skill-library-curator/">
   <span class="skill-date">2026-08-31</span>
   <span class="skill-icon"><i class="fas fa-folder-tree"></i></span>

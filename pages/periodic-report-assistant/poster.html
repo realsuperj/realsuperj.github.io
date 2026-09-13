@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>周期汇报助手</title>
+<style>
+/* 一律用系统字体：headless 导出时网络字体可能加载不全，会导致排版漂移 */
+:root{
+  --bg:#0B1420;
+  --panel:#122032;
+  --panel2:#0E1A29;
+  --line:#22344B;
+  --text:#E4EDF7;
+  --dim:#9DB0C6;
+  --mute:#6B7F97;
+  --faint:#4E6076;
+  --accent:#E8A33D;
+  --accent2:#A8712A;
+  --green:#5BC48A;
+  --red:#E06B6B;
+  --f:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',-apple-system,sans-serif;
+  --m:'SF Mono','Menlo',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  width:1080px;height:1620px;background:var(--bg);color:var(--text);
+  font-family:var(--f);overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.poster{
+  width:1080px;height:1620px;padding:48px 60px 34px;
+  display:flex;flex-direction:column;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0%,rgba(232,163,61,.13),transparent 68%),
+    radial-gradient(ellipse 60% 35% at 50% 100%,rgba(232,163,61,.07),transparent 70%),
+    var(--bg);
+}
+
+/* 强制大写，免得 content.json 里写成 Agent Skill 时海报跟着变小写混排 */
+.eyebrow{
+  font-family:var(--m);font-size:17px;letter-spacing:.26em;color:var(--accent);
+  margin-bottom:18px;font-weight:500;text-transform:uppercase;
+}
+h1{
+  font-size:72px;font-weight:800;line-height:1.06;letter-spacing:-.02em;
+  margin-bottom:20px;
+}
+h1 em{font-style:normal;color:var(--accent)}
+.tag{font-size:24.5px;color:var(--dim);line-height:1.58;font-weight:400}
+.tag b{color:var(--text);font-weight:600}
+.rule{height:2px;background:linear-gradient(90deg,var(--accent),rgba(232,163,61,0));margin:23px 0 0}
+
+.st{
+  font-size:22px;font-weight:700;color:var(--accent);letter-spacing:.06em;
+  margin:23px 0 12px;display:flex;align-items:center;gap:12px;
+}
+.st::after{content:'';flex:1;height:1px;background:var(--line)}
+
+.pains{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.pain{
+  background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--red);
+  border-radius:0 10px 10px 0;padding:14px 19px;
+}
+.pain b{display:block;font-size:20px;font-weight:600;margin-bottom:5px;line-height:1.35}
+.pain span{font-size:16.5px;color:var(--mute);line-height:1.5}
+
+.steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.step{
+  background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:13px 16px;position:relative;
+}
+.step i{
+  font-style:normal;font-family:var(--m);font-size:14px;font-weight:600;
+  color:var(--accent);display:block;margin-bottom:7px;letter-spacing:.05em;
+}
+.step b{display:block;font-size:20px;font-weight:600;margin-bottom:5px}
+.step span{font-size:16px;color:var(--mute);line-height:1.5}
+
+.bnd{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bcol{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.bhead{
+  padding:12px 20px;font-size:21px;font-weight:700;
+  display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);
+}
+.bhead.ok{background:rgba(91,196,138,.11);color:var(--green)}
+.bhead.no{background:rgba(224,107,107,.10);color:var(--red)}
+.bbody{padding:12px 20px 14px}
+.bbody div{
+  font-size:17px;color:var(--dim);padding:4.5px 0 4.5px 22px;position:relative;line-height:1.45;
+}
+.bbody div::before{position:absolute;left:0;font-family:var(--m);font-weight:600;font-size:17px}
+.bbody.ok div::before{content:'+';color:var(--green)}
+.bbody.no div::before{content:'\2013';color:var(--red)}
+
+.plat{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:11px}
+.pc{border-radius:12px;padding:14px 19px;border:1px solid var(--line);background:var(--panel2)}
+.pc.hl{border-color:rgba(232,163,61,.4);background:rgba(232,163,61,.06)}
+.pc b{display:block;font-size:20px;font-weight:700;margin-bottom:6px}
+.pc.hl b{color:var(--accent)}
+.pc span{font-size:16.5px;color:var(--mute);line-height:1.5}
+
+.foot{
+  margin-top:auto;padding-top:22px;border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:32px;
+}
+.qr{width:190px;height:190px;background:#fff;border-radius:14px;padding:10px;flex-shrink:0}
+.qr img{width:100%;height:100%;display:block}
+.fmeta{flex:1}
+.fmeta .big{font-size:29px;font-weight:700;margin-bottom:10px;line-height:1.3}
+.fmeta .big em{font-style:normal;color:var(--accent)}
+.fmeta .url{
+  font-family:var(--m);font-size:17px;color:var(--dim);
+  background:var(--panel);border:1px solid var(--line);border-radius:7px;
+  padding:8px 14px;display:inline-block;margin-bottom:11px;
+}
+.fmeta .desc{font-size:17px;color:var(--mute);line-height:1.55}
+.fmeta .desc b{color:var(--dim);font-weight:600}
+
+/* 权利声明与二维码区分开：二维码管行动召唤，这行管授权 */
+.copyright{
+  margin-top:16px;text-align:center;
+  font-size:14px;color:var(--faint);letter-spacing:.02em;
+}
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <div class="eyebrow">Agent Skill</div>
+  <h1>周期汇报<em>助手</em></h1>
+  <p class="tag">零散材料每天记，到点出一份<strong>能交的阶段汇报</strong>。<br>最终稿可复制到 PPT，底稿能追回原材料。</p>
+  <div class="rule"></div>
+
+  <div class="st">你是不是也这样</div>
+  <div class="pains"><div class="pain"><b>每次都从头翻</b><span>聊天往上翻，表格里找数字</span></div>
+<div class="pain"><b>AI 出一版还得改</b><span>粘进去出来的内容还要自己重写</span></div>
+<div class="pain"><b>数字对不上出处</b><span>被问依据时，想不起材料在哪</span></div>
+<div class="pain"><b>下个周期又重来</b><span>材料换了，流程整套再走一遍</span></div></div>
+
+  <div class="st">它怎么做</div>
+  <div class="steps"><div class="step"><i>01</i><b>建档案</b><span>记下时区、角色和汇报对象</span></div>
+<div class="step"><i>02</i><b>记材料</b><span>工作、反馈、学习、背景只追加</span></div>
+<div class="step"><i>03</i><b>补日报</b><span>有材料的日子补事实，空日跳过</span></div>
+<div class="step"><i>04</i><b>对范围</b><span>复述周期、文件和缺口再写</span></div>
+<div class="step"><i>05</i><b>出两层稿</b><span>先事实底稿，再出可复制终稿</span></div>
+<div class="step"><i>06</i><b>能追溯</b><span>结论回读日报和原材料</span></div></div>
+
+  <div class="st">边界写在前面</div>
+  <div class="bnd">
+    <div class="bcol">
+      <div class="bhead ok">✓ 它负责</div>
+      <div class="bbody ok"><div>按天归档四类零散材料</div>
+<div>补齐有材料的日报</div>
+<div>按口令生成五类周期汇报</div>
+<div>同时出最终稿和事实底稿</div>
+<div>把结论追溯到原材料</div></div>
+    </div>
+    <div class="bcol">
+      <div class="bhead no">✗ 它不负责</div>
+      <div class="bbody no"><div>不接公司系统自动取数</div>
+<div>不编造没有依据的数字</div>
+<div>不自动提醒周末月末</div>
+<div>未应用的学习不写进成果</div>
+<div>上游待更新时不硬出正式稿</div></div>
+    </div>
+  </div>
+
+  <div class="plat"><div class="pc hl"><b>电脑端 · 完整可用</b><span>装上就能本地持续记录，到点由你说生成。</span></div>
+<div class="pc"><b>对话端 · 当场出一份</b><span>用通用提示词当场出稿，换对话需重贴材料。</span></div></div>
+
+  <div class="foot">
+    <div class="qr"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OTAiIGhlaWdodD0iNDkwIiBjbGFzcz0ic2Vnbm8iPjxnIHRyYW5zZm9ybT0ic2NhbGUoMTApIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMCAwaDQ5djQ5aC00OXoiLz48cGF0aCBjbGFzcz0icXJsaW5lIiBzdHJva2U9IiMwYjE0MjAiIGQ9Ik0yIDIuNWg3bTQgMGgybTIgMGgxbTIgMGg2bTMgMGg1bTEgMGgxbTIgMGgxbTEgMGg3bS00NSAxaDFtNSAwaDFtMyAwaDJtNiAwaDFtMSAwaDJtMSAwaDJtMSAwaDVtMSAwaDJtMSAwaDFtMiAwaDFtNSAwaDFtLTQ1IDFoMW0xIDBoM20xIDBoMW00IDBoMm0yIDBoMW05IDBoMm0yIDBoMW0xIDBoMW0zIDBoMW0yIDBoMW0xIDBoM20xIDBoMW0tNDUgMWgxbTEgMGgzbTEgMGgxbTMgMGgybTEgMGgxMW0xIDBoMW0xIDBoMW0xIDBoMm00IDBoMm0xIDBoMW0xIDBoM20xIDBoMW0tNDUgMWgxbTEgMGgzbTEgMGgxbTEgMGgybTMgMGgybTEgMGgxbTEgMGg4bTIgMGgxbTMgMGg1bTEgMGgxbTEgMGgzbTEgMGgxbS00NSAxaDFtNSAwaDFtMiAwaDFtMSAwaDFtMSAwaDNtMiAwaDNtMyAwaDVtMSAwaDJtNiAwaDFtNSAwaDFtLTQ1IDFoN20xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoN20tMzcgMWgzbTIgMGgybTEgMGgxbTEgMGgzbTMgMGgxbTEgMGgzbTIgMGgxbTEgMGgzbS0zNCAxaDJtMiAwaDNtMSAwaDFtMSAwaDFtMSAwaDEybTEgMGgzbTMgMGgxbTIgMGgzbTEgMGgxbS00MSAxaDFtMSAwaDFtMSAwaDFtMiAwaDJtMiAwaDJtMSAwaDZtMyAwaDFtNCAwaDNtMSAwaDJtMSAwaDNtNCAwaDFtMSAwaDFtLTQ1IDFoMW0xIDBoMW0xIDBoNG0yIDBoMW0xIDBoMW00IDBoNG0xIDBoMW0xIDBoM20zIDBoMW0xIDBoMW0xIDBoNG0yIDBoMW0yIDBoMm0tNDQgMWgxbTMgMGgxbTEgMGg1bTIgMGgxbTYgMGgzbTMgMGgxbTEgMGgxbTEgMGg0bTIgMGgxbTMgMGgxbS00MCAxaDFtMyAwaDNtMiAwaDFtMSAwaDRtMSAwaDJtMiAwaDFtMSAwaDFtMSAwaDFtMyAwaDJtMiAwaDFtNiAwaDFtMiAwaDFtLTQxIDFoMW0yIDBoMW00IDBoMW0yIDBoM20yIDBoNG0xIDBoMW0yIDBoMm0yIDBoMm0zIDBoM20xIDBoMm0tNDMgMWgxbTEgMGgxbTEgMGg1bTEgMGgxbTEgMGgxbTQgMGgxbTMgMGgxbTIgMGgxbTEgMGgzbTEgMGgybTMgMGgybTEgMGgxbS0zOCAxaDFtOCAwaDNtMiAwaDFtMSAwaDNtMSAwaDFtMiAwaDZtMSAwaDJtMiAwaDJtMyAwaDNtMSAwaDFtLTQ1IDFoMW0yIDBoNm0yIDBoMW0yIDBoMW0xIDBoMm0zIDBoMW0yIDBoMW0xIDBoOG0xIDBoMm0yIDBoMW0yIDBoMm0tNDAgMWgxbTMgMGg0bTQgMGgxbTEgMGgxbTMgMGgybTIgMGgxbTEgMGg0bTEgMGgzbTMgMGgxbTEgMGgxbTIgMGgxbS00NCAxaDZtNSAwaDFtMSAwaDVtMSAwaDNtNSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMyAwaDFtMSAwaDRtLTQ0IDFoMW0zIDBoMW00IDBoMW01IDBoOW0xIDBoMm0yIDBoMW0zIDBoMW0yIDBoMW0xIDBoM20yIDBoMW0tNDQgMWgxbTEgMGgxbTEgMGg1bTQgMGgxbTMgMGg4bTQgMGgxbTMgMGgybTEgMGg4bS00NCAxaDJtMiAwaDFtMyAwaDRtMyAwaDRtMSAwaDFtMyAwaDVtMSAwaDJtMyAwaDJtMyAwaDFtMyAwaDFtLTQ1IDFoM20xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMm00IDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoM20yIDBoNm0xIDBoMW0xIDBoMW0yIDBoMm0tNDUgMWg1bTMgMGgxbTMgMGgxbTQgMGgybTEgMGgxbTMgMGgxbTEgMGgxbTMgMGgybTEgMGgxbTIgMGgxbTMgMGgybS00MCAxaDdtMSAwaDJtMiAwaDFtMiAwaDhtOCAwaDJtMSAwaDVtMiAwaDJtLTQ1IDFoM20xIDBoMm0xIDBoMW0xIDBoMm0xIDBoMW01IDBoMW0zIDBoMm0xIDBoMW0xIDBoMm0yIDBoMW0xIDBoMW00IDBoMm0yIDBoMW0tNDMgMWgybTEgMGg2bTEgMGgxbTEgMGgzbTMgMGgybTIgMGgybTEgMGgxbTQgMGgxbTEgMGgybTEgMGgxbTMgMGg0bS00MSAxaDRtMSAwaDFtMyAwaDJtMSAwaDNtMSAwaDJtMSAwaDNtMiAwaDFtMSAwaDFtMiAwaDJtMSAwaDJtMiAwaDFtMiAwaDNtLTQ0IDFoM20xIDBoM20xIDBoNm0zIDBoMm0zIDBoM200IDBoN20yIDBoNm0tNDMgMWgybTIgMGgxbTIgMGgxbTMgMGgybTEgMGgxbTIgMGgybTEgMGgybTYgMGgxbTIgMGgzbTEgMGgxbTEgMGgzbTIgMGgybS00MyAxaDFtMSAwaDFtMSAwaDJtMSAwaDltMSAwaDFtMSAwaDJtMSAwaDJtMiAwaDFtMiAwaDJtMSAwaDFtNCAwaDFtMSAwaDFtMSAwaDFtLTQzIDFoMW0yIDBoMm0zIDBoMm0xIDBoM20xIDBoM20yIDBoNG0xIDBoMm0zIDBoMW0yIDBoMW0xIDBoMW0yIDBoMW0tMzggMWgxbTIgMGg0bTEgMGgxbTIgMGgybTIgMGgybTEgMGgybTEgMGg0bTYgMGgybTEgMGgybTMgMGgzbS00NCAxaDZtMSAwaDFtMiAwaDFtMSAwaDFtMiAwaDFtMyAwaDFtMiAwaDFtMSAwaDJtMSAwaDFtMiAwaDNtNCAwaDJtMiAwaDJtMSAwaDFtLTQxIDFoMW0xIDBoMW01IDBoMm01IDBoM20xIDBoMW0xIDBoMW0xIDBoMW0xIDBoM20xIDBoMm0yIDBoNW0yIDBoMW0tNDQgMWg0bTIgMGgzbTMgMGg4bTIgMGgxbTEgMGgybTQgMGgybTEgMGgzbTEgMGgxbTEgMGgybTEgMGgybS00NSAxaDFtMiAwaDJtMSAwaDNtMSAwaDFtMSAwaDFtNiAwaDdtMSAwaDFtMiAwaDJtMiAwaDFtMSAwaDZtLTM0IDFoMW0xIDBoMm0zIDBoMW0xIDBoMm0xIDBoMW0zIDBoMW0yIDBoMm0xIDBoMW0xIDBoMW0zIDBoMW0zIDBoMm0xIDBoMW0tNDQgMWg3bTEgMGgybTYgMGgxbTMgMGgxbTEgMGgxbTEgMGgybTQgMGgxbTUgMGgxbTEgMGgxbTEgMGgxbS00MSAxaDFtNSAwaDFtMiAwaDRtMSAwaDJtMSAwaDJtMSAwaDFtMyAwaDFtMSAwaDNtMyAwaDJtMiAwaDFtMyAwaDNtLTQzIDFoMW0xIDBoM20xIDBoMW0yIDBoMW0zIDBoMm0xIDBoM20xIDBoN20xIDBoMW0xIDBoM20yIDBoOW0tNDQgMWgxbTEgMGgzbTEgMGgxbTEgMGgybTIgMGg1bTIgMGgzbTEgMGgzbTMgMGgxbTEgMGg0bTEgMGgybTMgMGgybTEgMGgxbS00NSAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDJtMyAwaDFtMiAwaDJtMiAwaDFtOCAwaDJtMSAwaDNtMiAwaDFtLTQyIDFoMW01IDBoMW0yIDBoM20xIDBoMW0yIDBoM20xIDBoMW0yIDBoMm0xIDBoMW0yIDBoMW0zIDBoMW0xIDBoMm0xIDBoMW0yIDBoMW0yIDBoMW0tNDUgMWg3bTIgMGgzbTIgMGgzbTMgMGgzbTIgMGgxbTEgMGgxbTEgMGgzbTIgMGgxbTEgMGgxbTEgMGgzbTEgMGgxIi8+PC9nPjwvc3ZnPgo=" alt="扫码查看"></div>
+    <div class="fmeta">
+      <div class="big">扫码下载，<em>复制一段话就能装</em></div>
+      <div class="url">realsuperj.github.io/pages/periodic-report-assistant/</div>
+      <div class="desc">页面上有 zip 下载，和一段<b>可直接复制的安装提示词</b> ——
+      粘贴给你的 AI，它会自己判断该装到哪个目录。</div>
+    </div>
+  </div>
+
+  <div class="copyright">© 2026 进击的姜饼人 · CC BY-NC 4.0 · 可自由传播，请勿商用</div>
+
+</div>
+
+<script>
+// 溢出量写进 data-overflow，由 shoot.py 用 --dump-dom 读走。
+// 靠肉眼看截图判断有没有截断是不可靠的，导出前必须先测。
+(function(){
+  function measure(){
+    var p = document.querySelector('.poster');
+    var last = document.querySelector('.copyright');
+    var padBottom = parseFloat(getComputedStyle(p).paddingBottom) || 0;
+    var over = Math.round(last.getBoundingClientRect().bottom + padBottom
+                          - p.getBoundingClientRect().bottom);
+    var root = document.documentElement;
+    root.setAttribute('data-overflow', Math.max(0, over));
+    root.setAttribute('data-scroll-over', Math.max(0, p.scrollHeight - p.clientHeight));
+  }
+  if (document.readyState === 'complete') measure();
+  else window.addEventListener('load', measure);
+})();
+</script>
+</body>
+</html>

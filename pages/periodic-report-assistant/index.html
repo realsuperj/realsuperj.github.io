@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>周期汇报助手 —— 把零散材料按天记下，到点生成可直接复制的周报、月报和阶段汇报，每条结论都能追回依据</title>
+<meta name="description" content="把零散材料按天记下，到点生成可直接复制的周报、月报和阶段汇报，每条结论都能追回依据">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0B1420;
+  --bg-panel:#122032;
+  --bg-panel-2:#0E1A29;
+  --line:#22344B;
+  --steel:#3A5068;
+  --text:#DCE6F2;
+  --text-dim:#93A7BF;
+  --text-mute:#6B7F97;
+  --text-faint:#4E6076;
+  --accent:#E8A33D;
+  --accent-dim:#A8712A;
+  --green:#5BC48A;
+  --red:#E06B6B;
+  --font-head:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-body:'IBM Plex Sans','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg-deep);color:var(--text);
+  font-family:var(--font-body);line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px}
+
+header{
+  padding:72px 0 56px;text-align:center;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(232,163,61,.10),transparent 70%);
+  border-bottom:1px solid var(--line);
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.18em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:18px;
+}
+h1{
+  font-family:var(--font-head);font-size:clamp(30px,5.5vw,46px);
+  font-weight:700;line-height:1.2;letter-spacing:-.01em;margin-bottom:18px;
+}
+.sub{font-size:clamp(15px,2.4vw,18px);color:var(--text-dim);max-width:600px;margin:0 auto}
+.sub b{color:var(--text);font-weight:600}
+
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 26px;border-radius:8px;font-size:15px;font-weight:600;
+  text-decoration:none;transition:.18s;border:1px solid transparent;cursor:pointer;
+  font-family:var(--font-body);
+}
+.btn-primary{background:var(--accent);color:#1A1206}
+.btn-primary:hover{background:#F0B155;transform:translateY(-1px)}
+.btn-ghost{border-color:var(--steel);color:var(--text-dim);background:transparent}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+h2{
+  font-family:var(--font-head);font-size:24px;font-weight:600;
+  margin-bottom:10px;display:flex;align-items:center;gap:11px;
+}
+h2::before{content:'';width:3px;height:20px;background:var(--accent);border-radius:2px}
+.lead{color:var(--text-dim);margin-bottom:28px;font-size:15px}
+
+.pain{display:grid;gap:12px}
+.pain-item{
+  background:var(--bg-panel);border:1px solid var(--line);
+  border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:16px 20px;
+}
+.pain-item b{display:block;color:var(--text);font-weight:600;margin-bottom:4px;font-size:15px}
+.pain-item span{color:var(--text-mute);font-size:14px}
+
+.steps{counter-reset:s;display:grid;gap:11px}
+.step{
+  counter-increment:s;background:var(--bg-panel-2);border:1px solid var(--line);
+  border-radius:8px;padding:15px 18px 15px 54px;position:relative;font-size:14.5px;
+}
+.step::before{
+  content:counter(s);position:absolute;left:16px;top:14px;
+  width:24px;height:24px;border-radius:6px;background:var(--accent-dim);color:#fff;
+  font-family:var(--font-mono);font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+.step b{color:var(--text);font-weight:600}
+.step span{color:var(--text-mute)}
+
+.bnd{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.bnd{grid-template-columns:1fr}}
+.bnd-col{background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.bnd-head{
+  padding:14px 18px;font-family:var(--font-head);font-weight:600;font-size:15px;
+  display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--line);
+}
+.bnd-head.ok{background:rgba(91,196,138,.10);color:var(--green)}
+.bnd-head.no{background:rgba(224,107,107,.09);color:var(--red)}
+.bnd-body{padding:16px 18px}
+.bnd-body li{list-style:none;padding:6px 0 6px 20px;position:relative;font-size:14px;color:var(--text-dim)}
+.bnd-body li::before{position:absolute;left:0;font-family:var(--font-mono);font-size:13px}
+.bnd-body.ok li::before{content:'+';color:var(--green)}
+.bnd-body.no li::before{content:'–';color:var(--red)}
+
+.codewrap{position:relative;margin-top:16px}
+pre{
+  background:#08111C;border:1px solid var(--line);border-radius:10px;
+  padding:20px;padding-right:96px;overflow-x:auto;
+  font-family:var(--font-mono);font-size:13px;line-height:1.85;color:#C5D5E8;
+  white-space:pre-wrap;word-break:break-word;
+}
+.copy{
+  position:absolute;top:12px;right:12px;padding:7px 14px;
+  background:var(--bg-panel);border:1px solid var(--steel);border-radius:6px;
+  color:var(--text-dim);font-size:12px;font-family:var(--font-mono);cursor:pointer;transition:.18s;
+}
+.copy:hover{border-color:var(--accent);color:var(--accent)}
+.copy.done{border-color:var(--green);color:var(--green)}
+
+.note{
+  background:rgba(232,163,61,.07);border:1px solid rgba(232,163,61,.22);
+  border-radius:8px;padding:15px 18px;font-size:14px;color:var(--text-dim);margin-top:20px;
+}
+.note b{color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+@media(max-width:620px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.card b{display:block;font-size:14.5px;margin-bottom:5px;color:var(--text)}
+.card span{font-size:13.5px;color:var(--text-mute)}
+code{
+  font-family:var(--font-mono);font-size:.9em;background:rgba(255,255,255,.06);
+  padding:2px 6px;border-radius:4px;color:var(--accent);
+}
+footer{padding:40px 0 56px;text-align:center;color:var(--text-mute);font-size:13.5px}
+footer a{color:var(--text-dim);text-decoration:none;border-bottom:1px solid var(--steel)}
+footer a:hover{color:var(--accent);border-color:var(--accent)}
+.license{margin-top:18px;font-size:12.5px;color:var(--text-faint)}
+.license a{color:var(--text-faint);border-bottom-color:var(--line)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Agent Skill</div>
+    <h1>周期汇报助手</h1>
+    <p class="sub">聊天记录、任务清单、会议纪要、表格片段散落各处。<br>这个 skill 按天归档、补齐日报，再按你的口令生成<strong>可直接复制的最终汇报稿</strong>和可追溯的事实底稿。</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="periodic-report-assistant.zip" download>下载 skill（16 KB）</a>
+      <a class="btn btn-ghost" href="#install">怎么安装</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>它解决什么</h2>
+    <p class="lead">如果你也在写周报、月报或阶段汇报，这几件事应该很熟悉。</p>
+    <div class="pain"><div class="pain-item"><b>每次写汇报，都要从头翻材料</b><span>聊天记录往上翻，表格里找数字，邮件里找结论，拼完才能开始写。</span></div>
+<div class="pain-item"><b>粘给 AI 能出一版，交出去还得自己改</b><span>好不容易拼起来丢给 AI，出来的内容还要删路径、削过程、自己重写口径。</span></div>
+<div class="pain-item"><b>交上去才发现，数字对不上出处</b><span>领导追问一句数字从哪来，又得回头翻聊天和表格，说不清有没有推断。</span></div>
+<div class="pain-item"><b>这份交上去了，下个周期还得整套再来</b><span>周末、月末、年末，材料换了，找、拼、改还是同一套流程。</span></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>它怎么做</h2>
+    <p class="lead">你把零散材料丢进来，它按天记下；到点由你说「生成周报」或「生成月报」，确认范围后才出稿。</p>
+    <div class="steps"><div class="step"><b>先建汇报档案</b><span> —— 缺一项问一项，写下时区、业务、角色、汇报对象和一周起止</span></div>
+<div class="step"><b>按天追加四类材料</b><span> —— 工作、反馈、学习、背景按发生日追加，同一天丢多次也不会覆盖</span></div>
+<div class="step"><b>补齐有材料的日报</b><span> —— 有材料没日报的日子从旧到新补事实层；哪天没材料就不凭空写一天</span></div>
+<div class="step"><b>生成前先对范围</b><span> —— 先列出周期、将读取的文件和缺口；你确认后才落盘，已有稿件会走重生成</span></div>
+<div class="step"><b>先底稿再提炼终稿</b><span> —— 先写带出处的事实底稿，再提炼可直接复制到 PPT 的最终汇报稿</span></div>
+<div class="step"><b>任意结论都能回读</b><span> —— 指向一句结论时，回读日报和原材料，说明依据，承认有没有推断</span></div></div>
+    <div class="note"><b>每天打开只补日报，更高周期等你开口。</b> 周末说「生成周报」，月底说「生成月报」。缺结果、缺数字会先列缺口，不会编造。</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>能做什么，不能做什么</h2>
+    <p class="lead">边界写在前面，省得装完发现不是你要的。</p>
+    <div class="bnd">
+      <div class="bnd-col">
+        <div class="bnd-head ok">✓ 它负责</div>
+        <ul class="bnd-body ok"><li>按天归档工作、反馈、学习、背景四类材料</li>
+<li>补齐有材料的日报，空日不编造</li>
+<li>按口令生成周报、月报、季度、半年和年终汇报</li>
+<li>同时给出可复制的最终稿和可追溯的事实底稿</li>
+<li>把任意结论回读到日报和原材料</li></ul>
+      </div>
+      <div class="bnd-col">
+        <div class="bnd-head no">✗ 它不负责</div>
+        <ul class="bnd-body no"><li>不接公司系统账号，也不自动拉数</li>
+<li>材料里没有的数字、收益和评价一律不写</li>
+<li>不会在周末或月末自动提醒你生成汇报</li>
+<li>学习没应用到工作或决策，不写进成果</li>
+<li>上游日报或报告待更新时，先拦住，不硬出正式稿</li></ul>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:22px"><div class="card"><b>Cursor / Claude Code / Trae：完整可用</b><span>安装 Skill 后，材料落在本地数据目录。每天丢新材料，到点由你说「生成周报」或「生成月报」。</span></div>
+<div class="card"><b>豆包 / Kimi / ChatGPT：当场出一份</b><span>可用通用提示词当场整理一份汇报。换对话不会记住每天记录，需要重新粘贴材料和提示词。</span></div></div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>怎么安装</h2>
+    <p class="lead">先下载上面的 zip，然后把下面这段话整个复制给你的 AI。各家客户端放 skill 的位置不一样，让它自己判断就行。</p>
+    <div class="codewrap">
+      <button class="copy" onclick="copyPrompt(this)">复制</button>
+      <pre id="prompt">我下载了一个叫 periodic-report-assistant 的 AI skill，压缩包在我的下载目录里。
+
+请帮我：
+1. 判断我现在用的这个 AI 客户端把 skill 放在哪个目录
+2. 把压缩包解压过去，保持 periodic-report-assistant 这个文件夹名不变
+3. 装好后告诉我怎么触发它
+
+这个 skill 的作用：把工作、反馈、学习、任务背景按天存档，
+补齐日报，并按口令生成周报、月报、季度、半年和年终汇报。
+只使用已有材料，不编造数字和结果。</pre>
+    </div>
+    <div class="note" style="margin-top:22px"><b>装好之后怎么用：</b> 跟 AI 说「记录今天」，把聊天摘录、任务、纪要或表格丢过去，说清是哪一天。同一天可以丢多次。<br><br><b>到点由你开口。</b> 说「生成周报」或「生成月报」，先看它列出的日期和缺口，确认后再出正式稿。想核对一句结论，直接问「这句话依据是什么」。</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    这个 skill 是从真实的周报到月报流程里打磨出来的 —— 能交的终稿和能回读的底稿，必须拆开写。
+    <br><br>
+    <a href="https://realsuperj.github.io">← 回到博客</a> &nbsp;·&nbsp; <a href="https://realsuperj.github.io/skills/">全部 skill</a>
+    <div class="license">© 2026 进击的姜饼人 · 本作品采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh" target="_blank" rel="noopener">CC BY-NC 4.0</a> 授权 · 可自由传播，请勿商用</div>
+  </div>
+</footer>
+
+<script>
+function copyPrompt(btn){
+  var t = document.getElementById('prompt').innerText;
+  var done = function(){
+    btn.textContent = '已复制';
+    btn.classList.add('done');
+    setTimeout(function(){ btn.textContent='复制'; btn.classList.remove('done'); }, 2000);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(t).then(done).catch(function(){ fallback(t, done); });
+  } else {
+    fallback(t, done);
+  }
+}
+function fallback(text, cb){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); cb(); } catch(e) { alert('复制失败，请手动选中文字复制'); }
+  document.body.removeChild(ta);
+}
+</script>
+
+</body>
+</html>
